@@ -23,28 +23,27 @@ public class Tetrahedron {
     {
         final int TRIANGLESIZE = 3;
         Vertex[] p = new Vertex[TRIANGLESIZE];
-        
-        p[0] = new Vertex(10, 2, 2);
-        p[1] = new Vertex(10, 0, -2);
-        p[2] = new Vertex(8, 0, 0);
+        p[0] = new Vertex(10, 3, 3);
+        p[1] = new Vertex(10, 1, -1);
+        p[2] = new Vertex(8, 1, 1);
         mesh[0] = new Triangle(p, new ColorDbl(500000000, 700000000, 250000000));
-        p[0] = new Vertex(10, 0, -2);
-        p[1] = new Vertex(10, -2, 2);
-        p[2] = new Vertex(8, 0, 0);
+        p[0] = new Vertex(10, 1, -1);
+        p[1] = new Vertex(10, -1, 3);
+        p[2] = new Vertex(8, 1, 1);
         mesh[1] = new Triangle(p, new ColorDbl(700000000, 250000000, 500000000));
-        p[0] = new Vertex(8, 0, 0);
-        p[1] = new Vertex(10, -2, 2);
-        p[2] = new Vertex(10, 2, 2);
+        p[0] = new Vertex(8, 1, 1);
+        p[1] = new Vertex(10, -1, 3);
+        p[2] = new Vertex(10, 3, 3);
         mesh[2] = new Triangle(p, new ColorDbl(600000000, 300000000, 800000000));
-        p[0] = new Vertex(10, 2, 2);
-        p[1] = new Vertex(10, -2, 2);
-        p[2] = new Vertex(10, 0, -2);
+        p[0] = new Vertex(10, 3, 3);
+        p[1] = new Vertex(10, -1, 3);
+        p[2] = new Vertex(10, 1, -1);
         mesh[3] = new Triangle(p, new ColorDbl(250000000, 500000000, 700000000));
     }
     
     public Ray rayIntersection(Ray r)
     {
-        double t = -1, smallT = 0;
+        double t = -1, smallT = 100;
         int savedID = -1;
         for(int idt = 0; idt < SIZE; ++idt)
         {
@@ -55,11 +54,13 @@ public class Tetrahedron {
                 savedID = idt;
             }
         }
-        if(smallT != 0)
+        if(smallT != 100)
+        {
             return new Ray(r.start, VektorAddition(r.start, VektorMultiplikation(
                         VektorSubtraktion(r.end, r.start), smallT)), 
                         new ColorDbl(mesh[savedID].color), savedID);
-        return r;
+        }
+        return new Ray(r.start, VektorMultiplikation(r.end, 10000), r.color);
     }
     
 }

@@ -56,8 +56,8 @@ public class LinAlg {
     
     public static Boolean VektorDistansJämförelse(Vertex p0, Vertex p1)
     {
-
-        if(p0.x*p0.x + p0.y*p0.y + p0.z*p0.z > p1.x*p1.x + p1.y*p1.y + p1.z*p1.z)
+        //Jag tror inte att denna funkar som den ska.
+        if((p0.x*p0.x + p0.y*p0.y + p0.z*p0.z) < (p1.x*p1.x + p1.y*p1.y + p1.z*p1.z))
             return true;
         else
             return false;

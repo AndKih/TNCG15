@@ -151,11 +151,13 @@ public class Scene {
             t = mesh[idt].rayIntersection(r);
             if(t>=0)
             {
+                //System.out.println("TEST");
                 Vertex newEnd = VektorAddition(r.start, VektorMultiplikation(
                         VektorSubtraktion(r.end, r.start), t));
                 if(VektorDistansJämförelse(newEnd, newR.end))                //If true, newEnd is bigger.
                 {
-                    newR = new Ray(r.start, newR.end, new ColorDbl(newR.color));
+                    //System.out.println("TEST");
+                    newR = new Ray(r.start, newEnd, new ColorDbl(mesh[idt].color));
                 }
 //                return new Ray(r.start, newEnd, new ColorDbl(objects[idt].color), idt);
             }
