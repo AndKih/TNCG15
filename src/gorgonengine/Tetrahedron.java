@@ -43,18 +43,25 @@ public class Tetrahedron {
     
     public Ray rayIntersection(Ray r)
     {
-        double t = -1, smallT = 100;
+        double t = -1, smallT = -10;
+        Boolean firstHit = true;
         int savedID = -1;
         for(int idt = 0; idt < SIZE; ++idt)
         {
             t = mesh[idt].rayIntersection(r);
-            if(t>=0 && t < smallT)
+            if(firstHit && t>=0)
+            {
+                smallT = t;
+                savedID = idt;
+                firstHit = false;
+            }
+            else if(!firstHit && t>=0 && t < smallT)
             {
                 smallT = t;
                 savedID = idt;
             }
         }
-        if(smallT != 100)
+        if(smallT != -10)
         {
             return new Ray(r.start, VektorAddition(r.start, VektorMultiplikation(
                         VektorSubtraktion(r.end, r.start), smallT)), 
