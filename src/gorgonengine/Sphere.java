@@ -53,7 +53,7 @@ public class Sphere extends Object{
             return new Ray(r.start, x2, color);
         }
         else
-            return r;
+            return new Ray(r.start, VektorMultiplikation(VektorSubtraktion(r.end,r.start), 10000), r.color);
     }
     
 }

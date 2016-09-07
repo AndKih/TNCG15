@@ -17,6 +17,7 @@ public class Scene {
     public final static int SIZE = 24;
     public Triangle[] mesh = new Triangle[SIZE];
     Tetrahedron tetra;
+    Sphere sphere;
     
     public Scene()
     {
@@ -139,12 +140,22 @@ public class Scene {
         p[2] = new Vertex(13, 0, -5);
         mesh[23] = new Triangle(p, new ColorDbl(1000000000, 1000000000, 1000000000));
         
+        sphere = new Sphere(new ColorDbl(1000000000, 1000000000, 1000000000), new Vertex(10, -3, 3), 1);
+        
     }
     
     public Ray rayIntersection(Ray r)
     {
         double t = -1;
         Ray newR = tetra.rayIntersection(r);
+        
+        Ray newray = sphere.rayIntersection(r);
+        if(VektorDistansJämförelse(newray.end, newR.end))                //If true, newEnd is bigger.
+        {
+            newR = newray;
+        System.out.println(newray.end.toString());
+        }
+        
         for(int idt = 0; idt < SIZE; ++idt)
         {
             
@@ -162,6 +173,9 @@ public class Scene {
 //                return new Ray(r.start, newEnd, new ColorDbl(objects[idt].color), idt);
             }
         }
+        
+        
+        
         return newR;
     }
 }
