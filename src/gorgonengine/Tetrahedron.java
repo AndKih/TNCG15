@@ -14,7 +14,7 @@ import static gorgonengine.Scene.SIZE;
  *
  * @author Andreas
  */
-public class Tetrahedron {
+public class Tetrahedron extends Object{
     
     public final static int SIZE = 4;
     public Triangle[] mesh = new Triangle[SIZE];

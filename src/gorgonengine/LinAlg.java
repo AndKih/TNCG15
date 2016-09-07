@@ -9,6 +9,9 @@ package gorgonengine;
  *
  * @author Andreas
  */
+
+import java.lang.Math.*;
+
 public class LinAlg {
     
     public static Vertex VektorProdukt(Vertex p0, Vertex p1, Vertex p2)
@@ -21,6 +24,24 @@ public class LinAlg {
         y = (a.z*b.x) - (a.x*b.z);
         z = (a.x*b.y) - (a.y*b.x);
         return new Vertex(x, y, z);
+    }
+    
+    public static Direction normalize(Direction dir)
+    {
+        double length = Math.sqrt(Math.pow(dir.x, 2) + Math.pow(dir.y, 2) + Math.pow(dir.z, 2));
+        dir.x = dir.x/length;
+        dir.y = dir.y/length;
+        dir.z = dir.z/length;
+        return dir;
+    }
+    
+    public static Vertex normalize(Vertex vr)
+    {
+        double length = Math.sqrt(Math.pow(vr.x, 2) + Math.pow(vr.y, 2) + Math.pow(vr.z, 2));
+        vr.x = vr.x/length;
+        vr.y = vr.y/length;
+        vr.z = vr.z/length;
+        return vr;
     }
     
     public static Vertex KryssProdukt(Vertex a, Vertex b)
@@ -52,6 +73,11 @@ public class LinAlg {
     public static Vertex VektorMultiplikation(Vertex p, double m)
     {
         return new Vertex(m*p.x, m*p.y, m*p.z);
+    }
+    
+    public static Vertex VektorMultiplikation(Vertex p0, Vertex p1)
+    {
+        return new Vertex(p0.x*p1.x, p0.y*p1.y, p0.z*p1.z);
     }
     
     public static Boolean VektorDistansJämförelse(Vertex p0, Vertex p1)
