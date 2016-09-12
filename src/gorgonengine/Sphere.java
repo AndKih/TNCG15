@@ -28,6 +28,7 @@ public class Sphere extends Object{
     
     public Ray rayIntersection(Ray r)
     {
+        final double EPSILON = 0.000001;
         //||x - C||^2 = r^2
         //x = o + dI
         //a = (I*I) = 1
@@ -37,18 +38,41 @@ public class Sphere extends Object{
         double dup, ddown;
         Vertex i = new Vertex((r.end.x - r.start.x), (r.end.y - r.start.y), (r.end.z - r.start.z));
         i = normalize(i);
+//        System.out.println("i: " + i);
         double a = SkalärProdukt(i, i);
         double b = SkalärProdukt(VektorMultiplikation(i, 2), VektorSubtraktion(r.start, center));
         double c = SkalärProdukt(VektorSubtraktion(r.start, center), VektorSubtraktion(r.start, center)) - Math.pow(radius, 2);
-        dup = (-b/2) + Math.sqrt((b/2) - a*c);
-        ddown = (-b/2) - Math.sqrt((b/2) - a*c);
+//        System.out.println("a: " + a);
+//        if(b > 0)
+//        {
+//            System.out.println("b: " + b);
+//        }
+        
+//        System.out.println("c: " + c);
+        if((b/2) - a*c >= 0)
+            System.out.println("Schwosh");
+        dup = (-b/2) + Math.sqrt(Math.pow(b/2, 2) - a*c);
+        ddown = (-b/2) - Math.sqrt(Math.pow(b/2, 2) - a*c);
+//        System.out.println("dup: " + dup);
+//        System.out.println("ddown: " + ddown);
         Vertex x1 = VektorAddition(r.start, VektorMultiplikation(i, dup));
         Vertex x2 = VektorAddition(r.start, VektorMultiplikation(i, ddown));
-        if(Math.pow(Math.abs(Math.sqrt((x1.x - center.x) + (x1.y - center.y) + (x1.z - center.z))), 2) == Math.pow(radius, 2))
+//        System.out.println("x1: " + x1 + " x2: " + x2);
+//        if(Math.pow(Math.abs(Math.sqrt(Math.pow(x1.x - center.x, 2) + Math.pow(x1.y - center.y, 2) + Math.pow(x1.z - center.z, 2))), 2) == Math.pow(radius, 2))
+//        {
+//            System.out.println("HEJ!");
+//            return new Ray(r.start, x1, color);
+//        }
+//        else if(Math.pow(Math.abs(Math.sqrt(Math.pow(x2.x - center.x, 2) + Math.pow(x2.y - center.y, 2) + Math.pow(x2.z - center.z, 2))), 2) == Math.pow(radius, 2))
+//        {
+//            System.out.println("HEJ!");
+//            return new Ray(r.start, x2, color);
+//        }
+        if(Math.pow(Math.abs(Math.sqrt(Math.pow(x1.x - center.x, 2) + Math.pow(x1.y - center.y, 2) + Math.pow(x1.z - center.z, 2))), 2) - Math.pow(radius, 2) < EPSILON)
         {
             return new Ray(r.start, x1, color);
         }
-        else if(Math.pow(Math.abs(Math.sqrt((x2.x - center.x) + (x2.y - center.y) + (x2.z - center.z))), 2) == Math.pow(radius, 2))
+        else if(Math.pow(Math.abs(Math.sqrt(Math.pow(x2.x - center.x, 2) + Math.pow(x2.y - center.y, 2) + Math.pow(x2.z - center.z, 2))), 2) - Math.pow(radius, 2) < EPSILON)
         {
             return new Ray(r.start, x2, color);
         }

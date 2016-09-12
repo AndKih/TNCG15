@@ -83,7 +83,9 @@ public class LinAlg {
     public static Boolean VektorDistansJämförelse(Vertex p0, Vertex p1)
     {
         //Jag tror inte att denna funkar som den ska.
-        if((p0.x*p0.x + p0.y*p0.y + p0.z*p0.z) < (p1.x*p1.x + p1.y*p1.y + p1.z*p1.z))
+        double p0l = Math.sqrt(Math.pow(p0.x, 2) + Math.pow(p0.y, 2) + Math.pow(p0.z, 2));
+        double p1l = Math.sqrt(Math.pow(p1.x, 2) + Math.pow(p1.y, 2) + Math.pow(p1.z, 2));
+        if(p0l < p1l)
             return true;
         else
             return false;
@@ -91,6 +93,11 @@ public class LinAlg {
     public static double VektorKvadratLängd(Vertex p0)
     {
         return p0.x*p0.x + p0.y*p0.y + p0.z*p0.z;
+    }
+    
+    public static double returnLength(Vertex p)
+    {
+        return Math.sqrt(Math.pow(p.x, 2) + Math.pow(p.y, 2) + Math.pow(p.z, 2));
     }
     
     public static double Möller_Trumbore(Vertex pe, Vertex ps, Vertex p0, Vertex p1, Vertex p2)

@@ -11,7 +11,6 @@ package gorgonengine;
  */
 public abstract class Object {
     
-    
     public Object()
     {
         

@@ -14,9 +14,11 @@ public class Ray {
     public Vertex start, end;
     public ColorDbl color;
     private int rayIndex;
+    public int t;
     
     public Ray(Vertex s, Vertex e, ColorDbl c)
     {
+        t = -1;
         start = s;
         end = e;
         color = c;
@@ -25,6 +27,7 @@ public class Ray {
     
     public Ray(Vertex s, Vertex e, ColorDbl c, int index)
     {
+        t = -1;
         start = s;
         end = e;
         color = c;

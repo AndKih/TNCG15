@@ -41,6 +41,28 @@ public class Tetrahedron extends Object{
         mesh[3] = new Triangle(p, new ColorDbl(250000000, 500000000, 700000000));
     }
     
+    public Tetrahedron(Vertex[] pin, ColorDbl[] cin)
+    {
+        final int TRIANGLESIZE = 3;
+        Vertex[] p = new Vertex[TRIANGLESIZE];
+        p[0] = pin[0];
+        p[1] = pin[1];
+        p[2] = pin[2];
+        mesh[0] = new Triangle(p, cin[0]);
+        p[0] = pin[3];
+        p[1] = pin[4];
+        p[2] = pin[5];
+        mesh[1] = new Triangle(p, cin[1]);
+        p[0] = pin[6];
+        p[1] = pin[7];
+        p[2] = pin[8];
+        mesh[2] = new Triangle(p, cin[2]);
+        p[0] = pin[9];
+        p[1] = pin[10];
+        p[2] = pin[11];
+        mesh[3] = new Triangle(p, cin[3]);
+    }
+    
     public Ray rayIntersection(Ray r)
     {
         double t = -1, smallT = -10;

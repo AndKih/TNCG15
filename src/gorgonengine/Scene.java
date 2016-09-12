@@ -169,7 +169,7 @@ public class Scene {
         
         
         objects[2] = new Sphere(new ColorDbl(1000000000, 1000000000, 1000000000), new Vertex(10, -3, 3), 1);
-        sphere = new Sphere(new ColorDbl(1000000000, 1000000000, 1000000000), new Vertex(10, -3, 3), 1);
+        sphere = new Sphere(new ColorDbl(400000000, 200000000, 600000000), new Vertex(5, -3, 3), 1);
         
         
     }
@@ -206,7 +206,7 @@ public class Scene {
         if(VektorDistansJämförelse(newray.end, newR.end))                //If true, newEnd is bigger.
         {
             newR = newray;
-        System.out.println(newray.end.toString());
+            //System.out.println(newray.end.toString());
         }
         
         for(int idt = 0; idt < SIZE; ++idt)
