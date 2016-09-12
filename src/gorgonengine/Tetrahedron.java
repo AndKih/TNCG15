@@ -94,9 +94,11 @@ public class Tetrahedron extends Object{
         }
         if(smallT != -10)
         {
-            return new Ray(r.start, VektorAddition(r.start, VektorMultiplikation(
+            Ray result = new Ray(r.start, VektorAddition(r.start, VektorMultiplikation(
                         VektorSubtraktion(r.end, r.start), smallT)), 
                         new ColorDbl(mesh[savedID].color), savedID);
+            result.setT(smallT);
+            return result;
         }
         return new Ray(r.start, VektorMultiplikation(r.end, 10000), r.color);
     }
