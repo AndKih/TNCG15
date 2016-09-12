@@ -14,7 +14,7 @@ public class Ray {
     public Vertex start, end;
     public ColorDbl color;
     private int rayIndex;
-    public int t;
+    private double t;
     
     public Ray(Vertex s, Vertex e, ColorDbl c)
     {
@@ -32,6 +32,11 @@ public class Ray {
         end = e;
         color = c;
         rayIndex = index;
+    }
+    
+    public void setT(double t)
+    {
+        this.t = t; 
     }
     
     public int returnIndex()

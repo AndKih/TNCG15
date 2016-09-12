@@ -63,6 +63,15 @@ public class Tetrahedron extends Object{
         mesh[3] = new Triangle(p, cin[3]);
     }
     
+    public Tetrahedron(Triangle[] mesh)
+    {
+        for(int ids = 0; ids < SIZE; ++ids)
+        {
+            this.mesh[ids] = new Triangle(mesh[ids].p, mesh[ids].color);
+        }
+        
+    }
+    
     public Ray rayIntersection(Ray r)
     {
         double t = -1, smallT = -10;
