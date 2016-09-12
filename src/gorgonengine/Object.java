@@ -11,8 +11,6 @@ package gorgonengine;
  */
 public abstract class Object {
     
-    public Triangle[] mesh;
-    
     public Object()
     {
         
