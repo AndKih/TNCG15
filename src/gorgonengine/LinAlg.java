@@ -90,6 +90,10 @@ public class LinAlg {
         else
             return false;
     }
+    public static double VektorKvadratLängd(Vertex p0)
+    {
+        return p0.x*p0.x + p0.y*p0.y + p0.z*p0.z;
+    }
     
     public static double returnLength(Vertex p)
     {
