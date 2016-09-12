@@ -35,5 +35,38 @@ public class Ray {
     {
         return rayIndex;
     }
+    public boolean equals(Ray ray)
+    {
+        if(ray.end.x != end.x)
+        {
+            return false;
+        }
+        if(ray.end.y != end.y)
+        {
+            return false;
+        }
+        if(ray.end.z != end.z)
+        {
+            return false;
+        }
+        if(ray.start.x != start.x)
+        {
+            return false;
+        }
+        if(ray.start.y != start.y)
+        {
+            return false;
+        }
+        if(ray.start.z != start.z)
+        {
+            return false;
+        }
+        if(ray.color != color)
+        {
+            return false;
+        }
+        return true;
+                
+    }
     
 }

@@ -88,6 +88,10 @@ public class LinAlg {
         else
             return false;
     }
+    public static double VektorKvadratLängd(Vertex p0)
+    {
+        return p0.x*p0.x + p0.y*p0.y + p0.z*p0.z;
+    }
     
     public static double Möller_Trumbore(Vertex pe, Vertex ps, Vertex p0, Vertex p1, Vertex p2)
     {
