@@ -151,24 +151,24 @@ public class Scene {
         pnew[0] = new Vertex(10, 3, 3);
         pnew[1] = new Vertex(10, 1, -1);
         pnew[2] = new Vertex(8, 1, 1);
-        mesh2[0] = new Triangle(p, new ColorDbl(500000000, 700000000, 250000000));
+        mesh2[0] = new Triangle(pnew, new ColorDbl(500000000, 700000000, 250000000));
         pnew[0] = new Vertex(10, 1, -1);
         pnew[1] = new Vertex(10, -1, 3);
         pnew[2] = new Vertex(8, 1, 1);
-        mesh2[1] = new Triangle(p, new ColorDbl(700000000, 250000000, 500000000));
+        mesh2[1] = new Triangle(pnew, new ColorDbl(700000000, 250000000, 500000000));
         pnew[0] = new Vertex(8, 1, 1);
         pnew[1] = new Vertex(10, -1, 3);
         pnew[2] = new Vertex(10, 3, 3);
-        mesh2[2] = new Triangle(p, new ColorDbl(600000000, 300000000, 800000000));
+        mesh2[2] = new Triangle(pnew, new ColorDbl(600000000, 300000000, 800000000));
         pnew[0] = new Vertex(10, 3, 3);
         pnew[1] = new Vertex(10, -1, 3);
         pnew[2] = new Vertex(10, 1, -1);
-        mesh2[3] = new Triangle(p, new ColorDbl(250000000, 500000000, 700000000));
+        mesh2[3] = new Triangle(pnew, new ColorDbl(250000000, 500000000, 700000000));
         
         objects[1] = new Mesh(mesh2);
         
         
-        objects[2] = new Sphere(new ColorDbl(1000000000, 1000000000, 1000000000), new Vertex(10, -3, 3), 1);
+        objects[2] = new Sphere(new ColorDbl(400000000, 200000000, 600000000), new Vertex(5, -3, 3), 1);
         sphere = new Sphere(new ColorDbl(400000000, 200000000, 600000000), new Vertex(5, -3, 3), 1);
         
         
@@ -176,10 +176,9 @@ public class Scene {
     
     public Ray rayIntersection(Ray r)
     {
-        Ray largestRay = new Ray(r.start,VektorMultiplikation(VektorSubtraktion(r.end, r.start),100000),r.color);
-        double rLength = VektorKvadratLängd(r.end);
         Ray newRay;
-        for(int idt = 0; idt < objects.length; ++idt)
+        Ray largestRay = objects[0].rayIntersection(r);
+        for(int idt = 1; idt < objects.length; ++idt)
         {
             newRay = objects[idt].rayIntersection(r);
 //            if(idt==1 && VektorDistansJämförelse(r.end, newRay.end))
