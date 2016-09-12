@@ -146,4 +146,11 @@ public class Camera extends JFrame{
         return deltay;
     }
     
+    public void translateCamera(Vertex pos)
+    {
+        eye1 = VektorAddition(eye1,pos);
+        eye2 = VektorAddition(eye2,pos);
+        this.pos = VektorAddition(this.pos,pos);
+    }
+    
 }
