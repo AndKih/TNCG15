@@ -23,8 +23,8 @@ public class Camera extends JFrame{
     //Toggle = false means eye 1.
     
     public final int SIZEX, SIZEY;
-    public Vertex eye1, eye2;
-    private Boolean toggle;
+    public Vertex eye[];
+    private int toggle;
     public Pixel[][] cam;
     public Vertex pos;
     public double width, height;
@@ -35,13 +35,16 @@ public class Camera extends JFrame{
     private double deltax;
     private double deltay;
     
-    public Camera(int sizex, int sizey, Vertex e1, Vertex e2, Vertex pos, double wdth, double hght)
+    public Camera(int sizex, int sizey, Vertex[] e1, Vertex pos, double wdth, double hght)
     {
         SIZEX = sizex;
         SIZEY = sizey;
-        eye1 = e1;
-        eye2 = e2;
-        toggle = false;
+        eye = new Vertex[e1.length];
+        for(int i = 0; i < e1.length; i++)
+        {
+            eye[i] = e1[i];
+        }
+        toggle = 0;
         cam = new Pixel[SIZEX][SIZEY];
         this.pos = pos;
         width = wdth;
@@ -125,12 +128,7 @@ public class Camera extends JFrame{
     
     public Vertex getViewpoint()
     {
-        if(toggle)
-        {
-            return eye2;
-        }else{
-            return eye1;
-        }
+        return eye[toggle];
     }
     private void calcDelta()
     {
@@ -148,9 +146,17 @@ public class Camera extends JFrame{
     
     public void translateCamera(Vertex pos)
     {
-        eye1 = VektorAddition(eye1,pos);
-        eye2 = VektorAddition(eye2,pos);
+        
+        for(int i = 0; i < eye.length; i++)
+        {
+            eye[i] = VektorAddition(eye[i],pos);
+        }
+        
         this.pos = VektorAddition(this.pos,pos);
+    }
+    public void rotateCamera(double x, double y, double z)
+    {
+        
     }
     
 }
