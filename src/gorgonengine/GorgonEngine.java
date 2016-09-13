@@ -28,7 +28,7 @@ public class GorgonEngine
         // TODO code application logic here
         
         Camera camera = new Camera(1000, 1000, new Vertex(-1, 0, 0), new Vertex(-2, 0, 0), new Vertex(0, 0, 0), 2.0, 2.0);
-        camera.translateCamera(new Vertex(0,1,0));
+        camera.translateCamera(new Vertex(0,0,0));
         camera.render();
         
         
