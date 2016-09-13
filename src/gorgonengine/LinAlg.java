@@ -142,4 +142,28 @@ public class LinAlg {
         return t;
     }
     
+    public static Vertex rotateXVertex(Vertex p, double angle)
+    {
+        double nx = p.x;
+        double ny = (p.y*Math.cos(angle)) + (p.z*Math.sin(angle));
+        double nz = (-p.y*Math.sin(angle)) + (p.z*Math.cos(angle));
+        return new Vertex(nx, ny, nz);
+    }
+    
+    public static Vertex rotateYVertex(Vertex p, double angle)
+    {
+        double nx = (p.x*Math.cos(angle)) + (p.z*Math.sin(angle));
+        double ny = p.y;
+        double nz = (-p.x*Math.sin(angle)) + (p.z*Math.cos(angle));
+        return new Vertex(nx, ny, nz);
+    }
+    
+    public static Vertex rotateZVertex(Vertex p, double angle)
+    {
+        double nx = (p.x*Math.cos(angle)) + (p.y*Math.sin(angle));
+        double ny = (-p.x*Math.sin(angle)) + (p.y*Math.cos(angle));
+        double nz = p.z;
+        return new Vertex(nx, ny, nz);
+    }
+    
 }

@@ -8,6 +8,9 @@ package gorgonengine;
 import static gorgonengine.LinAlg.VektorAddition;
 import static gorgonengine.LinAlg.VektorMultiplikation;
 import static gorgonengine.LinAlg.VektorSubtraktion;
+import static gorgonengine.LinAlg.rotateXVertex;
+import static gorgonengine.LinAlg.rotateYVertex;
+import static gorgonengine.LinAlg.rotateZVertex;
 import static gorgonengine.Scene.SIZE;
 
 /**
@@ -56,6 +59,40 @@ public class Mesh extends Object{
                         new ColorDbl(mesh[savedID].color), savedID);
         }
         return new Ray(r.start, VektorMultiplikation(r.end, 10000), r.color);
+    }
+
+    @Override
+    public void rotateX(double angle) {
+        for(int i = 0; i<mesh.length; i++)
+        {
+            for(int t = 0; t<3; t++)
+            {
+                mesh[i].p[t] = rotateXVertex(mesh[i].p[t], angle);
+            }
+            
+        }
+    }
+    
+    public void rotateY(double angle) {
+        for(int i = 0; i<mesh.length; i++)
+        {
+            for(int t = 0; t<3; t++)
+            {
+                mesh[i].p[t] = rotateYVertex(mesh[i].p[t], angle);
+            }
+            
+        }
+    }
+    
+    public void rotateZ(double angle) {
+        for(int i = 0; i<mesh.length; i++)
+        {
+            for(int t = 0; t<3; t++)
+            {
+                mesh[i].p[t] = rotateZVertex(mesh[i].p[t], angle);
+            }
+            
+        }
     }
     
 }

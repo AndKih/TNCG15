@@ -91,5 +91,20 @@ public class Tetrahedron extends Object{
         }
         return new Ray(r.start, VektorMultiplikation(r.end, 10000), r.color);
     }
+
+    @Override
+    public void rotateX(double angle) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void rotateY(double angle) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void rotateZ(double angle) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     
 }
