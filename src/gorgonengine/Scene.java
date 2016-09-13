@@ -230,4 +230,27 @@ public class Scene {
         
         return newR;
     }
+    
+    
+    public void rotateX(double angle)
+    {
+        for(int i = 0; i < objects.length; i++)
+        {
+            objects[i].rotateX(angle);
+        }
+    }
+    public void rotateY(double angle)
+    {
+        for(int i = 0; i < objects.length; i++)
+        {
+            objects[i].rotateY(angle);
+        }
+    }
+    public void rotateZ(double angle)
+    {
+        for(int i = 0; i < objects.length; i++)
+        {
+            objects[i].rotateZ(angle);
+        }
+    }
 }

@@ -80,5 +80,21 @@ public class Sphere extends Object{
         else
             return new Ray(r.start, VektorMultiplikation(VektorSubtraktion(r.end,r.start), 10000), r.color);
     }
+
+    @Override
+    public void rotateX(double angle) {
+        center = rotateXVertex(center, angle);
+    }
+    
+    
+    public void rotateY(double angle) {
+        center = rotateYVertex(center, angle);
+    }
+    
+    
+    public void rotateZ(double angle) {
+        center = rotateZVertex(center, angle);
+    }
+    
     
 }

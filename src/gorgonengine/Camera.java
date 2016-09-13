@@ -18,6 +18,7 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 
 
+
 public class Camera extends JFrame{
     
     //Toggle = false means eye 1.
@@ -154,9 +155,22 @@ public class Camera extends JFrame{
         
         this.pos = VektorAddition(this.pos,pos);
     }
-    public void rotateCamera(double x, double y, double z)
+    public void rotateCameraX(double angle)
     {
-        
+        scene.rotateX(angle);
+//        pos = rotateVertex(pos, angle);
+//        for(int i = 0; i < eye.length; i++)
+//        {
+//            eye[i] = rotateVertex(eye[i], angle);
+//        }
+    }
+    public void rotateCameraY(double angle)
+    {
+        scene.rotateY(angle);
+    }
+    public void rotateCameraZ(double angle)
+    {
+        scene.rotateZ(angle);
     }
     
 }

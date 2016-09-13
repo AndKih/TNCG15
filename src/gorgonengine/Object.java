@@ -17,4 +17,8 @@ public abstract class Object {
     }
     
     public abstract Ray rayIntersection(Ray r);
+
+    public abstract void rotateX(double angle);
+    public abstract void rotateY(double angle);
+    public abstract void rotateZ(double angle);
 }
