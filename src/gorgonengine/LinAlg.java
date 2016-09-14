@@ -166,4 +166,14 @@ public class LinAlg {
         return new Vertex(nx, ny, nz);
     }
     
+    public static double VektorVinkel(Vertex v1, Vertex v2)
+    {
+        
+        double angle = SkalärProdukt(v1,v2)/(returnLength(v1)*returnLength(v2));
+        
+        angle = Math.acos(angle);
+        
+        return angle;
+    }
+    
 }

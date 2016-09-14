@@ -20,6 +20,7 @@ public class Scene {
     Sphere sphere;
     
     Object[] objects;
+    PointLightSource[] lights;
     
     public Scene()
     {
@@ -170,6 +171,10 @@ public class Scene {
         
         objects[2] = new Sphere(new ColorDbl(400000000, 200000000, 600000000), new Vertex(5, -3, 3), 1);
         sphere = new Sphere(new ColorDbl(400000000, 200000000, 600000000), new Vertex(5, -3, 3), 1);
+        
+        lights = new PointLightSource[1];
+        lights[0] = new PointLightSource(new Vertex(-1,4,2),1.0);
+        
         
         
     }

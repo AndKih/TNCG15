@@ -20,6 +20,12 @@ public class Direction {
         this.y = y; 
         this.z = z;
     }
+    public Direction(Vertex v)
+    {
+        x = v.x;
+        y = v.y; 
+        z = v.z;
+    }
     
     public double returnX()
     {
