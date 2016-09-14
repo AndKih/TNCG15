@@ -14,24 +14,21 @@ import static gorgonengine.LinAlg.VektorSubtraktion;
 public class PointLightSource {
     Vertex pos;
     ColorDbl color;
-    double intensity;
     
     public PointLightSource(Vertex p0, double intensity)
     {
         pos = p0;
-        this.intensity = intensity;
-        color = new ColorDbl(1000000000, 1000000000, 1000000000);
+        color = new ColorDbl(1, 1, 1);
     }
     
     public PointLightSource(Vertex p0, double intensity, ColorDbl col)
     {
         pos = p0;
-        this.intensity = intensity;
         color = color;
     }
     
     public Vertex getLightVectorFrom(Vertex p)
     {
-        return VektorSubtraktion(p,pos);
+        return VektorSubtraktion(pos,p);
     }
 }

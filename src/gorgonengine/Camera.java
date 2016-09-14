@@ -114,7 +114,7 @@ public class Camera extends JFrame{
                 g = (int)(cam[px][py].color.g*(255.99/iMax));
                 b = (int)(cam[px][py].color.b*(255.99/iMax));
                 rgb = ( r << 16) | ( g << 8 ) | b;
-                im.setRGB(px, py, rgb);
+                im.setRGB(px, SIZEY-1-py, rgb);
             }
         }
         getContentPane().setLayout(new FlowLayout());

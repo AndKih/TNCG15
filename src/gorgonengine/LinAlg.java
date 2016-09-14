@@ -70,6 +70,16 @@ public class LinAlg {
         return dir;
     }
     
+    public static Vertex dirToVertex(Direction dir)
+    {
+        return new Vertex(dir.x, dir.y, dir.z);
+    }
+    
+    public static Direction vertexToDir(Vertex p)
+    {
+        return new Direction(p.x, p.y, p.z);
+    }
+    
     public static Vertex normalize(Vertex vr)
     {
         double length = Math.sqrt(Math.pow(vr.x, 2) + Math.pow(vr.y, 2) + Math.pow(vr.z, 2));
@@ -117,10 +127,7 @@ public class LinAlg {
     
     public static Boolean VektorDistansJämförelse(Vertex p0, Vertex p1)
     {
-        //Jag tror inte att denna funkar som den ska.
-        double p0l = Math.sqrt(Math.pow(p0.x, 2) + Math.pow(p0.y, 2) + Math.pow(p0.z, 2));
-        double p1l = Math.sqrt(Math.pow(p1.x, 2) + Math.pow(p1.y, 2) + Math.pow(p1.z, 2));
-        if(p0l < p1l)
+        if(returnLength(p0) < returnLength(p1))
             return true;
         else
             return false;
@@ -133,6 +140,18 @@ public class LinAlg {
     public static double returnLength(Vertex p)
     {
         return Math.sqrt(Math.pow(p.x, 2) + Math.pow(p.y, 2) + Math.pow(p.z, 2));
+    }
+    
+    public static ColorDbl getLightIntensity(Direction normal, Vertex endpt, PointLightSource ls)
+    {
+        Vertex n = dirToVertex(normal);
+        Vertex l = ls.getLightVectorFrom(endpt);
+        double angle =  VektorVinkel(n, l);
+//        if(angle < 0)
+//            System.out.println("Angle: " + angle);
+        ColorDbl res = new ColorDbl(ls.color);
+        res.setIntensity(angle);
+        return res;
     }
     
     public static double Möller_Trumbore(Vertex pe, Vertex ps, Vertex p0, Vertex p1, Vertex p2)
@@ -204,11 +223,8 @@ public class LinAlg {
     public static double VektorVinkel(Vertex v1, Vertex v2)
     {
         
-        double angle = SkalärProdukt(v1,v2)/(returnLength(v1)*returnLength(v2));
-        
-        angle = Math.acos(angle);
-        
-        return angle;
+        return SkalärProdukt(v1,v2)/(returnLength(v1)*returnLength(v2));
+
     }
     
 }

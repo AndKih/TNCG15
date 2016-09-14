@@ -5,12 +5,7 @@
  */
 package gorgonengine;
 
-import static gorgonengine.LinAlg.VektorAddition;
-import static gorgonengine.LinAlg.VektorMultiplikation;
-import static gorgonengine.LinAlg.VektorSubtraktion;
-import static gorgonengine.LinAlg.rotateXVertex;
-import static gorgonengine.LinAlg.rotateYVertex;
-import static gorgonengine.LinAlg.rotateZVertex;
+import static gorgonengine.LinAlg.*;
 import static gorgonengine.Scene.SIZE;
 
 /**
@@ -32,11 +27,12 @@ public class Mesh extends Object{
         }
     }
     
-    public Ray rayIntersection(Ray r)
+    public Ray rayIntersection(Ray r, PointLightSource ls)
     {
         double t = -1, smallT = -10;
         Boolean firstHit = true;
         int savedID = -1;
+        Direction normal = new Direction();
         for(int idt = 0; idt < SIZE; ++idt)
         {
             t = mesh[idt].rayIntersection(r);
@@ -54,9 +50,11 @@ public class Mesh extends Object{
         }
         if(smallT != -10)
         {
+            normal = mesh[savedID].normal;
+            ColorDbl res = new ColorDbl(mesh[savedID].color);
+            res.setIntensity(getLightIntensity(normal, r.end, ls));
             return new Ray(r.start, VektorAddition(r.start, VektorMultiplikation(
-                        VektorSubtraktion(r.end, r.start), smallT)), 
-                        new ColorDbl(mesh[savedID].color), savedID);
+                        VektorSubtraktion(r.end, r.start), smallT)), res, savedID);
         }
         return new Ray(r.start, VektorMultiplikation(r.end, 10000), r.color);
     }
