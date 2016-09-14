@@ -33,11 +33,11 @@ public class GorgonEngine
         
         Camera camera = new Camera(1000, 1000, viewPoint, new Vertex(0, 0, 0), 2.0, 2.0);
 
-        camera.translateCamera(new Vertex(0,-2,0));
-        
-        camera.rotateCameraZ(Math.PI/12);
-        camera.rotateCameraX(0);
-        camera.rotateCameraY(0);
+//        camera.translateCamera(new Vertex(0,0,0));
+//        
+//        camera.rotateCameraZ(Math.PI/12);
+//        camera.rotateCameraX(0);
+//        camera.rotateCameraY(0);
         
         camera.render();
         

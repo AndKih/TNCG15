@@ -26,6 +26,41 @@ public class LinAlg {
         return new Vertex(x, y, z);
     }
     
+    public static double irradiance()
+    {
+        return 0;
+    }
+    
+    public static double radiosity()
+    {
+        return 0;
+    }
+    
+    public static double radiance()
+    {
+        return 0;
+    }
+    
+    public static double formfactor()
+    {
+        return 0;
+    }
+    
+    public static double BRDF()
+    {
+        return 0;
+    }
+    
+    public static double hemisToCart()
+    {
+        return 0;
+    }
+    
+    public static double cartToHemis()
+    {
+        return 0;
+    }
+    
     public static Direction normalize(Direction dir)
     {
         double length = Math.sqrt(Math.pow(dir.x, 2) + Math.pow(dir.y, 2) + Math.pow(dir.z, 2));
