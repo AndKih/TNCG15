@@ -24,11 +24,11 @@ public class PointLightSource {
     public PointLightSource(Vertex p0, double intensity, ColorDbl col)
     {
         pos = p0;
-        color = color;
+        color = col;
     }
     
     public Vertex getLightVectorFrom(Vertex p)
     {
-        return VektorSubtraktion(pos,p);
+        return VektorSubtraktion(p,pos);
     }
 }

@@ -149,6 +149,7 @@ public class LinAlg {
         double angle =  VektorVinkel(n, l);
 //        if(angle < 0)
 //            System.out.println("Angle: " + angle);
+//            System.out.println("pos: " + endpt.toString());
         ColorDbl res = new ColorDbl(ls.color);
         res.setIntensity(angle);
         return res;
@@ -222,7 +223,6 @@ public class LinAlg {
     
     public static double VektorVinkel(Vertex v1, Vertex v2)
     {
-        
         return SkalärProdukt(v1,v2)/(returnLength(v1)*returnLength(v2));
 
     }

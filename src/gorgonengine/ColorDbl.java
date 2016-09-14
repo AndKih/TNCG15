@@ -42,7 +42,7 @@ public class ColorDbl {
     public void setIntensity(double intensity)
     {
         if(intensity < 0)
-            return;
+            intensity=0;
         r *= intensity;
         g *= intensity;
         b *= intensity;
