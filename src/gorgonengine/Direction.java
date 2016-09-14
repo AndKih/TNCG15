@@ -14,6 +14,13 @@ public class Direction {
     
     double x, y, z;
     
+    public Direction()
+    {
+        x = 0;
+        y = 0;
+        z = 0;
+    }
+    
     public Direction(double x, double y, double z)
     {
         this.x = x;

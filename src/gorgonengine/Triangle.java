@@ -42,9 +42,8 @@ public class Triangle {
     }
     
     public double rayIntersection(Ray r)
-    {
+    {   
         return Möller_Trumbore(r.end, r.start, p[0], p[1], p[2]);
-        
     }
     
     public String toString()

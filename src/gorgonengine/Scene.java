@@ -16,7 +16,6 @@ public class Scene {
     
     public final static int SIZE = 24;
     public Triangle[] mesh = new Triangle[SIZE];
-    Tetrahedron tetra;
     Sphere sphere;
     
     Object[] objects;
@@ -24,7 +23,6 @@ public class Scene {
     
     public Scene()
     {
-        tetra = new Tetrahedron();
         //Middleposition: roof, (0, 0, 5). Floor: (0, 0, -5)
         final int TRIANGLESIZE = 3;
         Vertex[] p = new Vertex[TRIANGLESIZE];
@@ -83,65 +81,65 @@ public class Scene {
         p[2] = new Vertex(13, 0, -5);
         mesh[11] = new Triangle(p, new ColorDbl(0, 1000000000, 1000000000));
         //Tak norr (+y)
-        p[0] = new Vertex(0, 0, 5);
-        p[1] = new Vertex(0, 6, 5);
+        p[0] = new Vertex(0, 6, 5);
+        p[1] = new Vertex(0, 0, 5);
         p[2] = new Vertex(10, 6, 5);
         mesh[12] = new Triangle(p, new ColorDbl(1000000000, 1000000000, 1000000000));
         //Tak Nordväst (+y, -x)
-        p[0] = new Vertex(0, 0, 5);
-        p[1] = new Vertex(-3, 0, 5);
+        p[0] = new Vertex(-3, 0, 5);
+        p[1] = new Vertex(0, 0, 5);
         p[2] = new Vertex(0, 6, 5);
         mesh[13] = new Triangle(p, new ColorDbl(1000000000, 1000000000, 1000000000));
         //Tak Sydväst (-y, -x)
-        p[0] = new Vertex(0, 0, 5);
-        p[1] = new Vertex(0, -6, 5);
+        p[0] = new Vertex(0, -6, 5);
+        p[1] = new Vertex(0, 0, 5);
         p[2] = new Vertex(-3, 0, 5);
         mesh[14] = new Triangle(p, new ColorDbl(1000000000, 1000000000, 1000000000));
         //Tak syd (-y)
-        p[0] = new Vertex(0, 0, 5);
-        p[1] = new Vertex(10, -6, 5);
+        p[0] = new Vertex(10, -6, 5);
+        p[1] = new Vertex(0, 0, 5);
         p[2] = new Vertex(0, -6, 5);
         mesh[15] = new Triangle(p, new ColorDbl(1000000000, 1000000000, 1000000000));
         //Tak Sydost (-y, +x)
-        p[0] = new Vertex(0, 0, 5);
-        p[1] = new Vertex(13, 0, 5);
+        p[0] = new Vertex(13, 0, 5);
+        p[1] = new Vertex(0, 0, 5);
         p[2] = new Vertex(10, -6, 5);
         mesh[16] = new Triangle(p, new ColorDbl(1000000000, 1000000000, 1000000000));
         //Tak Nordost (+y, +x)
-        p[0] = new Vertex(0, 0, 5);
-        p[1] = new Vertex(10, 6, 5);
+        p[0] = new Vertex(10, 6, 5);
+        p[1] = new Vertex(0, 0, 5);
         p[2] = new Vertex(13, 0, 5);
         mesh[17] = new Triangle(p, new ColorDbl(1000000000, 1000000000, 1000000000));
         //Golv Norr (+y)
-        p[0] = new Vertex(0, 6, -5);
-        p[1] = new Vertex(0, 0, -5);
+        p[0] = new Vertex(0, 0, -5);
+        p[1] = new Vertex(0, 6, -5);
         p[2] = new Vertex(10, 6, -5);
-        mesh[18] = new Triangle(p, new ColorDbl(1000000000, 1000000000, 1000000000));
+        mesh[18] = new Triangle(p, new ColorDbl(0, 0, 0));
         //Golv Nordväst (+y, -x)
-        p[0] = new Vertex(-3, 0, -5);
-        p[1] = new Vertex(0, 0, -5);
+        p[0] = new Vertex(0, 0, -5);
+        p[1] = new Vertex(-3, 0, -5);
         p[2] = new Vertex(0, 6, -5);
-        mesh[19] = new Triangle(p, new ColorDbl(1000000000, 1000000000, 1000000000));
+        mesh[19] = new Triangle(p, new ColorDbl(0, 0, 0));
         //Golv Sydväst (-y, -x)
-        p[0] = new Vertex(0, -6, -5);
-        p[1] = new Vertex(0, 0, -5);
+        p[0] = new Vertex(0, 0, -5);
+        p[1] = new Vertex(0, -6, -5);
         p[2] = new Vertex(-3, 0, -5);
-        mesh[20] = new Triangle(p, new ColorDbl(1000000000, 1000000000, 1000000000));
+        mesh[20] = new Triangle(p, new ColorDbl(0, 0, 0));
         //Golv Syd (-y)
-        p[0] = new Vertex(10, -6, -5);
-        p[1] = new Vertex(0, 0, -5);
+        p[0] = new Vertex(0, 0, -5);
+        p[1] = new Vertex(10, -6, -5);
         p[2] = new Vertex(0, -6, -5);
-        mesh[21] = new Triangle(p, new ColorDbl(1000000000, 1000000000, 1000000000));
+        mesh[21] = new Triangle(p, new ColorDbl(0, 0, 0));
         //Golv Sydost (-y, +x)
-        p[0] = new Vertex(13, 0, -5);
-        p[1] = new Vertex(0, 0, -5);
+        p[0] = new Vertex(0, 0, -5);
+        p[1] = new Vertex(13, 0, -5);
         p[2] = new Vertex(10, -6, -5);
-        mesh[22] = new Triangle(p, new ColorDbl(1000000000, 1000000000, 1000000000));
+        mesh[22] = new Triangle(p, new ColorDbl(0, 0, 0));
         //Golv Nordost (+y, +x)
-        p[0] = new Vertex(10, 6, -5);
-        p[1] = new Vertex(0, 0, -5);
+        p[0] = new Vertex(0, 0, -5);
+        p[1] = new Vertex(10, 6, -5);
         p[2] = new Vertex(13, 0, -5);
-        mesh[23] = new Triangle(p, new ColorDbl(1000000000, 1000000000, 1000000000));
+        mesh[23] = new Triangle(p, new ColorDbl(0, 0, 0));
         
         
         objects = new Object[3];
@@ -173,7 +171,7 @@ public class Scene {
         sphere = new Sphere(new ColorDbl(400000000, 200000000, 600000000), new Vertex(5, -3, 3), 1);
         
         lights = new PointLightSource[1];
-        lights[0] = new PointLightSource(new Vertex(-1,4,2),1.0);
+        lights[0] = new PointLightSource(new Vertex(-1,0,0),1.0);
         
         
         
@@ -182,10 +180,10 @@ public class Scene {
     public Ray rayIntersection(Ray r)
     {
         Ray newRay;
-        Ray largestRay = objects[0].rayIntersection(r);
+        Ray largestRay = objects[0].rayIntersection(r, lights[0]);
         for(int idt = 1; idt < objects.length; ++idt)
         {
-            newRay = objects[idt].rayIntersection(r);
+            newRay = objects[idt].rayIntersection(r, lights[0]);
 //            if(idt==1 && VektorDistansJämförelse(r.end, newRay.end))
 //            {
 //                System.out.println(newRay.end.toString()+"   |   "+
@@ -200,40 +198,6 @@ public class Scene {
         
         
         return largestRay;
-    }
-    public Ray oldrayIntersection(Ray r)
-    {
-        double t = -1;
-        Ray newR = tetra.rayIntersection(r);
-        
-        Ray newray = sphere.rayIntersection(r);
-        if(VektorDistansJämförelse(newray.end, newR.end))                //If true, newEnd is bigger.
-        {
-            newR = newray;
-            //System.out.println(newray.end.toString());
-        }
-        
-        for(int idt = 0; idt < SIZE; ++idt)
-        {
-            
-            t = mesh[idt].rayIntersection(r);
-            if(t>=0)
-            {
-                //System.out.println("TEST");
-                Vertex newEnd = VektorAddition(r.start, VektorMultiplikation(
-                        VektorSubtraktion(r.end, r.start), t));
-                if(VektorDistansJämförelse(newEnd, newR.end))                //If true, newEnd is bigger.
-                {
-                    //System.out.println("TEST");
-                    newR = new Ray(r.start, newEnd, new ColorDbl(mesh[idt].color));
-                }
-//                return new Ray(r.start, newEnd, new ColorDbl(objects[idt].color), idt);
-            }
-        }
-        
-        
-        
-        return newR;
     }
     
     

@@ -32,6 +32,22 @@ public class ColorDbl {
         return r;
     }
     
+    public void setIntensity(ColorDbl intensity)
+    {
+        r *= intensity.r;
+        g *= intensity.g;
+        b *= intensity.b;
+    }
+    
+    public void setIntensity(double intensity)
+    {
+        if(intensity < 0)
+            return;
+        r *= intensity;
+        g *= intensity;
+        b *= intensity;
+    }
+    
     public double returnG()
     {
         return g;

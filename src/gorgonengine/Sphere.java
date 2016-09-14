@@ -26,7 +26,7 @@ public class Sphere extends Object{
         color = c;
     }
     
-    public Ray rayIntersection(Ray r)
+    public Ray rayIntersection(Ray r, PointLightSource ls)
     {
         final double EPSILON = 0.000001;
         //||x - C||^2 = r^2
