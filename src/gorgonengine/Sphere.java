@@ -70,6 +70,7 @@ public class Sphere extends Object{
 //        }
         if(Math.pow(Math.abs(Math.sqrt(Math.pow(x1.x - center.x, 2) + Math.pow(x1.y - center.y, 2) + Math.pow(x1.z - center.z, 2))), 2) - Math.pow(radius, 2) < EPSILON)
         {
+            Ray result = new Ray(r.start, x1, color);
             return new Ray(r.start, x1, color);
         }
         else if(Math.pow(Math.abs(Math.sqrt(Math.pow(x2.x - center.x, 2) + Math.pow(x2.y - center.y, 2) + Math.pow(x2.z - center.z, 2))), 2) - Math.pow(radius, 2) < EPSILON)
