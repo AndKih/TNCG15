@@ -114,32 +114,32 @@ public class Scene {
         p[0] = new Vertex(0, 0, -5);
         p[1] = new Vertex(10, 6, -5);
         p[2] = new Vertex(0, 6, -5);
-        mesh[18] = new Triangle(p, new ColorDbl(0, 0, 0));
+        mesh[18] = new Triangle(p, new ColorDbl(500000000, 500000000, 500000000));
         //Golv Nordväst (+y, -x)
         p[0] = new Vertex(0, 0, -5);
         p[1] = new Vertex(0, 6, -5);
         p[2] = new Vertex(-3, 0, -5);
-        mesh[19] = new Triangle(p, new ColorDbl(0, 0, 0));
+        mesh[19] = new Triangle(p, new ColorDbl(500000000, 500000000, 500000000));
         //Golv Sydväst (-y, -x)
         p[0] = new Vertex(0, 0, -5);
         p[1] = new Vertex(-3, 0, -5);
         p[2] = new Vertex(0, -6, -5);
-        mesh[20] = new Triangle(p, new ColorDbl(0, 0, 0));
+        mesh[20] = new Triangle(p, new ColorDbl(500000000, 500000000, 500000000));
         //Golv Syd (-y)
         p[0] = new Vertex(0, 0, -5);
         p[1] = new Vertex(0, -6, -5);
         p[2] = new Vertex(10, -6, -5);
-        mesh[21] = new Triangle(p, new ColorDbl(0, 0, 0));
+        mesh[21] = new Triangle(p, new ColorDbl(500000000, 500000000, 500000000));
         //Golv Sydost (-y, +x)
         p[0] = new Vertex(13, 0, -5);
         p[1] = new Vertex(0, 0, -5);
         p[2] = new Vertex(10, -6, -5);
-        mesh[22] = new Triangle(p, new ColorDbl(0, 0, 0));
+        mesh[22] = new Triangle(p, new ColorDbl(500000000, 500000000, 500000000));
         //Golv Nordost (+y, +x)
         p[0] = new Vertex(0, 0, -5);
         p[1] = new Vertex(13, 0, -5);
         p[2] = new Vertex(10, 6, -5);
-        mesh[23] = new Triangle(p, new ColorDbl(0, 0, 0));
+        mesh[23] = new Triangle(p, new ColorDbl(500000000, 500000000, 500000000));
         
         
         objects = new Object[3];
