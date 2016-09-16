@@ -27,7 +27,7 @@ public class Mesh extends Object{
         }
     }
     
-    public Ray rayIntersection(Ray r, PointLightSource ls)
+    public Ray rayIntersection(Ray r, PointLightSource[] ls)
     {
         double t = -1, smallT = -10;
         Boolean firstHit = true;
@@ -51,9 +51,14 @@ public class Mesh extends Object{
         if(smallT != -10)
         {
             normal = mesh[savedID].normal;
-            ColorDbl res = new ColorDbl(mesh[savedID].color);
+            ColorDbl tmpCol = new ColorDbl(mesh[savedID].color);
+            ColorDbl res = new ColorDbl();
             Vertex newEnd = VektorAddition(r.start, VektorMultiplikation(VektorSubtraktion(r.end, r.start), smallT));
-            res.setIntensity(getLightIntensity(normal, newEnd, ls));
+            for(int i = 0; i<ls.length; i++)
+            {
+                res.setIntensity(getLightIntensity(normal, newEnd, ls[i]), tmpCol);
+            }
+            
             return new Ray(r.start, newEnd, res, savedID);
         }
         return new Ray(r.start, VektorMultiplikation(r.end, 10000), r.color);

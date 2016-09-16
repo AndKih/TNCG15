@@ -16,7 +16,7 @@ public abstract class Object {
         
     }
     
-    public abstract Ray rayIntersection(Ray r, PointLightSource ls);
+    public abstract Ray rayIntersection(Ray r, PointLightSource ls[]);
 
     public abstract void rotateX(double angle);
     public abstract void rotateY(double angle);
