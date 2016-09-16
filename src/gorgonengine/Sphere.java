@@ -26,7 +26,7 @@ public class Sphere extends Object{
         color = c;
     }
     
-    public Ray rayIntersection(Ray r, PointLightSource ls)
+    public Ray rayIntersection(Ray r, PointLightSource[] ls)
     {
         final double EPSILON = 0.000001;
         //||x - C||^2 = r^2
@@ -86,11 +86,15 @@ public class Sphere extends Object{
         else
             return new Ray(r.start, VektorMultiplikation(VektorSubtraktion(r.end,r.start), 10000), r.color);
     }
-    private ColorDbl intensityCalc(Vertex x , PointLightSource ls)
+    private ColorDbl intensityCalc(Vertex x , PointLightSource[] ls)
     {
-            Direction normal = new Direction(VektorSubtraktion(center,x));
-            ColorDbl res = new ColorDbl(color);
-            res.setIntensity(getLightIntensity(normal, x, ls));
+        Direction normal = new Direction(VektorSubtraktion(center,x));
+        ColorDbl tmpCol = new ColorDbl(color);
+        ColorDbl res = new ColorDbl();
+        for(int i = 0; i<ls.length; i++)
+        {
+            res.setIntensity(getLightIntensity(normal, x, ls[i]), tmpCol);
+        }
             return res;
     }
     
