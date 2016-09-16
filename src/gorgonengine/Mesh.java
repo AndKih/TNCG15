@@ -53,9 +53,8 @@ public class Mesh extends Object{
             normal = mesh[savedID].normal;
             ColorDbl res = new ColorDbl(mesh[savedID].color);
             Vertex newEnd = VektorAddition(r.start, VektorMultiplikation(VektorSubtraktion(r.end, r.start), smallT));
-            res.setIntensity(getLightIntensity(normal, r.end, ls));
-            return new Ray(r.start, VektorAddition(r.start, VektorMultiplikation(
-                        VektorSubtraktion(r.end, r.start), smallT)), res, savedID);
+            res.setIntensity(getLightIntensity(normal, newEnd, ls));
+            return new Ray(r.start, newEnd, res, savedID);
         }
         return new Ray(r.start, VektorMultiplikation(r.end, 10000), r.color);
     }

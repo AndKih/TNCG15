@@ -170,7 +170,7 @@ public class Scene {
         objects[2] = new Sphere(new ColorDbl(400000000, 200000000, 600000000), new Vertex(8, 4, -4), 1);
         
         lights = new PointLightSource[1];
-        lights[0] = new PointLightSource(new Vertex(0,-4,0),1.0);
+        lights[0] = new PointLightSource(new Vertex(2,-4,0),1.0);
         
         
         
