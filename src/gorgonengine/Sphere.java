@@ -42,53 +42,34 @@ public class Sphere extends Object{
         double a = SkalärProdukt(i, i);
         double b = SkalärProdukt(VektorMultiplikation(i, 2), VektorSubtraktion(r.start, center));
         double c = SkalärProdukt(VektorSubtraktion(r.start, center), VektorSubtraktion(r.start, center)) - Math.pow(radius, 2);
-//        System.out.println("a: " + a);
-//        if(b > 0)
-//        {
-//            System.out.println("b: " + b);
-//        }
-        
-//        System.out.println("c: " + c);
         if((b/2) - a*c >= 0)
             System.out.println("Schwosh");
         dup = (-b/2) + Math.sqrt(Math.pow(b/2, 2) - a*c);
         ddown = (-b/2) - Math.sqrt(Math.pow(b/2, 2) - a*c);
-//        System.out.println("dup: " + dup);
-//        System.out.println("ddown: " + ddown);
         Vertex x1 = VektorAddition(r.start, VektorMultiplikation(i, dup));
         Vertex x2 = VektorAddition(r.start, VektorMultiplikation(i, ddown));
-//        System.out.println("x1: " + x1 + " x2: " + x2);
-//        if(Math.pow(Math.abs(Math.sqrt(Math.pow(x1.x - center.x, 2) + Math.pow(x1.y - center.y, 2) + Math.pow(x1.z - center.z, 2))), 2) == Math.pow(radius, 2))
-//        {
-//            System.out.println("HEJ!");
-//            return new Ray(r.start, x1, color);
-//        }
-//        else if(Math.pow(Math.abs(Math.sqrt(Math.pow(x2.x - center.x, 2) + Math.pow(x2.y - center.y, 2) + Math.pow(x2.z - center.z, 2))), 2) == Math.pow(radius, 2))
-//        {
-//            System.out.println("HEJ!");
-//            return new Ray(r.start, x2, color);
-//        }
-
-//vi booooorde verkligen kommentera här. Tog lite för långt tid att lista ut vad som händer
-//        if(Math.pow(Math.abs(Math.sqrt(Math.pow(x1.x - center.x, 2) + Math.pow(x1.y - center.y, 2) + Math.pow(x1.z - center.z, 2))), 2) - Math.pow(radius, 2) < EPSILON)
-        if(returnLength(VektorSubtraktion(x1, center))-radius<EPSILON)
+        
+        if(returnLength(VektorSubtraktion(x2, center))-radius<EPSILON || 
+                returnLength(VektorSubtraktion(x1, center))-radius<EPSILON)
         {
-            ColorDbl col = intensityCalc(x1,ls);
-            Ray result = new Ray(r.start, x1, col);
-            return new Ray(r.start, x1, col);
-        }
-//        else if(Math.pow(Math.abs(Math.sqrt(Math.pow(x2.x - center.x, 2) + Math.pow(x2.y - center.y, 2) + Math.pow(x2.z - center.z, 2))), 2) - Math.pow(radius, 2) < EPSILON)
-        else if(returnLength(VektorSubtraktion(x2, center))-radius<EPSILON)
-        {
-            ColorDbl col = intensityCalc(x2,ls);
-            return new Ray(r.start, x2, col);
+            if(returnLength(VektorSubtraktion(x1, r.start)) < 
+                    returnLength(VektorSubtraktion(x2, r.start)))
+            {
+                ColorDbl col = intensityCalc(x1,ls);
+                return new Ray(r.start, x1, col);
+            }
+            else
+            {
+                ColorDbl col = intensityCalc(x2,ls);
+                return new Ray(r.start, x2, col);
+            }
         }
         else
             return new Ray(r.start, VektorMultiplikation(VektorSubtraktion(r.end,r.start), 10000), r.color);
     }
     private ColorDbl intensityCalc(Vertex x , PointLightSource[] ls)
     {
-        Direction normal = new Direction(VektorSubtraktion(center,x));
+        Direction normal = new Direction(VektorSubtraktion(x,center));
         ColorDbl tmpCol = new ColorDbl(color);
         ColorDbl res = new ColorDbl();
         for(int i = 0; i<ls.length; i++)

@@ -167,11 +167,11 @@ public class Scene {
         objects[1] = new Mesh(mesh2);
         
         
-        objects[2] = new Sphere(new ColorDbl(400000000, 200000000, 600000000), new Vertex(8, 4, -4), 1);
+        objects[2] = new Sphere(new ColorDbl(400000000, 200000000, 600000000), new Vertex(11, -2, 1), 1);
         
-        lights = new PointLightSource[2];
-        lights[0] = new PointLightSource(new Vertex(9.5,-3,-1),1.0);
-        lights[1] = new PointLightSource(new Vertex(9,4,2),0.7);
+        lights = new PointLightSource[1];
+        lights[0] = new PointLightSource(new Vertex(2,-3,-1),1.0);
+//        lights[1] = new PointLightSource(new Vertex(9,4,2),0.7);
         
         
         
