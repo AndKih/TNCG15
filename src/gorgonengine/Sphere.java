@@ -70,13 +70,15 @@ public class Sphere extends Object{
 //        }
 
 //vi booooorde verkligen kommentera här. Tog lite för långt tid att lista ut vad som händer
-        if(Math.pow(Math.abs(Math.sqrt(Math.pow(x1.x - center.x, 2) + Math.pow(x1.y - center.y, 2) + Math.pow(x1.z - center.z, 2))), 2) - Math.pow(radius, 2) < EPSILON)
+//        if(Math.pow(Math.abs(Math.sqrt(Math.pow(x1.x - center.x, 2) + Math.pow(x1.y - center.y, 2) + Math.pow(x1.z - center.z, 2))), 2) - Math.pow(radius, 2) < EPSILON)
+        if(returnLength(VektorSubtraktion(x1, center))-radius<EPSILON)
         {
             ColorDbl col = intensityCalc(x1,ls);
             Ray result = new Ray(r.start, x1, col);
             return new Ray(r.start, x1, col);
         }
-        else if(Math.pow(Math.abs(Math.sqrt(Math.pow(x2.x - center.x, 2) + Math.pow(x2.y - center.y, 2) + Math.pow(x2.z - center.z, 2))), 2) - Math.pow(radius, 2) < EPSILON)
+//        else if(Math.pow(Math.abs(Math.sqrt(Math.pow(x2.x - center.x, 2) + Math.pow(x2.y - center.y, 2) + Math.pow(x2.z - center.z, 2))), 2) - Math.pow(radius, 2) < EPSILON)
+        else if(returnLength(VektorSubtraktion(x2, center))-radius<EPSILON)
         {
             ColorDbl col = intensityCalc(x2,ls);
             return new Ray(r.start, x2, col);
@@ -86,7 +88,7 @@ public class Sphere extends Object{
     }
     private ColorDbl intensityCalc(Vertex x , PointLightSource ls)
     {
-            Direction normal = new Direction(VektorSubtraktion(x,center));
+            Direction normal = new Direction(VektorSubtraktion(center,x));
             ColorDbl res = new ColorDbl(color);
             res.setIntensity(getLightIntensity(normal, x, ls));
             return res;

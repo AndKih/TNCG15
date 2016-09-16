@@ -146,8 +146,19 @@ public class LinAlg {
     {
         Vertex n = dirToVertex(normal);
         Vertex l = ls.getLightVectorFrom(endpt);
-        double angle =  VektorVinkel(n, l);
+        double angle =  SkalärProdukt(n,l)/(returnLength(n)*returnLength(l));
+        
 //        if(angle < 0)
+//        {
+//            System.out.println("Endpt  " + endpt);
+//            System.out.println("Scalar " +SkalärProdukt(n,l));
+//            System.out.println("Length normal"+ returnLength(n));
+//            System.out.println("Length light "+returnLength(l));
+//            System.out.println("Multi  " + returnLength(n)*returnLength(l));
+//            System.out.println("Normal " + normal.toString());
+//            System.out.println("Light  " + l.toString());
+//            System.out.println("Angle  " + angle);
+//        }
 //            System.out.println("Angle: " + angle);
 //            System.out.println("pos: " + endpt.toString());
         ColorDbl res = new ColorDbl(ls.color);

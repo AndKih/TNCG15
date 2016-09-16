@@ -29,6 +29,6 @@ public class PointLightSource {
     
     public Vertex getLightVectorFrom(Vertex p)
     {
-        return VektorSubtraktion(p,pos);
+        return VektorSubtraktion(pos,p);
     }
 }

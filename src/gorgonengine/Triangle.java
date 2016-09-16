@@ -39,6 +39,12 @@ public class Triangle {
     {
         Vertex retval = VektorProdukt(p[0],p[1],p[2]);
         normal = new Direction(retval.x, retval.y, retval.z);
+        double normalFaktor = returnLength(dirToVertex(normal));
+        normal.x = normal.x/normalFaktor;
+        normal.y = normal.y/normalFaktor;
+        normal.z = normal.z/normalFaktor;
+        System.out.println("Normal " + normal.toString());
+        System.out.println("Triangle \n" + this.toString());
     }
     
     public double rayIntersection(Ray r)
