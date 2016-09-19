@@ -232,6 +232,14 @@ public class LinAlg {
         return new Vertex(nx, ny, nz);
     }
     
+    public static Vertex translateVertex(Vertex p, Vertex dir, double length)
+    {
+        Vertex result;
+        Vertex normDir = normalize(dir);
+        result = VektorAddition(p, VektorMultiplikation(normDir, length));
+        return result;
+    }
+    
     public static double VektorVinkel(Vertex v1, Vertex v2)
     {
         return SkalärProdukt(v1,v2)/(returnLength(v1)*returnLength(v2));

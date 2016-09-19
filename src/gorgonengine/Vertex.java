@@ -21,6 +21,14 @@ public class Vertex {
         w = 1;
     }
     
+    public Vertex(Vertex v)
+    {
+        x = v.x;
+        y = v.y;
+        z = v.z;
+        w = v.w;
+    }
+    
     public double returnCoordByIndex(int index)
     {
         if(index == 0)

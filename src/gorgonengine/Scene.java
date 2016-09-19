@@ -142,7 +142,7 @@ public class Scene {
         mesh[23] = new Triangle(p, new ColorDbl(500000000, 500000000, 500000000));
         
         
-        objects = new Object[3];
+        objects = new Object[5];
         objects[0] = new Mesh(mesh);
         
         Triangle[] mesh2 = new Triangle[4];
@@ -168,10 +168,12 @@ public class Scene {
         
         
         objects[2] = new Sphere(new ColorDbl(400000000, 200000000, 600000000), new Vertex(11, -2, 1), 1);
+        objects[3] = new Mesh(new Vertex(7, 2, 2), Mesh.TYPE_RECTANGLE);
+        objects[4] = new Mesh(2.0, new Vertex(5, -3, -2), Mesh.TYPE_CUBE, Mesh.COLOR_ORANGE);
         
-        lights = new PointLightSource[1];
+        lights = new PointLightSource[2];
         lights[0] = new PointLightSource(new Vertex(2,-3,-1),1.0);
-//        lights[1] = new PointLightSource(new Vertex(9,4,2),0.7);
+        lights[1] = new PointLightSource(new Vertex(5,4,2),0.7);
         
         
         
