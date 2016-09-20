@@ -18,6 +18,10 @@ public class Triangle {
     public Vertex[] p = new Vertex[SIZE];
     public Direction normal;
     public ColorDbl color;
+    public final int REFLECTION_TYPE;
+    public static final int REFLECTION_LAMBERTIAN = 100, REFLECTION_ORENNAYAR = 101;
+    // reflectionCoeff. p is 0<=p<=1.
+    public double reflectionCoefficient;
     
     public Triangle(Vertex[] p, ColorDbl c)
     {
@@ -31,6 +35,7 @@ public class Triangle {
         {
             this.p[i] = p[i];
         }
+        REFLECTION_TYPE = REFLECTION_LAMBERTIAN;
         color = c;
         calculateNormal();
     }
@@ -45,6 +50,11 @@ public class Triangle {
         normal.z = normal.z/normalFaktor;
         System.out.println("Normal " + normal.toString());
         System.out.println("Triangle \n" + this.toString());
+    }
+    
+    public void setReflectionCoefficient(double p)
+    {
+        reflectionCoefficient = p;
     }
     
     public double rayIntersection(Ray r)

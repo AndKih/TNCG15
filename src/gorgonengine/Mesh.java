@@ -747,4 +747,14 @@ public class Mesh extends Object{
         }
     }
     
+    public void setObjectReflection(double p)
+    {
+        
+        for(int idm = 0; idm < SIZE; ++idm)
+        {
+            mesh[idm].setReflectionCoefficient(p);
+        }
+        
+    }
+    
 }

@@ -141,6 +141,10 @@ public class Scene {
         p[2] = new Vertex(10, 6, -5);
         mesh[23] = new Triangle(p, new ColorDbl(500000000, 500000000, 500000000));
         
+        for(int idm = 0; idm < SIZE; ++idm)
+        {
+            mesh[idm].setReflectionCoefficient(1);
+        }
         
         objects = new Object[6];
         objects[0] = new Mesh(mesh);
@@ -164,18 +168,26 @@ public class Scene {
         pnew[2] = new Vertex(10, 1, -1);
         mesh2[3] = new Triangle(pnew, new ColorDbl(250000000, 500000000, 700000000));
         
-        objects[1] = new Mesh(mesh2);
+        objects[0].setObjectReflection(0.8);
         
+        objects[1] = new Mesh(mesh2);
+        objects[1].setObjectReflection(0.9);
         
         objects[2] = new Sphere(new ColorDbl(400000000, 200000000, 600000000), new Vertex(11, -2, 1), 1);
+        objects[2].setObjectReflection(1);
+        
         objects[3] = new Mesh(new Vertex(7, 2, 2), Mesh.TYPE_RECTANGLE);
+        objects[3].setObjectReflection(0.8);
+        
         objects[4] = new Mesh(new double[] {2}, new Vertex(5, -3, -2), Mesh.TYPE_CUBE, Mesh.COLOR_ORANGE);
+        objects[4].setObjectReflection(0.7);
+        
         objects[5] = new Mesh(new double[] {2, 3, 4}, new Vertex(6, 3, -2), Mesh.TYPE_RECTANGLE, Mesh.COLOR_PURPLE);
+        objects[5].setObjectReflection(0.75);
         
         lights = new PointLightSource[2];
         lights[0] = new PointLightSource(new Vertex(2,-3,-1),1.0);
-        lights[1] = new PointLightSource(new Vertex(6, -3, 4),0.7);
-        
+        lights[1] = new PointLightSource(new Vertex(5,4,2),0.7);
         
         
         

@@ -17,6 +17,7 @@ public class Sphere extends Object{
     public ColorDbl color;
     public double radius;
     public Vertex center;
+    private double reflectionCoefficient;
     //public Triangle[] mesh;
     
     public Sphere(ColorDbl c, Vertex center, double radius)
@@ -24,6 +25,11 @@ public class Sphere extends Object{
         this.center = center;
         this.radius = radius;
         color = c;
+    }
+    
+    public void setObjectReflection(double p)
+    {
+        reflectionCoefficient = p;
     }
     
     public Ray rayIntersection(Ray r, PointLightSource[] ls)
