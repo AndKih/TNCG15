@@ -14,16 +14,19 @@ import static gorgonengine.LinAlg.VektorSubtraktion;
 public class PointLightSource {
     Vertex pos;
     ColorDbl color;
+    double radiance;
     
     public PointLightSource(Vertex p0, double intensity)
     {
         pos = p0;
+        radiance = intensity;
         color = new ColorDbl(1, 1, 1);
     }
     
     public PointLightSource(Vertex p0, double intensity, ColorDbl col)
     {
         pos = p0;
+        radiance = intensity;
         color = col;
     }
     

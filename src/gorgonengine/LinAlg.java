@@ -36,29 +36,74 @@ public class LinAlg {
         return 0;
     }
     
-    public static double radiance()
+    public static double radiance(Vertex x, HemisCoords ohm, PointLightSource[] ls)
     {
+        Vertex p = hemisToCart(ohm);
+        double result;
+        double emmitance = 0;
+        double incRadiance = 0;
+        for(int idl = 0; idl < ls.length; ++idl)
+        {
+            Vertex l = ls[idl].getLightVectorFrom(x);
+            double angle = SkalärProdukt(p, l)/(returnLength(p)*returnLength(l));
+            emmitance += ls[idl].radiance*angle;
+        }
         return 0;
     }
     
-    public static double formfactor()
+//    public static double formfactor()
+//    {
+//        return 0;
+//    }
+    
+    public static double BRDF(Triangle t, int reflector_type)
     {
-        return 0;
+        double result;
+        switch(reflector_type)
+        {
+            case Triangle.REFLECTION_LAMBERTIAN:
+                result = t.reflectionCoefficient/Math.PI;
+                break;
+            case Triangle.REFLECTION_ORENNAYAR:
+                result = 0;
+                break;
+            default:
+                result = 0;
+                break;
+        }
+        return result;
     }
     
-    public static double BRDF()
+    public static Direction calculateVectorDirection(Vertex s, Vertex e)
     {
-        return 0;
+        return new Direction(e.x - s.x, e.y - s.y, e.z - s.z);
     }
     
-    public static double hemisToCart()
+    public static Vertex hemisToCart(HemisCoords h)
     {
-        return 0;
+        Vertex result = new Vertex(0, 0, 0);
+        result.x = h.r*Math.cos(h.phi)*Math.sin(h.theta);
+        result.y = h.r*Math.sin(h.phi)*Math.sin(h.theta);
+        result.z = h.r*Math.cos(h.theta);
+        return result;
     }
     
-    public static double cartToHemis()
+    public static HemisCoords cartToHemis(Vertex cart)
     {
-        return 0;
+        HemisCoords result = new HemisCoords();
+        result.r = returnLength(cart);
+        //Theta def. range is [0, (Math.pi/2)].
+        if(Math.atan(cart.y/cart.x) > (Math.PI/2))
+        {
+            return new HemisCoords();
+        }
+        result.theta = Math.atan(cart.y/cart.x);
+        //Phi def. range is [0, 2*Math.pi[
+        result.phi = Math.atan((Math.sqrt(Math.pow(cart.x, 2) + Math.pow(cart.y, 2))/2));
+        if(result.phi >= Math.PI*2)
+            while(result.phi > Math.PI*2)
+                result.phi -= Math.PI*2;
+        return result;
     }
     
     public static Direction normalize(Direction dir)
@@ -146,6 +191,8 @@ public class LinAlg {
     {
         Vertex n = dirToVertex(normal);
         Vertex l = ls.getLightVectorFrom(endpt);
+        Ray shadowRay = new Ray(n, endpt, new ColorDbl(0, 0, 0), -1, Ray.RAY_SHADOW);
+        
         double angle =  SkalärProdukt(n,l)/(returnLength(n)*returnLength(l));
         
 //        if(angle < 0)
@@ -232,10 +279,31 @@ public class LinAlg {
         return new Vertex(nx, ny, nz);
     }
     
+    public static Vertex translateVertex(Vertex p, Vertex dir, double length)
+    {
+        Vertex result;
+        Vertex normDir = normalize(dir);
+        result = VektorAddition(p, VektorMultiplikation(normDir, length));
+        return result;
+    }
+    
     public static double VektorVinkel(Vertex v1, Vertex v2)
     {
         return SkalärProdukt(v1,v2)/(returnLength(v1)*returnLength(v2));
-
     }
+    
+//    public static Vertex perspectiveProjection(Triangle t, Vertex start, Vertex p)
+//    {
+//        
+//        return new Vertex(0, 0, 0);
+//    }
+//    
+//    public static HemisCoords CalculateHemisCoords(Direction normal, Vertex incoming, Triangle t)
+//    {
+//        Vertex n = dirToVertex(normal);
+//        double theta = Math.acos(VektorVinkel(n, incoming));
+//        
+//        return new HemisCoords(theta, 0, 0);
+//    }
     
 }
