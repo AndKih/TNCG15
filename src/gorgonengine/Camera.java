@@ -69,7 +69,7 @@ public class Camera extends JFrame{
                         , new Vertex( 0, -(double)px*deltax, (double)py*deltay));
 //                System.out.println("Target: " + target);
 //                System.out.println("Start: " + vp);
-                r = new Ray(vp, target, new ColorDbl(0, 0, 0));
+                r = new Ray(vp, target, new ColorDbl(0, 0, 0), Ray.RAY_IMPORTANCE);
                 r = scene.rayIntersection(r);
                 cam[px][py] = new Pixel(r.color, r.returnIndex());
 //                System.out.println(r.color.toString());

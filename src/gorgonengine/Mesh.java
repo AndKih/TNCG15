@@ -977,4 +977,14 @@ public class Mesh extends Object{
         
     }
     
+    public double returnSize()
+    {
+        return (double)SIZE;
+    }
+    
+    public Triangle returnTriangleByIndex(int index)
+    {
+        return mesh[index];
+    }
+    
 }

@@ -21,6 +21,7 @@ public class Ray {
     private int rayIndex;
     private double t;
     private double radiance;
+    private double importance;
     public static final int RAY_LIGHT = 100, RAY_IMPORTANCE = 101, RAY_SHADOW = 102;
     public final int RAY_TYPE;
     
@@ -57,7 +58,24 @@ public class Ray {
         color = c;
         rayIndex = -1;
         RAY_TYPE = raytype;
-        radiance = 1;
+        switch(raytype)
+        {
+            case RAY_LIGHT:
+                radiance = 1;
+                importance = -1;
+                break;
+            case RAY_IMPORTANCE:
+                importance = 1;
+                radiance = -1;
+                break;
+            case RAY_SHADOW:
+                radiance = -1;
+                importance = -1;
+                break;
+            default:
+                
+                break;
+        }
     }
     
     public Ray(Vertex s, Vertex e, ColorDbl c, int index, int raytype)
@@ -69,7 +87,24 @@ public class Ray {
         color = c;
         rayIndex = index;
         RAY_TYPE = raytype;
-        radiance = 1;
+        switch(raytype)
+        {
+            case RAY_LIGHT:
+                radiance = 1;
+                importance = -1;
+                break;
+            case RAY_IMPORTANCE:
+                importance = 1;
+                radiance = -1;
+                break;
+            case RAY_SHADOW:
+                radiance = -1;
+                importance = -1;
+                break;
+            default:
+                
+                break;
+        }
     }
     
     public void setT(double t)
@@ -85,6 +120,11 @@ public class Ray {
     public double getRadiance()
     {
         return radiance;
+    }
+    
+    public void reflect()
+    {
+        
     }
     
     public int returnIndex()

@@ -21,6 +21,9 @@ public abstract class Object {
     public abstract void setObjectReflection(double p);
     
     public abstract boolean shadowRayIntersection(Ray r, PointLightSource ls, int triangleID);
+    
+    public abstract double returnSize();
+    public abstract Triangle returnTriangleByIndex(int index);
 
     public abstract void rotateX(double angle);
     public abstract void rotateY(double angle);

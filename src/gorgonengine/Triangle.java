@@ -50,8 +50,8 @@ public class Triangle {
         normal.x = normal.x/normalFaktor;
         normal.y = normal.y/normalFaktor;
         normal.z = normal.z/normalFaktor;
-        System.out.println("Normal " + normal.toString());
-        System.out.println("Triangle \n" + this.toString());
+//        System.out.println("Normal " + normal.toString());
+//        System.out.println("Triangle \n" + this.toString());
     }
     
     public void setReflectionCoefficient(double p)

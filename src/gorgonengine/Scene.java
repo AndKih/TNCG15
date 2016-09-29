@@ -230,7 +230,7 @@ public class Scene {
         objects[1] = new Mesh(mesh2);
         objects[1].setObjectReflection(0.9);
         
-        objects[2] = new Sphere(new ColorDbl(400000000, 200000000, 600000000), new Vertex(11, -2, 1), 1);
+        objects[2] = new Sphere(new ColorDbl(400000000, 200000000, 600000000), new Vertex(11, -2, 1), 1, 2);
         objects[2].setObjectReflection(1);
         
         objects[3] = new Mesh(new Vertex(7, 2, 2), Mesh.TYPE_RECTANGLE);
@@ -252,6 +252,7 @@ public class Scene {
     
     public Ray rayIntersection(Ray r)
     {
+        Node<Ray> rayit = new Node<Ray>(r);
         Ray newRay;
         Ray largestRay = objects[0].rayIntersection(r, lights);
         for(int idt = 1; idt < objects.length; ++idt)

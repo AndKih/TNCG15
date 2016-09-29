@@ -18,13 +18,15 @@ public class Sphere extends Object{
     public double radius;
     public Vertex center;
     private double reflectionCoefficient;
+    private int objectID;
     //public Triangle[] mesh;
     
-    public Sphere(ColorDbl c, Vertex center, double radius)
+    public Sphere(ColorDbl c, Vertex center, double radius, int index)
     {
         this.center = center;
         this.radius = radius;
         color = c;
+        objectID = index;
     }
     
     public void setObjectReflection(double p)
@@ -76,9 +78,73 @@ public class Sphere extends Object{
     
     public boolean shadowRayIntersection(Ray r, PointLightSource ls, int sphereid)
     {
+        double smallT = -10, t = -1;
+        if(sphereid == -1)
+        {
+            for(int id1 = 0; id1 < Scene.objects.length; ++id1)
+            {
+                if(id1 != objectID)
+                {
+                    for(int id2 = 0; id2 < Scene.objects[id1].returnSize(); ++id2)
+                    {
+//                        System.out.println("TEST");
+                        t = Scene.objects[id1].returnTriangleByIndex(id2).rayIntersection(r);
+                        if(smallT <= t && t > 0)
+                            smallT = t;
+                    }
+                }
+            }
+        }
+        else
+        {
+            final double EPSILON = 0.000001;
+            //||x - C||^2 = r^2
+            //x = o + dI
+            //a = (I*I) = 1
+            //b = 2I*(o - C)
+            //c = (o - C)*(o - C) - r^2
+            //d = (-b/2)+- sqrt((b/2)^2 - a*c)
+            double dup, ddown;
+            Vertex i = new Vertex((r.end.x - r.start.x), (r.end.y - r.start.y), (r.end.z - r.start.z));
+            i = normalize(i);
+    //        System.out.println("i: " + i);
+            double a = SkalärProdukt(i, i);
+            double b = SkalärProdukt(VektorMultiplikation(i, 2), VektorSubtraktion(r.start, center));
+            double c = SkalärProdukt(VektorSubtraktion(r.start, center), VektorSubtraktion(r.start, center)) - Math.pow(radius, 2);
+            dup = (-b/2) + Math.sqrt(Math.pow(b/2, 2) - a*c);
+            ddown = (-b/2) - Math.sqrt(Math.pow(b/2, 2) - a*c);
+            Vertex x1 = VektorAddition(r.start, VektorMultiplikation(i, dup));
+            Vertex x2 = VektorAddition(r.start, VektorMultiplikation(i, ddown));
+
+            if(returnLength(VektorSubtraktion(x2, center))-radius<EPSILON || 
+                    returnLength(VektorSubtraktion(x1, center))-radius<EPSILON)
+            {
+                if(returnLength(VektorSubtraktion(x1, r.start)) < 
+                        returnLength(VektorSubtraktion(x2, r.start)))
+                {
+                    smallT = 0.5;
+                }
+                else
+                {
+                    smallT = 0.5;
+                }
+            }
+            else
+            {
+                smallT = -10;
+            }
+        }
         
-        
+        if(smallT != -10 && smallT <= 1)
+        {
+//            System.out.println("TEST");
+            return true;
+        }
         return false;
+    }
+    public double returnSize()
+    {
+        return radius;
     }
     
     private ColorDbl intensityCalc(Vertex x , PointLightSource[] ls)
@@ -91,6 +157,12 @@ public class Sphere extends Object{
             res.setIntensity(getLightIntensity(normal, x, ls[i], -1), tmpCol);
         }
             return res;
+    }
+    
+    public Triangle returnTriangleByIndex(int index)
+    {
+        Vertex[] dummy = new Vertex[3];
+        return new Triangle(dummy, ColorDbl.BLACK, -1);
     }
     
     @Override
