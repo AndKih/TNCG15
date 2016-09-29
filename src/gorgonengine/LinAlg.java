@@ -46,7 +46,7 @@ public class LinAlg {
         {
             Vertex l = ls[idl].getLightVectorFrom(x);
             double angle = SkalärProdukt(p, l)/(returnLength(p)*returnLength(l));
-            emmitance += ls[idl].radiance*angle;
+            incRadiance += ls[idl].radiance*angle;
         }
         return 0;
     }
@@ -187,12 +187,24 @@ public class LinAlg {
         return Math.sqrt(Math.pow(p.x, 2) + Math.pow(p.y, 2) + Math.pow(p.z, 2));
     }
     
-    public static ColorDbl getLightIntensity(Direction normal, Vertex endpt, PointLightSource ls)
+    public static ColorDbl getLightIntensity(Direction normal, Vertex endpt, PointLightSource ls, int triangleID)
     {
+        int objectID;
+        if(triangleID == -1)
+            objectID = 2;
         Vertex n = dirToVertex(normal);
         Vertex l = ls.getLightVectorFrom(endpt);
-        Ray shadowRay = new Ray(n, endpt, new ColorDbl(0, 0, 0), -1, Ray.RAY_SHADOW);
+        Ray shadowRay = new Ray(endpt, ls.pos, new ColorDbl(0, 0, 0), -1, Ray.RAY_SHADOW);
+        Vertex vr = new Vertex(VektorSubtraktion(shadowRay.end, shadowRay.start));
         
+        for(int ids = 0; ids < Scene.objects.length; ++ids)
+        {
+            boolean test = Scene.objects[ids].shadowRayIntersection(shadowRay, ls, triangleID);
+            if(test)
+            {
+                return ColorDbl.BLACK;
+            }
+        }
         double angle =  SkalärProdukt(n,l)/(returnLength(n)*returnLength(l));
         
 //        if(angle < 0)

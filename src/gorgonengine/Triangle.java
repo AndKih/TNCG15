@@ -20,10 +20,11 @@ public class Triangle {
     public ColorDbl color;
     public final int REFLECTION_TYPE;
     public static final int REFLECTION_LAMBERTIAN = 100, REFLECTION_ORENNAYAR = 101;
+    public final int triangleIndex;
     // reflectionCoeff. p is 0<=p<=1.
     public double reflectionCoefficient;
     
-    public Triangle(Vertex[] p, ColorDbl c)
+    public Triangle(Vertex[] p, ColorDbl c, int index)
     {
         if(p.length != 3)
         {
@@ -38,6 +39,7 @@ public class Triangle {
         REFLECTION_TYPE = REFLECTION_LAMBERTIAN;
         color = c;
         calculateNormal();
+        triangleIndex = index;
     }
     
     private void calculateNormal()

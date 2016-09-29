@@ -19,6 +19,8 @@ public abstract class Object {
     public abstract Ray rayIntersection(Ray r, PointLightSource ls[]);
     
     public abstract void setObjectReflection(double p);
+    
+    public abstract boolean shadowRayIntersection(Ray r, PointLightSource ls, int triangleID);
 
     public abstract void rotateX(double angle);
     public abstract void rotateY(double angle);

@@ -73,6 +73,14 @@ public class Sphere extends Object{
         else
             return new Ray(r.start, VektorMultiplikation(VektorSubtraktion(r.end,r.start), 10000), r.color);
     }
+    
+    public boolean shadowRayIntersection(Ray r, PointLightSource ls, int sphereid)
+    {
+        
+        
+        return false;
+    }
+    
     private ColorDbl intensityCalc(Vertex x , PointLightSource[] ls)
     {
         Direction normal = new Direction(VektorSubtraktion(x,center));
@@ -80,7 +88,7 @@ public class Sphere extends Object{
         ColorDbl res = new ColorDbl();
         for(int i = 0; i<ls.length; i++)
         {
-            res.setIntensity(getLightIntensity(normal, x, ls[i]), tmpCol);
+            res.setIntensity(getLightIntensity(normal, x, ls[i], -1), tmpCol);
         }
             return res;
     }
