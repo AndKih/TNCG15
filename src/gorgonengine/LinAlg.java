@@ -25,14 +25,47 @@ public class LinAlg {
         z = (a.x*b.y) - (a.y*b.x);
         return new Vertex(x, y, z);
     }
-    
-    public static double irradiance()
+    //Dummy
+    public static double irradiance(Vertex x, HemisCoords ohm, PointLightSource[] ls, int iteration)
+    {
+        Vertex p = hemisToCart(ohm);
+        double result = 0;
+        double incRadiance = 0;
+        int STEPSIZE = 100000;
+        for(int idl = 0; idl < ls.length; ++idl)
+        {
+            Vertex l = ls[idl].getLightVectorFrom(x);
+            double angle = SkalärProdukt(p, l)/(returnLength(p)*returnLength(l));
+            incRadiance += ls[idl].radiance*angle;
+        }
+//        for(int idp = 0; idp < 2*Math.PI; idp += (2*Math.PI)/STEPSIZE)
+//        {
+//            for(int idt = 0; idt < Math.PI/2; idt += (Math.PI/2)/STEPSIZE)
+//            {
+//                HemisCoords dir = new HemisCoords(idt, idp, 1);
+//                //Find triangle located in dir path.
+//                if(iteration < maxiterations)
+//                    irradiance(newx, dir, ls, ++iteration);
+//                //end cycle when iterations reach a certain number
+//                //Send a ray in all directions and check the radiance emmitted by targeted triangles, using the radiance function.
+//            }
+//        }
+        return result;
+    }
+    //Dummy
+    public static double radiosity()
     {
         return 0;
     }
-    
-    public static double radiosity()
+    //Dummy
+    public static double visible()
     {
+        return 0;
+    }
+    //Dummy
+    public static double importance()
+    {
+        
         return 0;
     }
     
@@ -42,12 +75,23 @@ public class LinAlg {
         double result;
         double emmitance = 0;
         double incRadiance = 0;
+        int STEPSIZE = 100000;
         for(int idl = 0; idl < ls.length; ++idl)
         {
             Vertex l = ls[idl].getLightVectorFrom(x);
             double angle = SkalärProdukt(p, l)/(returnLength(p)*returnLength(l));
-            emmitance += ls[idl].radiance*angle;
+            incRadiance += ls[idl].radiance*angle;
         }
+        
+//        for(int idp = 0; idp < 2*Math.PI; idp += (2*Math.PI)/STEPSIZE)
+//        {
+//            for(int idt = 0; idt < Math.PI/2; idt += (Math.PI/2)/STEPSIZE)
+//            {
+//                HemisCoords dir = new HemisCoords(idt, idp, 1);
+//                
+//                //Send radiance in all directions
+//            }
+//        }
         return 0;
     }
     
@@ -187,12 +231,24 @@ public class LinAlg {
         return Math.sqrt(Math.pow(p.x, 2) + Math.pow(p.y, 2) + Math.pow(p.z, 2));
     }
     
-    public static ColorDbl getLightIntensity(Direction normal, Vertex endpt, PointLightSource ls)
+    public static ColorDbl getLightIntensity(Direction normal, Vertex endpt, PointLightSource ls, int triangleID)
     {
+        int objectID = -1;
+        if(triangleID == -1)
+            objectID = 2;
         Vertex n = dirToVertex(normal);
         Vertex l = ls.getLightVectorFrom(endpt);
-        Ray shadowRay = new Ray(n, endpt, new ColorDbl(0, 0, 0), -1, Ray.RAY_SHADOW);
+        Ray shadowRay = new Ray(endpt, ls.pos, new ColorDbl(0, 0, 0), -1, Ray.RAY_SHADOW);
+        Vertex vr = new Vertex(VektorSubtraktion(shadowRay.end, shadowRay.start));
         
+        for(int ids = 0; ids < Scene.objects.length; ++ids)
+        {
+            boolean test = Scene.objects[ids].shadowRayIntersection(shadowRay, ls, triangleID);
+            if(test)
+            {
+                return ColorDbl.BLACK;
+            }
+        }
         double angle =  SkalärProdukt(n,l)/(returnLength(n)*returnLength(l));
         
 //        if(angle < 0)

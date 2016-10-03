@@ -11,6 +11,7 @@ package gorgonengine;
  */
 
 import static gorgonengine.LinAlg.*;
+import java.util.Vector;
 
 public class Scene {
     
@@ -18,6 +19,8 @@ public class Scene {
     public Triangle[] mesh = new Triangle[SIZE];
     Sphere sphere;
     
+    
+    public static int counter = 1;
     public static Object[] objects;
     PointLightSource[] lights;
     
@@ -30,116 +33,162 @@ public class Scene {
         p[0] = new Vertex(10, 6, 5);
         p[1] = new Vertex(0, 6, 5);
         p[2] = new Vertex(0, 6, -5);
-        mesh[0] = new Triangle(p, new ColorDbl(0, 0, 1000000000));
+        mesh[0] = new Triangle(p, new ColorDbl(0, 0, 1000000000), counter);
+        ++counter;
         p[0] = new Vertex(10, 6, 5);
         p[1] = new Vertex(0, 6, -5);
         p[2] = new Vertex(10, 6, -5);
-        mesh[1] = new Triangle(p, new ColorDbl(0, 0, 1000000000));
+        mesh[1] = new Triangle(p, new ColorDbl(0, 0, 1000000000), counter);
+        
+        ++counter;
         //Vägg nordväst (+y, -x)
         p[0] = new Vertex(0, 6, 5);
         p[1] = new Vertex(-3, 0, 5);
         p[2] = new Vertex(-3, 0, -5);
-        mesh[2] = new Triangle(p, new ColorDbl(0, 1000000000, 0));
+        mesh[2] = new Triangle(p, new ColorDbl(0, 1000000000, 0), counter);
+        
+        ++counter;
         p[0] = new Vertex(0, 6, 5);
         p[1] = new Vertex(-3, 0, -5);
         p[2] = new Vertex(0, 6, -5);
-        mesh[3] = new Triangle(p, new ColorDbl(0, 1000000000, 0));
+        mesh[3] = new Triangle(p, new ColorDbl(0, 1000000000, 0), counter);
+        
+        ++counter;
         //Vägg sydväst (-y, -x)
         p[0] = new Vertex(-3, 0, 5);
         p[1] = new Vertex(0, -6, 5);
         p[2] = new Vertex(0, -6, -5);
-        mesh[4] = new Triangle(p, new ColorDbl(1000000000, 0, 0));
+        mesh[4] = new Triangle(p, new ColorDbl(1000000000, 0, 0), counter);
+        
+        ++counter;
         p[0] = new Vertex(-3, 0, 5);
         p[1] = new Vertex(0, -6, -5);
         p[2] = new Vertex(-3, 0, -5);
-        mesh[5] = new Triangle(p, new ColorDbl(1000000000, 0, 0));
+        mesh[5] = new Triangle(p, new ColorDbl(1000000000, 0, 0), counter);
+        
+        ++counter;
         //Vägg Syd (-y)
         p[0] = new Vertex(0, -6, 5);
         p[1] = new Vertex(10, -6, 5);
         p[2] = new Vertex(10, -6, -5);
-        mesh[6] = new Triangle(p, new ColorDbl(1000000000, 1000000000, 0));
+        mesh[6] = new Triangle(p, new ColorDbl(1000000000, 1000000000, 0), counter);
+        
+        ++counter;
         p[0] = new Vertex(0, -6, 5);
         p[1] = new Vertex(10, -6, -5);
         p[2] = new Vertex(0, -6, -5);
-        mesh[7] = new Triangle(p, new ColorDbl(1000000000, 1000000000, 0));
+        mesh[7] = new Triangle(p, new ColorDbl(1000000000, 1000000000, 0), counter);
+        
+        ++counter;
         //Vägg Sydost (-y, +x)
         p[0] = new Vertex(10, -6, 5);
         p[1] = new Vertex(13, 0, 5);
         p[2] = new Vertex(13, 0, -5);
-        mesh[8] = new Triangle(p, new ColorDbl(1000000000, 0, 1000000000));
+        mesh[8] = new Triangle(p, new ColorDbl(1000000000, 0, 1000000000), counter);
+        
+        ++counter;
         p[0] = new Vertex(10, -6, 5);
         p[1] = new Vertex(13, 0, -5);
         p[2] = new Vertex(10, -6, -5);
-        mesh[9] = new Triangle(p, new ColorDbl(1000000000, 0, 1000000000));
+        mesh[9] = new Triangle(p, new ColorDbl(1000000000, 0, 1000000000), counter);
+        
+        ++counter;
         //Väg Nordost (+y, +x)
         p[0] = new Vertex(10, 6, 5);
         p[1] = new Vertex(10, 6, -5);
         p[2] = new Vertex(13, 0, 5);
-        mesh[10] = new Triangle(p, new ColorDbl(0, 1000000000, 1000000000));
+        mesh[10] = new Triangle(p, new ColorDbl(0, 1000000000, 1000000000), counter);
+        
+        ++counter;
         p[0] = new Vertex(13, 0, 5);
         p[1] = new Vertex(10, 6, -5);
         p[2] = new Vertex(13, 0, -5);
-        mesh[11] = new Triangle(p, new ColorDbl(0, 1000000000, 1000000000));
+        mesh[11] = new Triangle(p, new ColorDbl(0, 1000000000, 1000000000), counter);
+        
+        ++counter;
         //Tak norr (+y)
         p[0] = new Vertex(0, 6, 5);
         p[1] = new Vertex(10, 6, 5);
         p[2] = new Vertex(0, 0, 5);
-        mesh[12] = new Triangle(p, new ColorDbl(1000000000, 1000000000, 1000000000));
+        mesh[12] = new Triangle(p, new ColorDbl(1000000000, 1000000000, 1000000000), counter);
+        
+        ++counter;
         //Tak Nordväst (+y, -x)
         p[0] = new Vertex(-3, 0, 5);
         p[1] = new Vertex(0, 6, 5);
         p[2] = new Vertex(0, 0, 5);
-        mesh[13] = new Triangle(p, new ColorDbl(1000000000, 1000000000, 1000000000));
+        mesh[13] = new Triangle(p, new ColorDbl(1000000000, 1000000000, 1000000000), counter);
+        
+        ++counter;
         //Tak Sydväst (-y, -x)
         p[0] = new Vertex(0, -6, 5);
         p[1] = new Vertex(-3, 0, 5);
         p[2] = new Vertex(0, 0, 5);
-        mesh[14] = new Triangle(p, new ColorDbl(1000000000, 1000000000, 1000000000));
+        mesh[14] = new Triangle(p, new ColorDbl(1000000000, 1000000000, 1000000000), counter);
+        
+        ++counter;
         //Tak syd (-y)
         p[0] = new Vertex(10, -6, 5);
         p[1] = new Vertex(0, -6, 5);
         p[2] = new Vertex(0, 0, 5);
-        mesh[15] = new Triangle(p, new ColorDbl(1000000000, 1000000000, 1000000000));
+        mesh[15] = new Triangle(p, new ColorDbl(1000000000, 1000000000, 1000000000), counter);
+        
+        ++counter;
         //Tak Sydost (-y, +x)
         p[0] = new Vertex(13, 0, 5);
         p[1] = new Vertex(10, -6, 5);
         p[2] = new Vertex(0, 0, 5);
-        mesh[16] = new Triangle(p, new ColorDbl(1000000000, 1000000000, 1000000000));
+        mesh[16] = new Triangle(p, new ColorDbl(1000000000, 1000000000, 1000000000), counter);
+        
+        ++counter;
         //Tak Nordost (+y, +x)
         p[0] = new Vertex(10, 6, 5);
         p[1] = new Vertex(13, 0, 5);
         p[2] = new Vertex(0, 0, 5);
-        mesh[17] = new Triangle(p, new ColorDbl(1000000000, 1000000000, 1000000000));
+        mesh[17] = new Triangle(p, new ColorDbl(1000000000, 1000000000, 1000000000), counter);
+        
+        ++counter;
         //Golv Norr (+y)
         p[0] = new Vertex(0, 0, -5);
         p[1] = new Vertex(10, 6, -5);
         p[2] = new Vertex(0, 6, -5);
-        mesh[18] = new Triangle(p, new ColorDbl(500000000, 500000000, 500000000));
+        mesh[18] = new Triangle(p, new ColorDbl(500000000, 500000000, 500000000), counter);
+        
+        ++counter;
         //Golv Nordväst (+y, -x)
         p[0] = new Vertex(0, 0, -5);
         p[1] = new Vertex(0, 6, -5);
         p[2] = new Vertex(-3, 0, -5);
-        mesh[19] = new Triangle(p, new ColorDbl(500000000, 500000000, 500000000));
+        mesh[19] = new Triangle(p, new ColorDbl(500000000, 500000000, 500000000), counter);
+        
+        ++counter;
         //Golv Sydväst (-y, -x)
         p[0] = new Vertex(0, 0, -5);
         p[1] = new Vertex(-3, 0, -5);
         p[2] = new Vertex(0, -6, -5);
-        mesh[20] = new Triangle(p, new ColorDbl(500000000, 500000000, 500000000));
+        mesh[20] = new Triangle(p, new ColorDbl(500000000, 500000000, 500000000), counter);
+        
+        ++counter;
         //Golv Syd (-y)
         p[0] = new Vertex(0, 0, -5);
         p[1] = new Vertex(0, -6, -5);
         p[2] = new Vertex(10, -6, -5);
-        mesh[21] = new Triangle(p, new ColorDbl(500000000, 500000000, 500000000));
+        mesh[21] = new Triangle(p, new ColorDbl(500000000, 500000000, 500000000), counter);
+
+        ++counter;
         //Golv Sydost (-y, +x)
         p[0] = new Vertex(13, 0, -5);
         p[1] = new Vertex(0, 0, -5);
         p[2] = new Vertex(10, -6, -5);
-        mesh[22] = new Triangle(p, new ColorDbl(500000000, 500000000, 500000000));
+        mesh[22] = new Triangle(p, new ColorDbl(500000000, 500000000, 500000000), counter);
+        ++counter;
         //Golv Nordost (+y, +x)
         p[0] = new Vertex(0, 0, -5);
         p[1] = new Vertex(13, 0, -5);
         p[2] = new Vertex(10, 6, -5);
-        mesh[23] = new Triangle(p, new ColorDbl(500000000, 500000000, 500000000));
+        mesh[23] = new Triangle(p, new ColorDbl(500000000, 500000000, 500000000), counter);
+        
+        ++counter;
         
         for(int idm = 0; idm < SIZE; ++idm)
         {
@@ -154,26 +203,34 @@ public class Scene {
         pnew[0] = new Vertex(10, 3, 3);
         pnew[1] = new Vertex(10, 1, -1);
         pnew[2] = new Vertex(8, 1, 1);
-        mesh2[0] = new Triangle(pnew, new ColorDbl(500000000, 700000000, 250000000));
+        mesh2[0] = new Triangle(pnew, new ColorDbl(500000000, 700000000, 250000000), counter);
+        
+        ++counter;
         pnew[0] = new Vertex(10, 1, -1);
         pnew[1] = new Vertex(10, -1, 3);
         pnew[2] = new Vertex(8, 1, 1);
-        mesh2[1] = new Triangle(pnew, new ColorDbl(700000000, 250000000, 500000000));
+        mesh2[1] = new Triangle(pnew, new ColorDbl(700000000, 250000000, 500000000), counter);
+        
+        ++counter;
         pnew[0] = new Vertex(8, 1, 1);
         pnew[1] = new Vertex(10, -1, 3);
         pnew[2] = new Vertex(10, 3, 3);
-        mesh2[2] = new Triangle(pnew, new ColorDbl(600000000, 300000000, 800000000));
+        mesh2[2] = new Triangle(pnew, new ColorDbl(600000000, 300000000, 800000000), counter);
+        
+        ++counter;
         pnew[0] = new Vertex(10, 3, 3);
         pnew[1] = new Vertex(10, -1, 3);
         pnew[2] = new Vertex(10, 1, -1);
-        mesh2[3] = new Triangle(pnew, new ColorDbl(250000000, 500000000, 700000000));
+        mesh2[3] = new Triangle(pnew, new ColorDbl(250000000, 500000000, 700000000), counter);
+        
+        ++counter;
         
         objects[0].setObjectReflection(0.8);
         
         objects[1] = new Mesh(mesh2);
         objects[1].setObjectReflection(0.9);
         
-        objects[2] = new Sphere(new ColorDbl(400000000, 200000000, 600000000), new Vertex(11, -2, 1), 1);
+        objects[2] = new Sphere(new ColorDbl(400000000, 200000000, 600000000), new Vertex(11, -2, 1), 1, 2);
         objects[2].setObjectReflection(1);
         
         objects[3] = new Mesh(new Vertex(7, 2, 2), Mesh.TYPE_RECTANGLE);
@@ -188,7 +245,7 @@ public class Scene {
         
         lights = new PointLightSource[2];
         lights[0] = new PointLightSource(new Vertex(2,-3,-1),1.0);
-        lights[1] = new PointLightSource(new Vertex(5,4,2),0.7);
+        lights[1] = new PointLightSource(new Vertex(3,4,2),0.7);
         
 //        for(int i = 0; i<objects.length;i++)
 //        {
@@ -206,6 +263,7 @@ public class Scene {
     
     public Ray rayIntersection(Ray r)
     {
+        Node<Ray> rayit = new Node<Ray>(r);
         Ray newRay;
         Ray largestRay = objects[0].rayIntersection(r, lights);
         for(int idt = 1; idt < objects.length; ++idt)

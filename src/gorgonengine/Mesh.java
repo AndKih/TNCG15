@@ -27,7 +27,8 @@ public class Mesh extends Object{
         mesh = new Triangle[SIZE];
         for(int i = 0; i < shape.length; i++)
         {
-            mesh[i] = new Triangle(shape[i].p, shape[i].color);
+            mesh[i] = new Triangle(shape[i].p, shape[i].color, shape[i].triangleIndex);
+            
         }
     }
     
@@ -122,12 +123,39 @@ public class Mesh extends Object{
             Vertex newEnd = VektorAddition(r.start, VektorMultiplikation(VektorSubtraktion(r.end, r.start), smallT));
             for(int i = 0; i<ls.length; i++)
             {
-                res.setIntensity(getLightIntensity(normal, newEnd, ls[i]), tmpCol);
+                res.setIntensity(getLightIntensity(normal, newEnd, ls[i], mesh[savedID].triangleIndex), tmpCol);
             }
             
             return new Ray(r.start, newEnd, res, savedID);
         }
         return new Ray(r.start, VektorMultiplikation(r.end, 10000), r.color);
+    }
+    
+    public boolean shadowRayIntersection(Ray r, PointLightSource ls, int triangleID)
+    {
+        double t = -1, smallT = -10;
+        Boolean firstHit = true;
+        for(int idt = 0; idt < SIZE; ++idt)
+        {
+            if(mesh[idt].triangleIndex == triangleID)
+                continue;
+            t = mesh[idt].rayIntersection(r);
+            if(firstHit && t>=0)
+            {
+                smallT = t;
+                firstHit = false;
+            }
+            else if(!firstHit && t>=0 && t < smallT)
+            {
+                smallT = t;
+            }
+        }
+        if(smallT != -10 && smallT <= 1)
+        {
+//            System.out.println("smallT: " + smallT);
+            return true;
+        }
+        return false;
     }
     
     private void buildDefaultCube(Vertex center)
@@ -148,53 +176,77 @@ public class Mesh extends Object{
         input[0] = new Vertex(pList[0]);
         input[1] = new Vertex(pList[1]);
         input[2] = new Vertex(pList[4]);
-        mesh[0] = new Triangle(input, def);
+        mesh[0] = new Triangle(input, def, Scene.counter);
+
+        ++Scene.counter;
         input[0] = new Vertex(pList[0]);
         input[1] = new Vertex(pList[4]);
         input[2] = new Vertex(pList[2]);
-        mesh[1] = new Triangle(input, def);
+        mesh[1] = new Triangle(input, def, Scene.counter);
+        
+        ++Scene.counter;
         input[0] = new Vertex(pList[3]);
         input[1] = new Vertex(pList[0]);
         input[2] = new Vertex(pList[2]);
-        mesh[2] = new Triangle(input, def);
+        mesh[2] = new Triangle(input, def, Scene.counter);
+        
+        ++Scene.counter;
         input[0] = new Vertex(pList[3]);
         input[1] = new Vertex(pList[2]);
         input[2] = new Vertex(pList[6]);
-        mesh[3] = new Triangle(input, def);
+        mesh[3] = new Triangle(input, def, Scene.counter);
+        
+        ++Scene.counter;
         input[0] = new Vertex(pList[7]);
         input[1] = new Vertex(pList[3]);
         input[2] = new Vertex(pList[6]);
-        mesh[4] = new Triangle(input, def);
+        mesh[4] = new Triangle(input, def, Scene.counter);
+        
+        ++Scene.counter;
         input[0] = new Vertex(pList[7]);
         input[1] = new Vertex(pList[5]);
         input[2] = new Vertex(pList[3]);
-        mesh[5] = new Triangle(input, def);
+        mesh[5] = new Triangle(input, def, Scene.counter);
+        
+        ++Scene.counter;
         input[0] = new Vertex(pList[1]);
         input[1] = new Vertex(pList[5]);
         input[2] = new Vertex(pList[7]);
-        mesh[6] = new Triangle(input, def);
+        mesh[6] = new Triangle(input, def, Scene.counter);
+        
+        ++Scene.counter;
         input[0] = new Vertex(pList[1]);
         input[1] = new Vertex(pList[7]);
         input[2] = new Vertex(pList[4]);
-        mesh[7] = new Triangle(input, def);
+        mesh[7] = new Triangle(input, def, Scene.counter);
+        
+        ++Scene.counter;
         //tak
         input[0] = new Vertex(pList[3]);
         input[1] = new Vertex(pList[1]);
         input[2] = new Vertex(pList[0]);
-        mesh[8] = new Triangle(input, def);
+        mesh[8] = new Triangle(input, def, Scene.counter);
+        
+        ++Scene.counter;
         input[0] = new Vertex(pList[3]);
         input[1] = new Vertex(pList[5]);
         input[2] = new Vertex(pList[1]);
-        mesh[9] = new Triangle(input, def);
+        mesh[9] = new Triangle(input, def, Scene.counter);
+        
+        ++Scene.counter;
         //golv
         input[0] = new Vertex(pList[7]);
         input[1] = new Vertex(pList[2]);
         input[2] = new Vertex(pList[4]);
-        mesh[10] = new Triangle(input, def);
+        mesh[10] = new Triangle(input, def, Scene.counter);
+        
+        ++Scene.counter;
         input[0] = new Vertex(pList[7]);
         input[1] = new Vertex(pList[6]);
         input[2] = new Vertex(pList[2]);
-        mesh[11] = new Triangle(input, def);
+        mesh[11] = new Triangle(input, def, Scene.counter);
+        
+        ++Scene.counter;
         
     }
     
@@ -217,51 +269,75 @@ public class Mesh extends Object{
         input[0] = new Vertex(pList[0]);
         input[1] = new Vertex(pList[1]);
         input[2] = new Vertex(pList[4]);
-        mesh[0] = new Triangle(input, def);
+        mesh[0] = new Triangle(input, def, Scene.counter);
+        
+        ++Scene.counter;
         input[0] = new Vertex(pList[0]);
         input[1] = new Vertex(pList[4]);
         input[2] = new Vertex(pList[2]);
-        mesh[1] = new Triangle(input, def);
+        mesh[1] = new Triangle(input, def, Scene.counter);
+        
+        ++Scene.counter;
         input[0] = new Vertex(pList[3]);
         input[1] = new Vertex(pList[0]);
         input[2] = new Vertex(pList[2]);
-        mesh[2] = new Triangle(input, def);
+        mesh[2] = new Triangle(input, def, Scene.counter);
+        
+        ++Scene.counter;
         input[0] = new Vertex(pList[3]);
         input[1] = new Vertex(pList[2]);
         input[2] = new Vertex(pList[6]);
-        mesh[3] = new Triangle(input, def);
+        mesh[3] = new Triangle(input, def, Scene.counter);
+        
+        ++Scene.counter;
         input[0] = new Vertex(pList[7]);
         input[1] = new Vertex(pList[3]);
         input[2] = new Vertex(pList[6]);
-        mesh[4] = new Triangle(input, def);
+        mesh[4] = new Triangle(input, def, Scene.counter);
+        
+        ++Scene.counter;
         input[0] = new Vertex(pList[7]);
         input[1] = new Vertex(pList[5]);
         input[2] = new Vertex(pList[3]);
-        mesh[5] = new Triangle(input, def);
+        mesh[5] = new Triangle(input, def, Scene.counter);
+        
+        ++Scene.counter;
         input[0] = new Vertex(pList[1]);
         input[1] = new Vertex(pList[5]);
         input[2] = new Vertex(pList[7]);
-        mesh[6] = new Triangle(input, def);
+        mesh[6] = new Triangle(input, def, Scene.counter);
+        
+        ++Scene.counter;
         input[0] = new Vertex(pList[1]);
         input[1] = new Vertex(pList[7]);
         input[2] = new Vertex(pList[4]);
-        mesh[7] = new Triangle(input, def);
+        mesh[7] = new Triangle(input, def, Scene.counter);
+        
+        ++Scene.counter;
         input[0] = new Vertex(pList[3]);
         input[1] = new Vertex(pList[1]);
         input[2] = new Vertex(pList[0]);
-        mesh[8] = new Triangle(input, def);
+        mesh[8] = new Triangle(input, def, Scene.counter);
+        
+        ++Scene.counter;
         input[0] = new Vertex(pList[3]);
         input[1] = new Vertex(pList[5]);
         input[2] = new Vertex(pList[1]);
-        mesh[9] = new Triangle(input, def);
+        mesh[9] = new Triangle(input, def, Scene.counter);
+        
+        ++Scene.counter;
         input[0] = new Vertex(pList[7]);
         input[1] = new Vertex(pList[2]);
         input[2] = new Vertex(pList[4]);
-        mesh[10] = new Triangle(input, def);
+        mesh[10] = new Triangle(input, def, Scene.counter);
+        
+        ++Scene.counter;
         input[0] = new Vertex(pList[7]);
         input[1] = new Vertex(pList[6]);
         input[2] = new Vertex(pList[2]);
-        mesh[11] = new Triangle(input, def);
+        mesh[11] = new Triangle(input, def, Scene.counter);
+        
+        ++Scene.counter;
         
     }
     
@@ -287,102 +363,150 @@ public class Mesh extends Object{
             input[0] = new Vertex(pList[0]);
             input[1] = new Vertex(pList[1]);
             input[2] = new Vertex(pList[4]);
-            mesh[0] = new Triangle(input, colorList[0]);
+            mesh[0] = new Triangle(input, colorList[0], Scene.counter);
+            
+            ++Scene.counter;
             input[0] = new Vertex(pList[0]);
             input[1] = new Vertex(pList[4]);
             input[2] = new Vertex(pList[2]);
-            mesh[1] = new Triangle(input, colorList[0]);
+            mesh[1] = new Triangle(input, colorList[0], Scene.counter);
+            
+            ++Scene.counter;
             input[0] = new Vertex(pList[3]);
             input[1] = new Vertex(pList[0]);
             input[2] = new Vertex(pList[2]);
-            mesh[2] = new Triangle(input, colorList[1]);
+            mesh[2] = new Triangle(input, colorList[1], Scene.counter);
+            
+            ++Scene.counter;
             input[0] = new Vertex(pList[3]);
             input[1] = new Vertex(pList[2]);
             input[2] = new Vertex(pList[6]);
-            mesh[3] = new Triangle(input, colorList[1]);
+            mesh[3] = new Triangle(input, colorList[1], Scene.counter);
+            
+            ++Scene.counter;
             input[0] = new Vertex(pList[7]);
             input[1] = new Vertex(pList[3]);
             input[2] = new Vertex(pList[6]);
-            mesh[4] = new Triangle(input, colorList[2]);
+            mesh[4] = new Triangle(input, colorList[2], Scene.counter);
+            
+            ++Scene.counter;
             input[0] = new Vertex(pList[7]);
             input[1] = new Vertex(pList[5]);
             input[2] = new Vertex(pList[3]);
-            mesh[5] = new Triangle(input, colorList[2]);
+            mesh[5] = new Triangle(input, colorList[2], Scene.counter);
+            
+            ++Scene.counter;
             input[0] = new Vertex(pList[1]);
             input[1] = new Vertex(pList[5]);
             input[2] = new Vertex(pList[7]);
-            mesh[6] = new Triangle(input, colorList[3]);
+            mesh[6] = new Triangle(input, colorList[3], Scene.counter);
+            
+            ++Scene.counter;
             input[0] = new Vertex(pList[1]);
             input[1] = new Vertex(pList[7]);
             input[2] = new Vertex(pList[4]);
-            mesh[7] = new Triangle(input, colorList[3]);
+            mesh[7] = new Triangle(input, colorList[3], Scene.counter);
+            
+            ++Scene.counter;
             input[0] = new Vertex(pList[3]);
             input[1] = new Vertex(pList[1]);
             input[2] = new Vertex(pList[0]);
-            mesh[8] = new Triangle(input, colorList[4]);
+            mesh[8] = new Triangle(input, colorList[4], Scene.counter);
+            
+            ++Scene.counter;
             input[0] = new Vertex(pList[3]);
             input[1] = new Vertex(pList[5]);
             input[2] = new Vertex(pList[1]);
-            mesh[9] = new Triangle(input, colorList[4]);
+            mesh[9] = new Triangle(input, colorList[4], Scene.counter);
+            
+            ++Scene.counter;
             input[0] = new Vertex(pList[7]);
             input[1] = new Vertex(pList[2]);
             input[2] = new Vertex(pList[4]);
-            mesh[10] = new Triangle(input, colorList[5]);
+            mesh[10] = new Triangle(input, colorList[5], Scene.counter);
+            
+            ++Scene.counter;
             input[0] = new Vertex(pList[7]);
             input[1] = new Vertex(pList[6]);
             input[2] = new Vertex(pList[2]);
-            mesh[11] = new Triangle(input, colorList[5]);
+            mesh[11] = new Triangle(input, colorList[5], Scene.counter);
+            
+            ++Scene.counter;
         }
         else if(colorList.length == 12)
         {
             input[0] = new Vertex(pList[0]);
             input[1] = new Vertex(pList[1]);
             input[2] = new Vertex(pList[4]);
-            mesh[0] = new Triangle(input, colorList[0]);
+            mesh[0] = new Triangle(input, colorList[0], Scene.counter);
+            
+            ++Scene.counter;
             input[0] = new Vertex(pList[0]);
             input[1] = new Vertex(pList[4]);
             input[2] = new Vertex(pList[2]);
-            mesh[1] = new Triangle(input, colorList[1]);
+            mesh[1] = new Triangle(input, colorList[1], Scene.counter);
+            
+            ++Scene.counter;
             input[0] = new Vertex(pList[3]);
             input[1] = new Vertex(pList[0]);
             input[2] = new Vertex(pList[2]);
-            mesh[2] = new Triangle(input, colorList[2]);
+            mesh[2] = new Triangle(input, colorList[2], Scene.counter);
+            
+            ++Scene.counter;
             input[0] = new Vertex(pList[3]);
             input[1] = new Vertex(pList[2]);
             input[2] = new Vertex(pList[6]);
-            mesh[3] = new Triangle(input, colorList[3]);
+            mesh[3] = new Triangle(input, colorList[3], Scene.counter);
+            
+            ++Scene.counter;
             input[0] = new Vertex(pList[7]);
             input[1] = new Vertex(pList[3]);
             input[2] = new Vertex(pList[6]);
-            mesh[4] = new Triangle(input, colorList[4]);
+            mesh[4] = new Triangle(input, colorList[4], Scene.counter);
+            
+            ++Scene.counter;
             input[0] = new Vertex(pList[7]);
             input[1] = new Vertex(pList[5]);
             input[2] = new Vertex(pList[3]);
-            mesh[5] = new Triangle(input, colorList[5]);
+            mesh[5] = new Triangle(input, colorList[5], Scene.counter);
+            
+            ++Scene.counter;
             input[0] = new Vertex(pList[1]);
             input[1] = new Vertex(pList[5]);
             input[2] = new Vertex(pList[7]);
-            mesh[6] = new Triangle(input, colorList[6]);
+            mesh[6] = new Triangle(input, colorList[6], Scene.counter);
+            
+            ++Scene.counter;
             input[0] = new Vertex(pList[1]);
             input[1] = new Vertex(pList[7]);
             input[2] = new Vertex(pList[4]);
-            mesh[7] = new Triangle(input, colorList[7]);
+            mesh[7] = new Triangle(input, colorList[7], Scene.counter);
+            
+            ++Scene.counter;
             input[0] = new Vertex(pList[3]);
             input[1] = new Vertex(pList[1]);
             input[2] = new Vertex(pList[0]);
-            mesh[8] = new Triangle(input, colorList[8]);
+            mesh[8] = new Triangle(input, colorList[8], Scene.counter);
+            
+            ++Scene.counter;
             input[0] = new Vertex(pList[3]);
             input[1] = new Vertex(pList[5]);
             input[2] = new Vertex(pList[1]);
-            mesh[9] = new Triangle(input, colorList[9]);
+            mesh[9] = new Triangle(input, colorList[9], Scene.counter);
+            
+            ++Scene.counter;
             input[0] = new Vertex(pList[7]);
             input[1] = new Vertex(pList[2]);
             input[2] = new Vertex(pList[4]);
-            mesh[10] = new Triangle(input, colorList[10]);
+            mesh[10] = new Triangle(input, colorList[10], Scene.counter);
+            
+            ++Scene.counter;
             input[0] = new Vertex(pList[7]);
             input[1] = new Vertex(pList[6]);
             input[2] = new Vertex(pList[2]);
-            mesh[11] = new Triangle(input, colorList[11]);
+            mesh[11] = new Triangle(input, colorList[11], Scene.counter);
+            
+            ++Scene.counter;
         }
         else
             return;
@@ -396,31 +520,31 @@ public class Mesh extends Object{
         switch(colorType)
         {
             case COLOR_RED:
-                color = new ColorDbl(1000000000, 0, 0);
+                color = ColorDbl.RED;
                 break;
             case COLOR_GREEN:
-                color = new ColorDbl(0, 1000000000, 0);
+                color = ColorDbl.GREEN;
                 break;
             case COLOR_BLUE:
-                color = new ColorDbl(0, 0, 1000000000);
+                color = ColorDbl.BLUE;
                 break;
             case COLOR_MAGENTA:
-                color = new ColorDbl(1000000000, 0, 1000000000);
+                color = ColorDbl.MAGENTA;
                 break;
             case COLOR_YELLOW:
-                color = new ColorDbl(0, 1000000000, 1000000000);
+                color = ColorDbl.YELLOW;
                 break;
             case COLOR_CYAN: 
-                color = new ColorDbl(1000000000, 1000000000, 0);
+                color = ColorDbl.CYAN;
                 break;
             case COLOR_PURPLE:
-                color = new ColorDbl(900000000, 0, 1000000000);
+                color = ColorDbl.PURPLE;
                 break;
             case COLOR_ORANGE:
-                color = new ColorDbl(1000000000, 550000000, 0);
+                color = ColorDbl.ORANGE;
                 break;
             case COLOR_BLACK:
-                color = new ColorDbl(0, 0, 0);
+                color = ColorDbl.BLACK;
                 break;
             default:
                 color = new ColorDbl(1000000000, 1000000000, 1000000000);
@@ -441,51 +565,75 @@ public class Mesh extends Object{
         input[0] = new Vertex(pList[0]);
         input[1] = new Vertex(pList[1]);
         input[2] = new Vertex(pList[4]);
-        mesh[0] = new Triangle(input, color);
+        mesh[0] = new Triangle(input, color, Scene.counter);
+        
+        ++Scene.counter;
         input[0] = new Vertex(pList[0]);
         input[1] = new Vertex(pList[4]);
         input[2] = new Vertex(pList[2]);
-        mesh[1] = new Triangle(input, color);
+        mesh[1] = new Triangle(input, color, Scene.counter);
+        
+        ++Scene.counter;
         input[0] = new Vertex(pList[3]);
         input[1] = new Vertex(pList[0]);
         input[2] = new Vertex(pList[2]);
-        mesh[2] = new Triangle(input, color);
+        mesh[2] = new Triangle(input, color, Scene.counter);
+        
+        ++Scene.counter;
         input[0] = new Vertex(pList[3]);
         input[1] = new Vertex(pList[2]);
         input[2] = new Vertex(pList[6]);
-        mesh[3] = new Triangle(input, color);
+        mesh[3] = new Triangle(input, color, Scene.counter);
+        
+        ++Scene.counter;
         input[0] = new Vertex(pList[7]);
         input[1] = new Vertex(pList[3]);
         input[2] = new Vertex(pList[6]);
-        mesh[4] = new Triangle(input, color);
+        mesh[4] = new Triangle(input, color, Scene.counter);
+        
+        ++Scene.counter;
         input[0] = new Vertex(pList[7]);
         input[1] = new Vertex(pList[5]);
         input[2] = new Vertex(pList[3]);
-        mesh[5] = new Triangle(input, color);
+        mesh[5] = new Triangle(input, color, Scene.counter);
+        
+        ++Scene.counter;
         input[0] = new Vertex(pList[1]);
         input[1] = new Vertex(pList[5]);
         input[2] = new Vertex(pList[7]);
-        mesh[6] = new Triangle(input, color);
+        mesh[6] = new Triangle(input, color, Scene.counter);
+        
+        ++Scene.counter;
         input[0] = new Vertex(pList[1]);
         input[1] = new Vertex(pList[7]);
         input[2] = new Vertex(pList[4]);
-        mesh[7] = new Triangle(input, color);
+        mesh[7] = new Triangle(input, color, Scene.counter);
+        
+        ++Scene.counter;
         input[0] = new Vertex(pList[3]);
         input[1] = new Vertex(pList[1]);
         input[2] = new Vertex(pList[0]);
-        mesh[8] = new Triangle(input, color);
+        mesh[8] = new Triangle(input, color, Scene.counter);
+        
+        ++Scene.counter;
         input[0] = new Vertex(pList[3]);
         input[1] = new Vertex(pList[5]);
         input[2] = new Vertex(pList[1]);
-        mesh[9] = new Triangle(input, color);
+        mesh[9] = new Triangle(input, color, Scene.counter);
+        
+        ++Scene.counter;
         input[0] = new Vertex(pList[7]);
         input[1] = new Vertex(pList[2]);
         input[2] = new Vertex(pList[4]);
-        mesh[10] = new Triangle(input, color);
+        mesh[10] = new Triangle(input, color, Scene.counter);
+        
+        ++Scene.counter;
         input[0] = new Vertex(pList[7]);
         input[1] = new Vertex(pList[6]);
         input[2] = new Vertex(pList[2]);
-        mesh[11] = new Triangle(input, color);
+        mesh[11] = new Triangle(input, color, Scene.counter);
+        
+        ++Scene.counter;
         
         return;
     }
@@ -511,102 +659,150 @@ public class Mesh extends Object{
             input[0] = new Vertex(pList[0]);
             input[1] = new Vertex(pList[1]);
             input[2] = new Vertex(pList[4]);
-            mesh[0] = new Triangle(input, colorList[0]);
+            mesh[0] = new Triangle(input, colorList[0], Scene.counter);
+            
+            ++Scene.counter;
             input[0] = new Vertex(pList[0]);
             input[1] = new Vertex(pList[4]);
             input[2] = new Vertex(pList[2]);
-            mesh[1] = new Triangle(input, colorList[0]);
+            mesh[1] = new Triangle(input, colorList[0], Scene.counter);
+            
+            ++Scene.counter;
             input[0] = new Vertex(pList[3]);
             input[1] = new Vertex(pList[0]);
             input[2] = new Vertex(pList[2]);
-            mesh[2] = new Triangle(input, colorList[1]);
+            mesh[2] = new Triangle(input, colorList[1], Scene.counter);
+            
+            ++Scene.counter;
             input[0] = new Vertex(pList[3]);
             input[1] = new Vertex(pList[2]);
             input[2] = new Vertex(pList[6]);
-            mesh[3] = new Triangle(input, colorList[1]);
+            mesh[3] = new Triangle(input, colorList[1], Scene.counter);
+            
+            ++Scene.counter;
             input[0] = new Vertex(pList[7]);
             input[1] = new Vertex(pList[3]);
             input[2] = new Vertex(pList[6]);
-            mesh[4] = new Triangle(input, colorList[2]);
+            mesh[4] = new Triangle(input, colorList[2], Scene.counter);
+            
+            ++Scene.counter;
             input[0] = new Vertex(pList[7]);
             input[1] = new Vertex(pList[5]);
             input[2] = new Vertex(pList[3]);
-            mesh[5] = new Triangle(input, colorList[2]);
+            mesh[5] = new Triangle(input, colorList[2], Scene.counter);
+            
+            ++Scene.counter;
             input[0] = new Vertex(pList[1]);
             input[1] = new Vertex(pList[5]);
             input[2] = new Vertex(pList[7]);
-            mesh[6] = new Triangle(input, colorList[3]);
+            mesh[6] = new Triangle(input, colorList[3], Scene.counter);
+            
+            ++Scene.counter;
             input[0] = new Vertex(pList[1]);
             input[1] = new Vertex(pList[7]);
             input[2] = new Vertex(pList[4]);
-            mesh[7] = new Triangle(input, colorList[3]);
+            mesh[7] = new Triangle(input, colorList[3], Scene.counter);
+            
+            ++Scene.counter;
             input[0] = new Vertex(pList[3]);
             input[1] = new Vertex(pList[1]);
             input[2] = new Vertex(pList[0]);
-            mesh[8] = new Triangle(input, colorList[4]);
+            mesh[8] = new Triangle(input, colorList[4], Scene.counter);
+            
+            ++Scene.counter;
             input[0] = new Vertex(pList[3]);
             input[1] = new Vertex(pList[5]);
             input[2] = new Vertex(pList[1]);
-            mesh[9] = new Triangle(input, colorList[4]);
+            mesh[9] = new Triangle(input, colorList[4], Scene.counter);
+            
+            ++Scene.counter;
             input[0] = new Vertex(pList[7]);
             input[1] = new Vertex(pList[2]);
             input[2] = new Vertex(pList[4]);
-            mesh[10] = new Triangle(input, colorList[5]);
+            mesh[10] = new Triangle(input, colorList[5], Scene.counter);
+            
+            ++Scene.counter;
             input[0] = new Vertex(pList[7]);
             input[1] = new Vertex(pList[6]);
             input[2] = new Vertex(pList[2]);
-            mesh[11] = new Triangle(input, colorList[5]);
+            mesh[11] = new Triangle(input, colorList[5], Scene.counter);
+            
+            ++Scene.counter;
         }
         else if(colorList.length == 12)
         {
             input[0] = new Vertex(pList[0]);
             input[1] = new Vertex(pList[1]);
             input[2] = new Vertex(pList[4]);
-            mesh[0] = new Triangle(input, colorList[0]);
+            mesh[0] = new Triangle(input, colorList[0], Scene.counter);
+            
+            ++Scene.counter;
             input[0] = new Vertex(pList[0]);
             input[1] = new Vertex(pList[4]);
             input[2] = new Vertex(pList[2]);
-            mesh[1] = new Triangle(input, colorList[1]);
+            mesh[1] = new Triangle(input, colorList[1], Scene.counter);
+            
+            ++Scene.counter;
             input[0] = new Vertex(pList[3]);
             input[1] = new Vertex(pList[0]);
             input[2] = new Vertex(pList[2]);
-            mesh[2] = new Triangle(input, colorList[2]);
+            mesh[2] = new Triangle(input, colorList[2], Scene.counter);
+            
+            ++Scene.counter;
             input[0] = new Vertex(pList[3]);
             input[1] = new Vertex(pList[2]);
             input[2] = new Vertex(pList[6]);
-            mesh[3] = new Triangle(input, colorList[3]);
+            mesh[3] = new Triangle(input, colorList[3], Scene.counter);
+            
+            ++Scene.counter;
             input[0] = new Vertex(pList[7]);
             input[1] = new Vertex(pList[3]);
             input[2] = new Vertex(pList[6]);
-            mesh[4] = new Triangle(input, colorList[4]);
+            mesh[4] = new Triangle(input, colorList[4], Scene.counter);
+            
+            ++Scene.counter;
             input[0] = new Vertex(pList[7]);
             input[1] = new Vertex(pList[5]);
             input[2] = new Vertex(pList[3]);
-            mesh[5] = new Triangle(input, colorList[5]);
+            mesh[5] = new Triangle(input, colorList[5], Scene.counter);
+            
+            ++Scene.counter;
             input[0] = new Vertex(pList[1]);
             input[1] = new Vertex(pList[5]);
             input[2] = new Vertex(pList[7]);
-            mesh[6] = new Triangle(input, colorList[6]);
+            mesh[6] = new Triangle(input, colorList[6], Scene.counter);
+            
+            ++Scene.counter;
             input[0] = new Vertex(pList[1]);
             input[1] = new Vertex(pList[7]);
             input[2] = new Vertex(pList[4]);
-            mesh[7] = new Triangle(input, colorList[7]);
+            mesh[7] = new Triangle(input, colorList[7], Scene.counter);
+            
+            ++Scene.counter;
             input[0] = new Vertex(pList[3]);
             input[1] = new Vertex(pList[1]);
             input[2] = new Vertex(pList[0]);
-            mesh[8] = new Triangle(input, colorList[8]);
+            mesh[8] = new Triangle(input, colorList[8], Scene.counter);
+            
+            ++Scene.counter;
             input[0] = new Vertex(pList[3]);
             input[1] = new Vertex(pList[5]);
             input[2] = new Vertex(pList[1]);
-            mesh[9] = new Triangle(input, colorList[9]);
+            mesh[9] = new Triangle(input, colorList[9], Scene.counter);
+            
+            ++Scene.counter;
             input[0] = new Vertex(pList[7]);
             input[1] = new Vertex(pList[2]);
             input[2] = new Vertex(pList[4]);
-            mesh[10] = new Triangle(input, colorList[10]);
+            mesh[10] = new Triangle(input, colorList[10], Scene.counter);
+            
+            ++Scene.counter;
             input[0] = new Vertex(pList[7]);
             input[1] = new Vertex(pList[6]);
             input[2] = new Vertex(pList[2]);
-            mesh[11] = new Triangle(input, colorList[11]);
+            mesh[11] = new Triangle(input, colorList[11], Scene.counter);
+            
+            ++Scene.counter;
         }
         else
             return;
@@ -620,31 +816,31 @@ public class Mesh extends Object{
         switch(colorType)
         {
             case COLOR_RED:
-                color = new ColorDbl(1000000000, 0, 0);
+                color = ColorDbl.RED;
                 break;
             case COLOR_GREEN:
-                color = new ColorDbl(0, 1000000000, 0);
+                color = ColorDbl.GREEN;
                 break;
             case COLOR_BLUE:
-                color = new ColorDbl(0, 0, 1000000000);
+                color = ColorDbl.BLUE;
                 break;
             case COLOR_MAGENTA:
-                color = new ColorDbl(1000000000, 0, 1000000000);
+                color = ColorDbl.MAGENTA;
                 break;
             case COLOR_YELLOW:
-                color = new ColorDbl(0, 1000000000, 1000000000);
+                color = ColorDbl.YELLOW;
                 break;
             case COLOR_CYAN: 
-                color = new ColorDbl(1000000000, 1000000000, 0);
+                color = ColorDbl.CYAN;
                 break;
             case COLOR_PURPLE:
-                color = new ColorDbl(900000000, 0, 1000000000);
+                color = ColorDbl.PURPLE;
                 break;
             case COLOR_ORANGE:
-                color = new ColorDbl(1000000000, 550000000, 0);
+                color = ColorDbl.ORANGE;
                 break;
             case COLOR_BLACK:
-                color = new ColorDbl(0, 0, 0);
+                color = ColorDbl.BLACK;
                 break;
             default:
                 color = new ColorDbl(1000000000, 1000000000, 1000000000);
@@ -665,51 +861,75 @@ public class Mesh extends Object{
         input[0] = new Vertex(pList[0]);
         input[1] = new Vertex(pList[1]);
         input[2] = new Vertex(pList[4]);
-        mesh[0] = new Triangle(input, color);
+        mesh[0] = new Triangle(input, color, Scene.counter);
+        
+        ++Scene.counter;
         input[0] = new Vertex(pList[0]);
         input[1] = new Vertex(pList[4]);
         input[2] = new Vertex(pList[2]);
-        mesh[1] = new Triangle(input, color);
+        mesh[1] = new Triangle(input, color, Scene.counter);
+        
+        ++Scene.counter;
         input[0] = new Vertex(pList[3]);
         input[1] = new Vertex(pList[0]);
         input[2] = new Vertex(pList[2]);
-        mesh[2] = new Triangle(input, color);
+        mesh[2] = new Triangle(input, color, Scene.counter);
+        
+        ++Scene.counter;
         input[0] = new Vertex(pList[3]);
         input[1] = new Vertex(pList[2]);
         input[2] = new Vertex(pList[6]);
-        mesh[3] = new Triangle(input, color);
+        mesh[3] = new Triangle(input, color, Scene.counter);
+        
+        ++Scene.counter;
         input[0] = new Vertex(pList[7]);
         input[1] = new Vertex(pList[3]);
         input[2] = new Vertex(pList[6]);
-        mesh[4] = new Triangle(input, color);
+        mesh[4] = new Triangle(input, color, Scene.counter);
+        
+        ++Scene.counter;
         input[0] = new Vertex(pList[7]);
         input[1] = new Vertex(pList[5]);
         input[2] = new Vertex(pList[3]);
-        mesh[5] = new Triangle(input, color);
+        mesh[5] = new Triangle(input, color, Scene.counter);
+        
+        ++Scene.counter;
         input[0] = new Vertex(pList[1]);
         input[1] = new Vertex(pList[5]);
         input[2] = new Vertex(pList[7]);
-        mesh[6] = new Triangle(input, color);
+        mesh[6] = new Triangle(input, color, Scene.counter);
+        
+        ++Scene.counter;
         input[0] = new Vertex(pList[1]);
         input[1] = new Vertex(pList[7]);
         input[2] = new Vertex(pList[4]);
-        mesh[7] = new Triangle(input, color);
+        mesh[7] = new Triangle(input, color, Scene.counter);
+        
+        ++Scene.counter;
         input[0] = new Vertex(pList[3]);
         input[1] = new Vertex(pList[1]);
         input[2] = new Vertex(pList[0]);
-        mesh[8] = new Triangle(input, color);
+        mesh[8] = new Triangle(input, color, Scene.counter);
+        
+        ++Scene.counter;
         input[0] = new Vertex(pList[3]);
         input[1] = new Vertex(pList[5]);
         input[2] = new Vertex(pList[1]);
-        mesh[9] = new Triangle(input, color);
+        mesh[9] = new Triangle(input, color, Scene.counter);
+        
+        ++Scene.counter;
         input[0] = new Vertex(pList[7]);
         input[1] = new Vertex(pList[2]);
         input[2] = new Vertex(pList[4]);
-        mesh[10] = new Triangle(input, color);
+        mesh[10] = new Triangle(input, color, Scene.counter);
+        
+        ++Scene.counter;
         input[0] = new Vertex(pList[7]);
         input[1] = new Vertex(pList[6]);
         input[2] = new Vertex(pList[2]);
-        mesh[11] = new Triangle(input, color);
+        mesh[11] = new Triangle(input, color, Scene.counter);
+        
+        ++Scene.counter;
         
     }
 
@@ -755,6 +975,16 @@ public class Mesh extends Object{
             mesh[idm].setReflectionCoefficient(p);
         }
         
+    }
+    
+    public double returnSize()
+    {
+        return (double)SIZE;
+    }
+    
+    public Triangle returnTriangleByIndex(int index)
+    {
+        return mesh[index];
     }
     
 }
