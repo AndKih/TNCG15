@@ -24,6 +24,7 @@ public abstract class Object {
     
     public abstract double returnSize();
     public abstract Triangle returnTriangleByIndex(int index);
+    public abstract boolean isSphere();
 
     public abstract void rotateX(double angle);
     public abstract void rotateY(double angle);

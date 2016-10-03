@@ -83,7 +83,7 @@ public class Sphere extends Object{
         {
             for(int id1 = 0; id1 < Scene.objects.length; ++id1)
             {
-                if(id1 != objectID)
+                if(!Scene.objects[id1].isSphere())
                 {
                     for(int id2 = 0; id2 < Scene.objects[id1].returnSize(); ++id2)
                     {
@@ -91,6 +91,13 @@ public class Sphere extends Object{
                         t = Scene.objects[id1].returnTriangleByIndex(id2).rayIntersection(r);
                         if(smallT <= t && t > 0)
                             smallT = t;
+                    }
+                }
+                else
+                {
+                    if(id1 != objectID)
+                    {
+                        
                     }
                 }
             }
@@ -178,6 +185,11 @@ public class Sphere extends Object{
     
     public void rotateZ(double angle) {
         center = rotateZVertex(center, angle);
+    }
+    
+    public boolean isSphere()
+    {
+        return true;
     }
     
     

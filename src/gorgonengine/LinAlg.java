@@ -31,7 +31,7 @@ public class LinAlg {
         Vertex p = hemisToCart(ohm);
         double result = 0;
         double incRadiance = 0;
-        int STEPSIZE = 100000;
+        final int STEPSIZE = 100000;
         for(int idl = 0; idl < ls.length; ++idl)
         {
             Vertex l = ls[idl].getLightVectorFrom(x);
@@ -58,9 +58,12 @@ public class LinAlg {
         return 0;
     }
     //Dummy
-    public static double visible()
+    public static boolean visible(Ray r, int triangleID)
     {
-        return 0;
+        
+        
+        
+        return true;
     }
     //Dummy
     public static double importance()
