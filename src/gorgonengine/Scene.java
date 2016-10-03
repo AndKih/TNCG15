@@ -243,9 +243,9 @@ public class Scene {
         objects[5].setObjectReflection(0.75);
         
         
-        lights = new PointLightSource[2];
-        lights[0] = new PointLightSource(new Vertex(2,-3,-1),1.0);
-        lights[1] = new PointLightSource(new Vertex(3,4,2),0.7);
+        lights = new PointLightSource[1];
+//        lights[0] = new PointLightSource(new Vertex(2,-3,-1),1.0);
+        lights[0] = new PointLightSource(new Vertex(3,4,2),0.7);
         
 //        for(int i = 0; i<objects.length;i++)
 //        {
