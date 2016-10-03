@@ -195,7 +195,7 @@ public class Scene {
             mesh[idm].setReflectionCoefficient(1);
         }
         
-        objects = new Object[6];
+        objects = new Object[7];
         objects[0] = new Mesh(mesh);
         
         Triangle[] mesh2 = new Triangle[4];
@@ -242,20 +242,13 @@ public class Scene {
         objects[5] = new Mesh(new double[] {2, 3, 4}, new Vertex(6, 3, -2), Mesh.TYPE_RECTANGLE, Mesh.COLOR_PURPLE);
         objects[5].setObjectReflection(0.75);
         
+        objects[6] = new Sphere(ColorDbl.GREEN, new Vertex(10, -3, -4), 1, 6);
+        objects[6].setObjectReflection(1);
         
-        lights = new PointLightSource[1];
-//        lights[0] = new PointLightSource(new Vertex(2,-3,-1),1.0);
-        lights[0] = new PointLightSource(new Vertex(3,4,2),0.7);
         
-//        for(int i = 0; i<objects.length;i++)
-//        {
-//            objects[i].rotateX(Math.PI/5);
-//        }
-//        for(int i = 0; i<lights.length; i++)
-//        {
-//            lights[i].rotateX(Math.PI/5);
-//        }
-        
+        lights = new PointLightSource[2];
+        lights[0] = new PointLightSource(new Vertex(2,-3,-1),1.0);
+        lights[1] = new PointLightSource(new Vertex(3,4,2),0.7);
         
         
         

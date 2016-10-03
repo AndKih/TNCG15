@@ -982,6 +982,11 @@ public class Mesh extends Object{
         return (double)SIZE;
     }
     
+    public boolean isSphere()
+    {
+        return false;
+    }
+    
     public Triangle returnTriangleByIndex(int index)
     {
         return mesh[index];
