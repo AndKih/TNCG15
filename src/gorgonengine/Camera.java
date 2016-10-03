@@ -131,6 +131,10 @@ public class Camera extends JFrame{
     {
         return eye[toggle];
     }
+    public void setViewpoint(int tog)
+    {
+        toggle = tog;
+    }
     private void calcDelta()
     {
         deltax =  width/SIZEX;

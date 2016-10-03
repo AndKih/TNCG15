@@ -6,6 +6,9 @@
 package gorgonengine;
 
 import static gorgonengine.LinAlg.VektorSubtraktion;
+import static gorgonengine.LinAlg.rotateXVertex;
+import static gorgonengine.LinAlg.rotateYVertex;
+import static gorgonengine.LinAlg.rotateZVertex;
 
 /**
  *
@@ -33,5 +36,14 @@ public class PointLightSource {
     public Vertex getLightVectorFrom(Vertex p)
     {
         return VektorSubtraktion(pos,p);
+    }
+    public void rotateX(double angle) {
+        pos = rotateXVertex(pos, angle);
+    }
+    public void rotateY(double angle) {
+        pos = rotateYVertex(pos, angle);
+    }
+    public void rotateZ(double angle) {
+        pos = rotateZVertex(pos, angle);
     }
 }
