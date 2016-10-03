@@ -181,6 +181,12 @@ public class LinAlg {
         return vr;
     }
     
+    public static Vertex invert(Vertex vr)
+    {
+        Vertex result = new Vertex(-vr.x, -vr.y, -vr.z);
+        return result;
+    }
+    
     public static Vertex KryssProdukt(Vertex a, Vertex b)
     {
         double x, y, z;

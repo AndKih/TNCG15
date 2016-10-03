@@ -50,8 +50,6 @@ public class Sphere extends Object{
         double a = SkalärProdukt(i, i);
         double b = SkalärProdukt(VektorMultiplikation(i, 2), VektorSubtraktion(r.start, center));
         double c = SkalärProdukt(VektorSubtraktion(r.start, center), VektorSubtraktion(r.start, center)) - Math.pow(radius, 2);
-        if((b/2) - a*c >= 0)
-            System.out.println("Schwosh");
         dup = (-b/2) + Math.sqrt(Math.pow(b/2, 2) - a*c);
         ddown = (-b/2) - Math.sqrt(Math.pow(b/2, 2) - a*c);
         Vertex x1 = VektorAddition(r.start, VektorMultiplikation(i, dup));
@@ -122,18 +120,33 @@ public class Sphere extends Object{
             ddown = (-b/2) - Math.sqrt(Math.pow(b/2, 2) - a*c);
             Vertex x1 = VektorAddition(r.start, VektorMultiplikation(i, dup));
             Vertex x2 = VektorAddition(r.start, VektorMultiplikation(i, ddown));
-
+            
             if(returnLength(VektorSubtraktion(x2, center))-radius<EPSILON || 
                     returnLength(VektorSubtraktion(x1, center))-radius<EPSILON)
             {
+                
                 if(returnLength(VektorSubtraktion(x1, r.start)) < 
                         returnLength(VektorSubtraktion(x2, r.start)))
                 {
-                    smallT = 0.5;
+                    Ray dirtest = new Ray(r.start, x1, ColorDbl.BLACK, -1, Ray.RAY_SHADOW);
+                    Vertex dir1 = dirToVertex(r.dir);
+                    Vertex dir2 = dirToVertex(dirtest.dir);
+                    double angle = SkalärProdukt(dir1,dir2)/(returnLength(dir1)*returnLength(dir2));
+                    if(angle < Math.PI/2 && angle > 0)
+                        smallT = 0.5;
+                    else
+                        smallT = -10;
                 }
                 else
                 {
-                    smallT = 0.5;
+                    Ray dirtest = new Ray(r.start, x2, ColorDbl.BLACK, -1, Ray.RAY_SHADOW);
+                    Vertex dir1 = dirToVertex(r.dir);
+                    Vertex dir2 = dirToVertex(dirtest.dir);
+                    double angle = SkalärProdukt(dir1,dir2)/(returnLength(dir1)*returnLength(dir2));
+                    if(angle < Math.PI/2 && angle > 0)
+                        smallT = 0.5;
+                    else
+                        smallT = -10;
                 }
             }
             else
