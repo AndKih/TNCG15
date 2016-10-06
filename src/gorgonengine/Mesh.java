@@ -27,6 +27,7 @@ public class Mesh extends Object{
         mesh = new Triangle[SIZE];
         for(int i = 0; i < shape.length; i++)
         {
+//            System.out.println("TriangleID: " + shape[i].triangleIndex);
             mesh[i] = new Triangle(shape[i].p, shape[i].color, shape[i].triangleIndex);
             
         }
@@ -97,6 +98,7 @@ public class Mesh extends Object{
     public Ray rayIntersection(Ray r, PointLightSource[] ls)
     {
         double t = -1, smallT = -10;
+        double EPSILON = 0.00000001;
         Boolean firstHit = true;
         int savedID = -1;
         Direction normal = new Direction();
@@ -115,7 +117,7 @@ public class Mesh extends Object{
                 savedID = idt;
             }
         }
-        if(smallT != -10)
+        if(smallT != -10 && smallT > EPSILON)
         {
             normal = mesh[savedID].normal;
             ColorDbl tmpCol = new ColorDbl(mesh[savedID].color);
@@ -124,9 +126,19 @@ public class Mesh extends Object{
             for(int i = 0; i<ls.length; i++)
             {
                 res.setIntensity(getLightIntensity(normal, newEnd, ls[i], mesh[savedID].triangleIndex), tmpCol);
+//                if(mesh[savedID].triangleIndex == 1)
+//                    System.out.println("res: " + res);
             }
-            
-            return new Ray(r.start, newEnd, res, savedID);
+            Ray resultRay = new Ray(r.start, newEnd, res, mesh[savedID].triangleIndex, Ray.RAY_IMPORTANCE);
+            resultRay.setImportance(r.getImportance()*mesh[savedID].reflectionCoefficient);
+//            if(resultRay.returnIndex() == 1)
+//            {
+//                System.out.println("tmpCol: " + tmpCol);
+//                System.out.println("res: " + res);
+//                System.out.println("Mesh ray color: " + resultRay.color);
+//            }
+                
+            return resultRay;
         }
         return new Ray(r.start, VektorMultiplikation(r.end, 10000), r.color);
     }
@@ -140,21 +152,24 @@ public class Mesh extends Object{
             if(mesh[idt].triangleIndex == triangleID)
                 continue;
             t = mesh[idt].rayIntersection(r);
-            if(firstHit && t>=0)
+            if(firstHit && t>0)
             {
                 smallT = t;
                 firstHit = false;
             }
-            else if(!firstHit && t>=0 && t < smallT)
+            else if(!firstHit && t>0 && t < smallT)
             {
                 smallT = t;
             }
         }
         if(smallT != -10 && smallT <= 1)
         {
-//            System.out.println("smallT: " + smallT);
+//            if(triangleID == 1)
+//                System.out.println("SmallT: " + smallT);
             return true;
         }
+//        if(triangleID == 1)
+//            System.out.println("SmallT: " + smallT);
         return false;
     }
     
@@ -170,7 +185,7 @@ public class Mesh extends Object{
         pList[5] = new Vertex(center.x - offset, center.y + offset, center.z - offset);
         pList[6] = new Vertex(center.x + offset, center.y - offset, center.z - offset);
         pList[7] = new Vertex(center.x - offset, center.y - offset, center.z - offset);
-        ColorDbl def = new ColorDbl(1000000000, 0, 0);
+        ColorDbl def = new ColorDbl(100, 0, 0);
         
         Vertex[] input = new Vertex[3];
         input[0] = new Vertex(pList[0]);
@@ -263,7 +278,7 @@ public class Mesh extends Object{
         pList[5] = new Vertex(center.x - offsetX, center.y + offsetY, center.z - offsetZ);
         pList[6] = new Vertex(center.x + offsetX, center.y - offsetY, center.z - offsetZ);
         pList[7] = new Vertex(center.x - offsetX, center.y - offsetY, center.z - offsetZ);
-        ColorDbl def = new ColorDbl(1000000000, 0, 0);
+        ColorDbl def = new ColorDbl(100, 0, 0);
         
         Vertex[] input = new Vertex[3];
         input[0] = new Vertex(pList[0]);
@@ -547,7 +562,7 @@ public class Mesh extends Object{
                 color = ColorDbl.BLACK;
                 break;
             default:
-                color = new ColorDbl(1000000000, 1000000000, 1000000000);
+                color = new ColorDbl(100, 100, 100);
                 break;
         }
         
@@ -843,7 +858,7 @@ public class Mesh extends Object{
                 color = ColorDbl.BLACK;
                 break;
             default:
-                color = new ColorDbl(1000000000, 1000000000, 1000000000);
+                color = new ColorDbl(100, 100, 100);
                 break;
         }
         
@@ -987,9 +1002,24 @@ public class Mesh extends Object{
         return false;
     }
     
+    public Direction returnNormal(Vertex vr)
+    {
+        return Direction.DUMMY;
+    }
+    
     public Triangle returnTriangleByIndex(int index)
     {
         return mesh[index];
+    }
+    
+    public Triangle returnTriangleById(int id)
+    {
+        for(int idt = 0; idt < SIZE; ++idt)
+        {
+            if(mesh[idt].triangleIndex == id)
+                return mesh[idt];
+        }
+        return Triangle.DUMMY;
     }
     
 }

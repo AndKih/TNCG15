@@ -11,10 +11,11 @@ package gorgonengine;
  */
 public class ColorDbl {
     
-    public static final ColorDbl BLACK = new ColorDbl(0, 0, 0), PURPLE =  new ColorDbl(900000000, 0, 1000000000), ORANGE  = new ColorDbl(1000000000, 550000000, 0);
-    public static final ColorDbl RED = new ColorDbl(1000000000, 0, 0), GREEN = new ColorDbl(0, 1000000000, 0), BLUE = new ColorDbl(0, 0, 1000000000);
-    public static final ColorDbl CYAN = new ColorDbl(0, 1000000000, 1000000000), MAGENTA = new ColorDbl(1000000000, 0, 1000000000), YELLOW = new ColorDbl(1000000000, 1000000000, 0);
+    public static final ColorDbl BLACK = new ColorDbl(0, 0, 0), PURPLE =  new ColorDbl(90, 0, 100), ORANGE  = new ColorDbl(100, 55, 0);
+    public static final ColorDbl RED = new ColorDbl(100, 0, 0), GREEN = new ColorDbl(0, 100, 0), BLUE = new ColorDbl(0, 0, 100);
+    public static final ColorDbl CYAN = new ColorDbl(0, 100, 100), MAGENTA = new ColorDbl(100, 0, 100), YELLOW = new ColorDbl(100, 100, 0);
     public double r, g, b;
+    
     
     public ColorDbl(double r, double g, double b)
     {
@@ -63,6 +64,13 @@ public class ColorDbl {
         r *= intensity;
         g *= intensity;
         b *= intensity;
+    }
+    
+    public void addColor(ColorDbl col)
+    {
+        r += col.r;
+        g += col.g;
+        b += col.b;
     }
     
     public double returnG()

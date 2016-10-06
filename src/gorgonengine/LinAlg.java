@@ -187,6 +187,13 @@ public class LinAlg {
         return result;
     }
     
+    public static Vertex reflect(Vertex vr, Direction norm)
+    {
+        Vertex result = new Vertex(0, 0, 0);
+        Vertex vrnorm = dirToVertex(norm);
+        return result;
+    }
+    
     public static Vertex KryssProdukt(Vertex a, Vertex b)
     {
         double x, y, z;
@@ -255,6 +262,7 @@ public class LinAlg {
             boolean test = Scene.objects[ids].shadowRayIntersection(shadowRay, ls, triangleID);
             if(test)
             {
+//                System.out.println("IS BLOCKED");
                 return ColorDbl.BLACK;
             }
         }
