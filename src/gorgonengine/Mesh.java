@@ -105,13 +105,13 @@ public class Mesh extends Object{
         for(int idt = 0; idt < SIZE; ++idt)
         {
             t = mesh[idt].rayIntersection(r);
-            if(firstHit && t>=0)
+            if(firstHit && t>= EPSILON)
             {
                 smallT = t;
                 savedID = idt;
                 firstHit = false;
             }
-            else if(!firstHit && t>=0 && t < smallT)
+            else if(!firstHit && t >= EPSILON && t < smallT)
             {
                 smallT = t;
                 savedID = idt;
@@ -140,7 +140,7 @@ public class Mesh extends Object{
                 
             return resultRay;
         }
-        return new Ray(r.start, VektorMultiplikation(r.end, 10000), r.color);
+        return Ray.ERROR_RAY;
     }
     
     public boolean shadowRayIntersection(Ray r, PointLightSource ls, int triangleID)
