@@ -54,9 +54,21 @@ public class Sphere extends Object{
         ddown = (-b/2) - Math.sqrt(Math.pow(b/2, 2) - a*c);
         Vertex x1 = VektorAddition(r.start, VektorMultiplikation(i, dup));
         Vertex x2 = VektorAddition(r.start, VektorMultiplikation(i, ddown));
+//        if(r.returnIndex() == -1)
+//        {
+//            System.out.println("Length: " + returnLength(VektorSubtraktion(x1, r.end)));
+//            System.out.println("Start: " + r.start);
+//            System.out.println("End: " + r.end);
+//            System.out.println("x1: " + x1);
+//            System.out.println("X2: " + x2);
+//        }
+            
         if(returnLength(VektorSubtraktion(x1, r.end)) < EPSILON || 
                 returnLength(VektorSubtraktion(x2, r.end)) < EPSILON)
-            return new Ray(r.start, VektorMultiplikation(VektorSubtraktion(r.end,r.start), 10000), r.color);
+            return Ray.ERROR_RAY;
+        if(returnLength(VektorSubtraktion(x1, r.start)) < EPSILON || 
+                returnLength(VektorSubtraktion(x2, r.start)) < EPSILON)
+            return Ray.ERROR_RAY;
         if(returnLength(VektorSubtraktion(x2, center))-radius<EPSILON || 
                 returnLength(VektorSubtraktion(x1, center))-radius<EPSILON)
         {
