@@ -226,25 +226,25 @@ public class Scene {
         
         ++counter;
         
-        objects[0].setObjectReflection(0.25);
+        objects[0].setObjectReflection(0.5);
         
         objects[1] = new Mesh(mesh2);
-        objects[1].setObjectReflection(0.25);
+        objects[1].setObjectReflection(0.5);
         
         objects[2] = new Sphere(new ColorDbl(40, 20, 60), new Vertex(11, -2, 1), 1, 2);
-        objects[2].setObjectReflection(0.25);
+        objects[2].setObjectReflection(0.5);
         
         objects[3] = new Mesh(new Vertex(7, 2, 2), Mesh.TYPE_RECTANGLE);
-        objects[3].setObjectReflection(0.25);
+        objects[3].setObjectReflection(0.5);
         
         objects[4] = new Mesh(new double[] {2}, new Vertex(5, -3, -2), Mesh.TYPE_CUBE, Mesh.COLOR_ORANGE);
-        objects[4].setObjectReflection(0.25);
+        objects[4].setObjectReflection(0.5);
         
         objects[5] = new Mesh(new double[] {2, 3, 4}, new Vertex(6, 3, -2), Mesh.TYPE_RECTANGLE, Mesh.COLOR_PURPLE);
-        objects[5].setObjectReflection(0.25);
+        objects[5].setObjectReflection(0.5);
         
         objects[6] = new Sphere(ColorDbl.GREEN, new Vertex(10, -3, -4), 1, 6);
-        objects[6].setObjectReflection(0.25);
+        objects[6].setObjectReflection(0.5);
         
         
         lights = new PointLightSource[2];
@@ -566,8 +566,9 @@ public class Scene {
 //            System.out.println("Current data for r dir: " + r.returnData().dir);
 //            System.out.println("Current data for r start: " + r.returnData().start);
 //            System.out.println("Current data for r end: " + r.returnData().end);
-            rayit = new Node<Ray>(largestRay, r);
-            r.addChild(rayit);
+//            rayit = new Node<Ray>(largestRay, r);
+//            r.addChild(rayit);
+            r.setData(largestRay);
 //            r.addChild(rayit);
             resultRay = new Ray(largestRay);
             resultRay.color.setIntensity(r.returnData().getImportance());
@@ -580,32 +581,6 @@ public class Scene {
 //            }while(it.returnData().returnIndex() != -2);
             
                 
-//            if(largestRay.returnIndex() == 1 && resultRay.color.b < 60)
-//            {
-//                System.out.println("End of recursiveness!!!");
-////                    System.out.println("Largest ray start: " + largestRay.start);
-//                //All triangle indexes are correct. There is a ray that is assigned the wrong index.
-////                    for(int ido = 1; ido < objects.length; ++ido)
-////                    {
-////                        if(objects[ido].isSphere())
-////                            continue;
-////                        Triangle test = objects[ido].returnTriangleById(largestRay.returnIndex());
-////                        if(test != Triangle.DUMMY)
-////                            System.out.println("Object Index: " + ido);
-////                    }
-////                    System.out.println("Northern wall normal: " + normal);
-////                    System.out.println("Northern wall largest ray end: " + largestRay.end);
-//                System.out.println("Northern wall largest ray dir: " + largestRay.dir);
-////                    System.out.println("Northern wall largest ray dir normalized: " + normalize(largestRay.dir));
-////                    System.out.println("refEnd: " + refEnd);
-////                    System.out.println("Northern wall reflected ray:" + VektorAddition(largestRay.end, refEnd));
-//                System.out.println("Reflected ray dir: " + reflectedRay.dir);
-//                System.out.println("resultRay importance: " + resultRay.getImportance());
-//                System.out.println("rayit importance: " + rayit.returnData().getImportance());
-//                System.out.println("largestRay importance: " + largestRay.getImportance());
-//                System.out.println("largestRay color: " + largestRay.color);
-//                System.out.println("Assigned ray color: " + resultRay.color);
-//            }
         }
         
 //        if(!r.checkHasParent())
@@ -613,18 +588,18 @@ public class Scene {
 //            System.out.println("Traversing tree...");
 //            int length = 1;
 //            System.out.println("Triangleindex: " + r.returnData().returnIndex());
-//            System.out.println("Ray Dir: " + normalize(r.returnData().dir));
-//            System.out.println("Ray start: " + r.returnData().start);
-//            System.out.println("Ray end point: " + r.returnData().end);
+////            System.out.println("Ray Dir: " + normalize(r.returnData().dir));
+////            System.out.println("Ray start: " + r.returnData().start);
+////            System.out.println("Ray end point: " + r.returnData().end);
 //            Node<Ray> it = r;
 //            while(it.checkIfParent())
 //            {
 //                ++length;
 //                it = it.returnChild();
 //                System.out.println("Triangleindex: " + it.returnData().returnIndex());
-//                System.out.println("Ray Dir: " + normalize(it.returnData().dir));
-//                System.out.println("Ray start: " + it.returnData().start);
-//                System.out.println("Ray end point: " + it.returnData().end);
+////                System.out.println("Ray Dir: " + normalize(it.returnData().dir));
+////                System.out.println("Ray start: " + it.returnData().start);
+////                System.out.println("Ray end point: " + it.returnData().end);
 //            }
 //            System.out.println("Length of tree: " + length);
 //        }
