@@ -33,6 +33,7 @@ public class Camera extends JFrame{
     public static final double IMPORTANCETHRESHOLD = 0.1;
     Scene scene;
     
+    public int raysPerPixel = 10;
     
     private double deltax;
     private double deltay;
@@ -62,42 +63,58 @@ public class Camera extends JFrame{
         Ray r;
         Vertex vp = getViewpoint();
         Vertex target;
+        double newY;
+        double newZ;
+                
         for(int px = 0; px<SIZEX; px++)
         {
+//            System.out.println("Rays are: " + ((double)px/SIZEX)*100 +"% done");
             for(int py = 0; py<SIZEY; py++)
             {
-                target = VektorAddition(VektorSubtraktion(pos, new Vertex(0, -width/2, height/2))
-                        , new Vertex( 0, -(double)px*deltax, (double)py*deltay));
-//                System.out.println("Target: " + target);
-//                System.out.println("Start: " + vp);
-                r = new Ray(vp, target, new ColorDbl(0, 0, 0), -2, Ray.RAY_IMPORTANCE);
-                Node<Ray> raystart = new Node<Ray>(r);
-                r = scene.rayIntersection(raystart);
-                cam[px][py] = new Pixel(r.color, r.returnIndex());
+                    cam[px][py] = new Pixel(new ColorDbl(), px + py*SIZEX);
+                
+                for(int rayInd = 0; rayInd < raysPerPixel; rayInd++)
+                {
+                    target = VektorAddition(VektorSubtraktion(pos, new Vertex(0, -width/2, height/2))
+                            , new Vertex( 0, -(double)px*deltax, (double)py*deltay));
+                    newY = Math.random()*deltax;
+                    newY -= deltax/2;
+                    target.y += newY;
+                    newZ = Math.random()*deltay;
+                    newZ-= deltay/2;
+                    target.z += newZ;
+                    
+    //                System.out.println("Target: " + target);
+    //                System.out.println("Start: " + vp);
+                    r = new Ray(vp, target, new ColorDbl(0, 0, 0), -2, Ray.RAY_IMPORTANCE);
+                    Node<Ray> raystart = new Node<Ray>(r);
+                    r = scene.rayIntersection(raystart);
+                    cam[px][py].addColor(r.color);
+                }
 //                System.out.println(r.color.toString());
-                if(iMax < r.color.r)
+                if(iMax < cam[px][py].color.r)
                 {
-                    iMax = r.color.r;
+                    iMax = cam[px][py].color.r;
                 }
-                if(iMax < r.color.g)
+                if(iMax < cam[px][py].color.g)
                 {
-                    iMax = r.color.g;
+                    iMax = cam[px][py].color.g;
                 }
-                if(iMax < r.color.b)
+                if(iMax < cam[px][py].color.b)
                 {
-                    iMax = r.color.b;
+                    iMax = cam[px][py].color.b;
                 }
-                if(iMin > r.color.r)
+                if(iMin > cam[px][py].color.r)
                 {
-                    iMin = r.color.r;
+                    iMin = cam[px][py].color.r;
                 }
-                if(iMin > r.color.g)
+                if(iMin > cam[px][py].color.g)
                 {
-                    iMin = r.color.g;
+                    iMin = cam[px][py].color.g;
                 }
-                if(iMin > r.color.b)
+                if(iMin > cam[px][py].color.b)
                 {
-                    iMin = r.color.b;
+                    iMin = cam[px][py].color.b;
                 }
             }
         }

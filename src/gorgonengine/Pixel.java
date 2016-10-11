@@ -17,8 +17,12 @@ public class Pixel {
     public Pixel(ColorDbl c, int pIndex)
     {
         color = c;
-        pixelIndex = pIndex;
+        pixelIndex = pIndex; //pixel index. Goes from 1 to max
         rayIndex = -1;
+    }
+    public void addColor(ColorDbl col)
+    {
+        color.addColor(col);
     }
     
 }
