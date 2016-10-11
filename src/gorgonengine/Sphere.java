@@ -54,7 +54,9 @@ public class Sphere extends Object{
         ddown = (-b/2) - Math.sqrt(Math.pow(b/2, 2) - a*c);
         Vertex x1 = VektorAddition(r.start, VektorMultiplikation(i, dup));
         Vertex x2 = VektorAddition(r.start, VektorMultiplikation(i, ddown));
-        
+        if(returnLength(VektorSubtraktion(x1, r.end)) < EPSILON || 
+                returnLength(VektorSubtraktion(x2, r.end)) < EPSILON)
+            return new Ray(r.start, VektorMultiplikation(VektorSubtraktion(r.end,r.start), 10000), r.color);
         if(returnLength(VektorSubtraktion(x2, center))-radius<EPSILON || 
                 returnLength(VektorSubtraktion(x1, center))-radius<EPSILON)
         {
@@ -62,12 +64,16 @@ public class Sphere extends Object{
                     returnLength(VektorSubtraktion(x2, r.start)))
             {
                 ColorDbl col = intensityCalc(x1,ls);
-                return new Ray(r.start, x1, col);
+                Ray resultRay = new Ray(r.start, x1, col, -1, Ray.RAY_IMPORTANCE);
+                resultRay.setImportance(r.getImportance()*reflectionCoefficient);
+                return resultRay;
             }
             else
             {
                 ColorDbl col = intensityCalc(x2,ls);
-                return new Ray(r.start, x2, col);
+                Ray resultRay = new Ray(r.start, x2, col, -1, Ray.RAY_IMPORTANCE);
+                resultRay.setImportance(r.getImportance()*reflectionCoefficient);
+                return resultRay;
             }
         }
         else
@@ -167,6 +173,18 @@ public class Sphere extends Object{
         return radius;
     }
     
+    public Direction returnNormal(Vertex vr)
+    {
+        double EPSILON = 0.0000001;
+        if(returnLength(VektorSubtraktion(vr, center))-radius<EPSILON || 
+                returnLength(VektorSubtraktion(vr, center))-radius<EPSILON)
+        {
+            return normalize(vertexToDir(VektorSubtraktion(vr, center)));
+        }
+        else
+            return Direction.DUMMY;
+    }
+    
     private ColorDbl intensityCalc(Vertex x , PointLightSource[] ls)
     {
         Direction normal = new Direction(VektorSubtraktion(x,center));
@@ -181,8 +199,12 @@ public class Sphere extends Object{
     
     public Triangle returnTriangleByIndex(int index)
     {
-        Vertex[] dummy = new Vertex[3];
-        return new Triangle(dummy, ColorDbl.BLACK, -1);
+        return Triangle.DUMMY;
+    }
+    
+    public Triangle returnTriangleById(int id)
+    {
+        return Triangle.DUMMY;
     }
     
     @Override

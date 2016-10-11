@@ -30,6 +30,7 @@ public class Camera extends JFrame{
     public Vertex pos;
     public double width, height;
     private double iMax, iMin;
+    public static final double IMPORTANCETHRESHOLD = 0.1;
     Scene scene;
     
     
@@ -69,8 +70,9 @@ public class Camera extends JFrame{
                         , new Vertex( 0, -(double)px*deltax, (double)py*deltay));
 //                System.out.println("Target: " + target);
 //                System.out.println("Start: " + vp);
-                r = new Ray(vp, target, new ColorDbl(0, 0, 0), Ray.RAY_IMPORTANCE);
-                r = scene.rayIntersection(r);
+                r = new Ray(vp, target, new ColorDbl(0, 0, 0), -2, Ray.RAY_IMPORTANCE);
+                Node<Ray> raystart = new Node<Ray>(r);
+                r = scene.rayIntersection(raystart);
                 cam[px][py] = new Pixel(r.color, r.returnIndex());
 //                System.out.println(r.color.toString());
                 if(iMax < r.color.r)

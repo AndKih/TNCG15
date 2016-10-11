@@ -14,6 +14,7 @@ import static gorgonengine.LinAlg.*;
 
 public class Triangle {
     
+    public static final Triangle DUMMY = new Triangle(new Vertex[]{new Vertex(0, 0, 0), new Vertex(0, 0, 0), new Vertex(0, 0, 0)}, ColorDbl.BLACK, -1);
     public static final int SIZE = 3;
     public Vertex[] p = new Vertex[SIZE];
     public Direction normal;

@@ -12,6 +12,7 @@ package gorgonengine;
  */
 public class Direction {
     
+    public static final Direction DUMMY = new Direction();
     double x, y, z;
     
     public Direction()

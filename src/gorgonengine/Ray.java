@@ -23,6 +23,7 @@ public class Ray {
     private double radiance;
     private double importance;
     public static final int RAY_LIGHT = 100, RAY_IMPORTANCE = 101, RAY_SHADOW = 102;
+    public static final int RAY_REFLECTION = 200, RAY_REFRACTION = 201;
     public final int RAY_TYPE;
     
     public Ray(Vertex s, Vertex e, ColorDbl c)
@@ -107,6 +108,19 @@ public class Ray {
         }
     }
     
+    public Ray(Ray r)
+    {
+        t = r.t;
+        start = r.start;
+        end = r.end;
+        dir = r.dir;
+        color = r.color;
+        rayIndex = r.returnIndex();
+        RAY_TYPE = r.RAY_TYPE;
+        radiance = r.getRadiance();
+        importance = r.getImportance();
+    }
+    
     public void setT(double t)
     {
         this.t = t; 
@@ -120,6 +134,16 @@ public class Ray {
     public double getRadiance()
     {
         return radiance;
+    }
+    
+    public void setImportance(double newImp)
+    {
+        importance = newImp;
+    }
+    
+    public double getImportance()
+    {
+        return importance;
     }
     
     public void reflect()
