@@ -123,7 +123,8 @@ public class LinAlg {
     
     public static Direction calculateVectorDirection(Vertex s, Vertex e)
     {
-        return new Direction(e.x - s.x, e.y - s.y, e.z - s.z);
+        Direction result = new Direction(e.x - s.x, e.y - s.y, e.z - s.z);
+        return normalize(result);
     }
     
     public static Vertex hemisToCart(HemisCoords h)
@@ -155,6 +156,8 @@ public class LinAlg {
     
     public static Direction normalize(Direction dir)
     {
+        if(dir.equals(Direction.DUMMY))
+            return dir;
         double length = Math.sqrt(Math.pow(dir.x, 2) + Math.pow(dir.y, 2) + Math.pow(dir.z, 2));
         dir.x = dir.x/length;
         dir.y = dir.y/length;
@@ -230,9 +233,11 @@ public class LinAlg {
         return new Vertex(p0.x*p1.x, p0.y*p1.y, p0.z*p1.z);
     }
     
-    public static Boolean VektorDistansJämförelse(Vertex p0, Vertex p1)
+    public static Boolean VektorDistansJämförelse(Vertex p0, Vertex p1, Vertex start)
     {
-        if(returnLength(p0) < returnLength(p1))
+        Vertex dist0 = VektorSubtraktion(p0, start);
+        Vertex dist1 = VektorSubtraktion(p1, start);
+        if(returnLength(dist0) < returnLength(dist1))
             return true;
         else
             return false;

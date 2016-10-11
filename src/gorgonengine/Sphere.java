@@ -77,7 +77,10 @@ public class Sphere extends Object{
             }
         }
         else
-            return new Ray(r.start, VektorMultiplikation(VektorSubtraktion(r.end,r.start), 10000), r.color);
+        {
+            return Ray.ERROR_RAY;
+        }
+            
     }
     
     public boolean shadowRayIntersection(Ray r, PointLightSource ls, int sphereid)

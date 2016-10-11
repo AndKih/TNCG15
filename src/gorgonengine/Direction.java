@@ -50,6 +50,19 @@ public class Direction {
         return z;
     }
     
+    public boolean equals(Direction dir)
+    {
+        boolean result = true;
+        if(x != dir.x)
+            return false;
+        else if(y != dir.y)
+            return false;
+        else if(z != dir.z)
+            return false;
+        else
+            return result;
+    }
+    
     public String toString()
     {
         return "(" + x + ", " + y + ", " + z + ")";
