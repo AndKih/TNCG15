@@ -20,7 +20,7 @@ public class Scene {
     public Triangle[] mesh = new Triangle[SIZE];
     Sphere sphere;
     
-    //public static Vector indexArray;
+    
     public static int counter = 1;
     public static Object[] objects;
     PointLightSource[] lights;
