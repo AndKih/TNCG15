@@ -11,6 +11,8 @@ package gorgonengine;
  */
 public class Vertex {
     
+    public static final Vertex DUMMY = new Vertex(0, 0, 0);
+    
     double x, y, z, w;
     
     public Vertex(double x, double y, double z)

@@ -1036,4 +1036,18 @@ public class Mesh extends Object{
         reflectorType = newType;
     }
     
+    public boolean checkTriangleIndexes(int index)
+    {
+        boolean result = false;
+        for(int idt = 0; idt < SIZE; ++idt)
+        {
+            if(mesh[idt].triangleIndex == index)
+            {
+                result = true;
+                break;
+            }
+        }
+        return result;
+    }
+    
 }

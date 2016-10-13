@@ -27,6 +27,7 @@ public abstract class Object {
     
     public abstract double returnSize();
     public abstract Triangle returnTriangleByIndex(int index);
+    public abstract boolean checkTriangleIndexes(int index);
     public abstract Triangle returnTriangleById(int id);
     public abstract boolean isSphere();
     public abstract Direction returnNormal(Vertex vr);

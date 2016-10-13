@@ -276,4 +276,9 @@ public class Sphere extends Object{
         reflectorType = newType;
     }
     
+    public boolean checkTriangleIndexes(int index)
+    {
+        return false;
+    }
+    
 }
