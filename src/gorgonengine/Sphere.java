@@ -36,7 +36,7 @@ public class Sphere extends Object{
     
     public Ray rayIntersection(Ray r, PointLightSource[] ls)
     {
-        final double EPSILON = 0.000001;
+        //final double EPSILON = 0.000001;
         //||x - C||^2 = r^2
         //x = o + dI
         //a = (I*I) = 1
@@ -123,7 +123,7 @@ public class Sphere extends Object{
         }
         else
         {
-            final double EPSILON = 0.000001;
+            //final double EPSILON = 0.000001;
             //||x - C||^2 = r^2
             //x = o + dI
             //a = (I*I) = 1
@@ -190,7 +190,7 @@ public class Sphere extends Object{
     
     public Direction returnNormal(Vertex vr)
     {
-        double EPSILON = 0.0000001;
+        //double EPSILON = 0.0000001;
         if(returnLength(VektorSubtraktion(vr, center))-radius<EPSILON || 
                 returnLength(VektorSubtraktion(vr, center))-radius<EPSILON)
         {

@@ -14,6 +14,8 @@ import java.lang.Math.*;
 
 public class LinAlg {
     
+    public final static double EPSILON = 0.00000001;
+    
     public static Vertex VektorProdukt(Vertex p0, Vertex p1, Vertex p2)
     {
         double x, y, z;

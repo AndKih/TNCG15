@@ -16,7 +16,7 @@ import java.util.Vector;
 public class Scene {
     
     public final static int SIZE = 24;
-    public static final double EPSILON  = 0.0000001;
+    //public static final double EPSILON  = 0.0000001;
     public Triangle[] mesh = new Triangle[SIZE];
     Sphere sphere;
     
@@ -288,7 +288,11 @@ public class Scene {
 //        }
         
         if(r.returnData().returnIndex() == largestRay.returnIndex() && r.returnData().returnIndex() != -1 && largestRay.returnIndex() != -1)
+        {
             System.out.println("Same index.");
+            System.out.println("LargestRay start: " + largestRay.start + "\nLargestRay   end: " + largestRay.end);
+            System.out.println("returnedRay start:" + r.returnData().start + "\nreturnedRay   end:" + r.returnData().end);
+        }
         if(largestRay.getImportance() > Camera.IMPORTANCETHRESHOLD)
         {
 //            System.out.println("Current importance: " + largestRay.getImportance());
@@ -311,9 +315,10 @@ public class Scene {
                                     dirToVertex(largestRay.dir), dirToVertex(normal))/Math.pow(returnLength(dirToVertex(normal)), 2))
                                     , 2));
                 
+                
                 //Random angle reflection
                 refEnd = randomAngle(normal);
-                
+
                 refEnd = normalize(refEnd);
                 reflectedRay = new Ray(largestRay.end, VektorAddition(largestRay.end, refEnd), largestRay.color, largestRay.returnIndex(), Ray.RAY_IMPORTANCE);
                 reflectedRay.setImportance(largestRay.getImportance());
@@ -463,9 +468,10 @@ public class Scene {
         
         //limit so they can't be reflected INTO the plane
         HemisCoords refEndPol = cartToHemis(lim);
-        double randAng = (Math.random()*Math.PI) - (Math.PI/2);
+        double pi = Math.PI-(2*Math.asin(EPSILON*10));
+        double randAng = (Math.random()*pi) - (pi/2);
         refEndPol.phi +=randAng;
-        randAng = (Math.random()*Math.PI) - (Math.PI/2);
+        randAng = (Math.random()*pi) - (pi/2);
         refEndPol.theta +=randAng;
         
         return hemisToCart(refEndPol);

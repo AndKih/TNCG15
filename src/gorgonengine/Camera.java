@@ -31,10 +31,11 @@ public class Camera extends JFrame{
     public double width, height;
     private double iMax, iMin;
     public static final double IMPORTANCETHRESHOLD = 0.1;
+    public static final int N_REFLECTEDRAYS = 5;
     Scene scene;
     
     
-    public int raysPerPixel = 4;
+    public int raysPerPixel = 2;
     
     private double deltax;
     private double deltay;
