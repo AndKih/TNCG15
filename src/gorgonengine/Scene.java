@@ -228,24 +228,31 @@ public class Scene {
         ++counter;
         
         objects[0].setObjectReflection(0.5);
+        objects[0].setReflectorType(Object.REFLECTOR_DIFFUSE);
         
         objects[1] = new Mesh(mesh2);
         objects[1].setObjectReflection(0.5);
+        objects[1].setReflectorType(Object.REFLECTOR_DIFFUSE);
         
         objects[2] = new Sphere(new ColorDbl(40, 20, 60), new Vertex(11, -2, 1), 1, 2);
         objects[2].setObjectReflection(0.5);
+        objects[2].setReflectorType(Object.REFLECTOR_DIFFUSE);
         
         objects[3] = new Mesh(new Vertex(7, 2, 2), Mesh.TYPE_RECTANGLE);
         objects[3].setObjectReflection(0.5);
+        objects[3].setReflectorType(Object.REFLECTOR_DIFFUSE);
         
         objects[4] = new Mesh(new double[] {2}, new Vertex(5, -3, -2), Mesh.TYPE_CUBE, Mesh.COLOR_ORANGE);
         objects[4].setObjectReflection(0.5);
+        objects[4].setReflectorType(Object.REFLECTOR_DIFFUSE);
         
         objects[5] = new Mesh(new double[] {2, 3, 4}, new Vertex(6, 3, -2), Mesh.TYPE_RECTANGLE, Mesh.COLOR_PURPLE);
         objects[5].setObjectReflection(0.5);
+        objects[5].setReflectorType(Object.REFLECTOR_DIFFUSE);
         
         objects[6] = new Sphere(ColorDbl.GREEN, new Vertex(10, -3, -4), 1, 6);
         objects[6].setObjectReflection(0.5);
+        objects[6].setReflectorType(Object.REFLECTOR_DIFFUSE);
         
         
         lights = new PointLightSource[2];
@@ -388,50 +395,17 @@ public class Scene {
         
         if(!r.checkHasParent())
         {
-//            System.out.println("Traversing tree...");
             int length = 1;
             
-//            System.out.println("Triangleindex: " + r.returnData().returnIndex());
-//            System.out.println("Ray Dir: " + normalize(r.returnData().dir));
-//            System.out.println("Ray start: " + r.returnData().start);
-//            System.out.println("Ray end point: " + r.returnData().end);
             Node<Ray> it = r;
+            
             while(it.checkIfParent())
             {
                 ++length;
                 it = it.returnChild();
-//                if(it.returnData().returnIndex() == -1)
-//                {
-////                    System.out.println("Current is sphere!");
-//                    if(it.checkIfParent())
-//                    {
-//                        if(it.returnChild().returnData().returnIndex() == -1)
-//                        {
-//                            
-//                            System.out.println("Ray Dir: " + it.returnData().dir);
-//                            System.out.println("Ray start: " + it.returnData().start);
-//                            System.out.println("Ray end point: " + it.returnData().end);
-//                            System.out.println("Child ray Dir: " + it.returnChild().returnData().dir);
-//                            System.out.println("Child ray start: " + it.returnChild().returnData().start);
-//                            System.out.println("Child ray end point: " + it.returnChild().returnData().end);
-//                            System.out.println("Child ray length: " + returnLength(VektorSubtraktion(it.returnChild().returnData().start, it.returnChild().returnData().end)));
-//                        }
-//                    }
-////                    if(it.checkHasParent())
-////                        System.out.println("Previous index: " + it.returnParent().returnData().returnIndex());
-////                    else
-////                        System.out.println("No parent.");
-////                    if(it.checkIfParent())
-////                        System.out.println("Next Index: " + it.returnChild().returnData().returnIndex());
-////                    else
-////                        System.out.println("No child.");
-                }
-//                System.out.println("Triangleindex: " + it.returnData().returnIndex());
-//                System.out.println("Ray Dir: " + normalize(it.returnData().dir));
-//                System.out.println("Ray start: " + it.returnData().start);
-//                System.out.println("Ray end point: " + it.returnData().end);
+//                
             }
-//            System.out.println("Length of tree: " + length);
+            System.out.println("Length of tree: " + length);
         }
         return resultRay;
     }
