@@ -102,7 +102,7 @@ public class Mesh extends Object{
     public Ray rayIntersection(Ray r, PointLightSource[] ls)
     {
         double t = -1, smallT = -10;
-        double EPSILON = 0.00000001;
+        //double EPSILON = 0.00000001;
         Boolean firstHit = true;
         int savedID = -1;
         Direction normal = new Direction();
