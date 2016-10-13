@@ -310,6 +310,10 @@ public class Scene {
                             VektorMultiplikation(dirToVertex(normal), SkalärProdukt(
                                     dirToVertex(largestRay.dir), dirToVertex(normal))/Math.pow(returnLength(dirToVertex(normal)), 2))
                                     , 2));
+                
+                //Random angle reflection
+                refEnd = randomAngle(normal);
+                
                 refEnd = normalize(refEnd);
                 reflectedRay = new Ray(largestRay.end, VektorAddition(largestRay.end, refEnd), largestRay.color, largestRay.returnIndex(), Ray.RAY_IMPORTANCE);
                 reflectedRay.setImportance(largestRay.getImportance());
@@ -333,6 +337,7 @@ public class Scene {
                                 VektorMultiplikation(dirToVertex(normal), SkalärProdukt(
                                         dirToVertex(largestRay.dir), dirToVertex(normal))/Math.pow(returnLength(dirToVertex(normal)), 2))
                                         , 2));
+                            refEnd = randomAngle(normal);
                             refEnd = normalize(refEnd);
                             reflectedRay = new Ray(largestRay.end, VektorAddition(largestRay.end, refEnd), largestRay.color, -1, Ray.RAY_IMPORTANCE);
                             reflectedRay.setImportance(largestRay.getImportance());
@@ -451,6 +456,20 @@ public class Scene {
 //            System.out.println("Length of tree: " + length);
         }
         return resultRay;
+    }
+    
+    public Vertex randomAngle(Direction limit)
+    {
+        Vertex lim = dirToVertex(limit);
+        
+        //limit so they can't be reflected INTO the plane
+        HemisCoords refEndPol = cartToHemis(lim);
+        double randAng = (Math.random()*Math.PI) - (Math.PI/2);
+        refEndPol.phi +=randAng;
+        randAng = (Math.random()*Math.PI) - (Math.PI/2);
+        refEndPol.theta +=randAng;
+        
+        return hemisToCart(refEndPol);
     }
     
     

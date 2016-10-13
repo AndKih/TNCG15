@@ -33,6 +33,7 @@ public class Camera extends JFrame{
     public static final double IMPORTANCETHRESHOLD = 0.1;
     Scene scene;
     
+    
     public int raysPerPixel = 4;
     
     private double deltax;
@@ -66,9 +67,16 @@ public class Camera extends JFrame{
         double newY;
         double newZ;
                 
+        int percentEffictivicer = 0;
         for(int px = 0; px<SIZEX; px++)
         {
-//            System.out.println("Rays are: " + ((double)px/SIZEX)*100 +"% done");
+            //if statement just here to simplify waiting by displaying a number
+            if(((double)(px+1)/SIZEX)*100 >= percentEffictivicer)
+            {
+                System.out.println("Rays are: " + percentEffictivicer +"% done");
+                percentEffictivicer++;
+            }
+            
             for(int py = 0; py<SIZEY; py++)
             {
                     cam[px][py] = new Pixel(new ColorDbl(), px + py*SIZEX);
