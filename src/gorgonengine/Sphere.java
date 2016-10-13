@@ -19,10 +19,12 @@ public class Sphere extends Object{
     public Vertex center;
     private double reflectionCoefficient;
     private int objectID;
+    private int reflectorType;
     //public Triangle[] mesh;
     
     public Sphere(ColorDbl c, Vertex center, double radius, int index)
     {
+        setReflectorType(Object.REFLECTOR_SPECULAR);
         this.center = center;
         this.radius = radius;
         color = c;
@@ -75,16 +77,38 @@ public class Sphere extends Object{
             if(returnLength(VektorSubtraktion(x1, r.start)) < 
                     returnLength(VektorSubtraktion(x2, r.start)))
             {
+                Ray dirtest = new Ray(r.start, x1, ColorDbl.BLACK, -1, Ray.RAY_SHADOW);
+                Vertex dir1 = dirToVertex(r.dir);
+                Vertex dir2 = dirToVertex(dirtest.dir);
+                double angle = SkalärProdukt(dir1,dir2)/(returnLength(dir1)*returnLength(dir2));
+                if(angle > Math.PI/2 || angle < 0)
+                    return Ray.ERROR_RAY;
                 ColorDbl col = intensityCalc(x1,ls);
                 Ray resultRay = new Ray(r.start, x1, col, -1, Ray.RAY_IMPORTANCE);
                 resultRay.setImportance(r.getImportance()*reflectionCoefficient);
+                if(returnLength(VektorSubtraktion(resultRay.start, resultRay.end)) < EPSILON)
+                    return Ray.ERROR_RAY;
+                if(returnLength(VektorSubtraktion(resultRay.start, center))-radius<EPSILON && 
+                        returnLength(VektorSubtraktion(resultRay.end, center))-radius<EPSILON)
+                    return Ray.ERROR_RAY;
                 return resultRay;
             }
             else
             {
+                Ray dirtest = new Ray(r.start, x2, ColorDbl.BLACK, -1, Ray.RAY_SHADOW);
+                Vertex dir1 = dirToVertex(r.dir);
+                Vertex dir2 = dirToVertex(dirtest.dir);
+                double angle = SkalärProdukt(dir1,dir2)/(returnLength(dir1)*returnLength(dir2));
+                if(angle > Math.PI/2 || angle < 0)
+                    return Ray.ERROR_RAY;
                 ColorDbl col = intensityCalc(x2,ls);
                 Ray resultRay = new Ray(r.start, x2, col, -1, Ray.RAY_IMPORTANCE);
                 resultRay.setImportance(r.getImportance()*reflectionCoefficient);
+                if(returnLength(VektorSubtraktion(resultRay.start, resultRay.end)) < EPSILON)
+                    return Ray.ERROR_RAY;
+                if(returnLength(VektorSubtraktion(resultRay.start, center))-radius<EPSILON && 
+                        returnLength(VektorSubtraktion(resultRay.end, center))-radius<EPSILON)
+                    return Ray.ERROR_RAY;
                 return resultRay;
             }
         }
@@ -242,5 +266,14 @@ public class Sphere extends Object{
         return true;
     }
     
+    public int getReflectorType()
+    {
+        return reflectorType;
+    }
+    
+    public void setReflectorType(int newType)
+    {
+        reflectorType = newType;
+    }
     
 }

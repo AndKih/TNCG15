@@ -420,19 +420,20 @@ public class Scene {
                 if(it.returnData().returnIndex() == -1)
                 {
 //                    System.out.println("Current is sphere!");
-//                    if(it.checkIfParent())
-//                    {
-//                        if(it.returnChild().returnData().returnIndex() == -1)
-//                        {
-//                            
-//                            System.out.println("Ray Dir: " + it.returnData().dir);
-//                            System.out.println("Ray start: " + it.returnData().start);
-//                            System.out.println("Ray end point: " + it.returnData().end);
-//                            System.out.println("Child ray Dir: " + it.returnChild().returnData().dir);
-//                            System.out.println("Child ray start: " + it.returnChild().returnData().start);
-//                            System.out.println("Child ray end point: " + it.returnChild().returnData().end);
-//                        }
-//                    }
+                    if(it.checkIfParent())
+                    {
+                        if(it.returnChild().returnData().returnIndex() == -1)
+                        {
+                            
+                            System.out.println("Ray Dir: " + it.returnData().dir);
+                            System.out.println("Ray start: " + it.returnData().start);
+                            System.out.println("Ray end point: " + it.returnData().end);
+                            System.out.println("Child ray Dir: " + it.returnChild().returnData().dir);
+                            System.out.println("Child ray start: " + it.returnChild().returnData().start);
+                            System.out.println("Child ray end point: " + it.returnChild().returnData().end);
+                            System.out.println("Child ray length: " + returnLength(VektorSubtraktion(it.returnChild().returnData().start, it.returnChild().returnData().end)));
+                        }
+                    }
 //                    if(it.checkHasParent())
 //                        System.out.println("Previous index: " + it.returnParent().returnData().returnIndex());
 //                    else

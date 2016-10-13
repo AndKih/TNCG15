@@ -20,21 +20,23 @@ public class Mesh extends Object{
     public static final int COLOR_PURPLE = 106, COLOR_ORANGE = 107, COLOR_BLACK = 108;
     public final int SIZE;
     public Triangle[] mesh;
+    private int reflectorType;
     
     public Mesh(Triangle[] shape)
     {
         SIZE = shape.length;
         mesh = new Triangle[SIZE];
+        setReflectorType(Object.REFLECTOR_SPECULAR);
         for(int i = 0; i < shape.length; i++)
         {
 //            System.out.println("TriangleID: " + shape[i].triangleIndex);
             mesh[i] = new Triangle(shape[i].p, shape[i].color, shape[i].triangleIndex);
-            
         }
     }
     
     public Mesh(Vertex center, int type)
     {
+        setReflectorType(Object.REFLECTOR_SPECULAR);
         switch(type)
         {
             case TYPE_CUBE:
@@ -55,6 +57,7 @@ public class Mesh extends Object{
     
     public Mesh(double[] lengths, Vertex center, int type, ColorDbl[] colorList)
     {
+        setReflectorType(Object.REFLECTOR_SPECULAR);
         switch(type)
         {
             case TYPE_CUBE:
@@ -76,6 +79,7 @@ public class Mesh extends Object{
     
     public Mesh(double[] lengths, Vertex center, int type, int colortype)
     {
+        setReflectorType(Object.REFLECTOR_SPECULAR);
         switch(type)
         {
             case TYPE_CUBE:
@@ -1020,6 +1024,16 @@ public class Mesh extends Object{
                 return mesh[idt];
         }
         return Triangle.DUMMY;
+    }
+    
+    public int getReflectorType()
+    {
+        return reflectorType;
+    }
+    
+    public void setReflectorType(int newType)
+    {
+        reflectorType = newType;
     }
     
 }

@@ -11,6 +11,9 @@ package gorgonengine;
  */
 public abstract class Object {
     
+    public static final int REFLECTOR_DIFFUSE = 500, REFLECTOR_SPECULAR = 501;
+    private int reflectorType;
+    
     public Object()
     {
         
@@ -27,6 +30,8 @@ public abstract class Object {
     public abstract Triangle returnTriangleById(int id);
     public abstract boolean isSphere();
     public abstract Direction returnNormal(Vertex vr);
+    public abstract int getReflectorType();
+    public abstract void setReflectorType(int newType);
 
     public abstract void rotateX(double angle);
     public abstract void rotateY(double angle);
