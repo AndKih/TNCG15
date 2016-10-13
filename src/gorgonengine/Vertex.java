@@ -11,6 +11,8 @@ package gorgonengine;
  */
 public class Vertex {
     
+    public static final Vertex DUMMY = new Vertex(0, 0, 0);
+    
     double x, y, z, w;
     
     public Vertex(double x, double y, double z)
@@ -64,6 +66,17 @@ public class Vertex {
     public String toString()
     {
         return "(" + x + ", " + y + ", " + z + ")";
+    }
+    
+    public boolean equals(Vertex v)
+    {
+        if(x != v.x)
+            return false;
+        if(y != v.y)
+            return false;
+        if(z != v.z)
+            return false;
+        return true;
     }
     
 }

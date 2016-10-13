@@ -74,9 +74,9 @@ public class LinAlg {
         return 0;
     }
     
-    public static double radiance(Vertex x, HemisCoords ohm, PointLightSource[] ls)
+    public static double radiance(Vertex x, Triangle t, HemisCoords in, PointLightSource[] ls)
     {
-        Vertex p = hemisToCart(ohm);
+        Vertex p = hemisToCart(in);
         double result;
         double emmitance = 0;
         double incRadiance = 0;
@@ -92,11 +92,15 @@ public class LinAlg {
 //        {
 //            for(int idt = 0; idt < Math.PI/2; idt += (Math.PI/2)/STEPSIZE)
 //            {
-//                HemisCoords dir = new HemisCoords(idt, idp, 1);
+//                HemisCoords out = new HemisCoords(idt, idp, 1);
 //                
 //                //Send radiance in all directions
+//
+//                result += BRDF(t, Triangle.REFLECTION_ORENNAYAR, in, out)*irradiance(x, out, ls, 0);
 //            }
 //        }
+
+
         return 0;
     }
     
@@ -105,7 +109,7 @@ public class LinAlg {
 //        return 0;
 //    }
     
-    public static double BRDF(Triangle t, int reflector_type)
+    public static double BRDF(Triangle t, int reflector_type, HemisCoords vIn, HemisCoords vOut)
     {
         double result;
         switch(reflector_type)
@@ -114,7 +118,12 @@ public class LinAlg {
                 result = t.reflectionCoefficient/Math.PI;
                 break;
             case Triangle.REFLECTION_ORENNAYAR:
-                result = 0;
+                double standardDeviation = Math.PI/16;
+                double A = 1 - (Math.pow(standardDeviation, 2)/2*(Math.pow(standardDeviation, 2) + 0.33));
+                double B = (0.45*Math.pow(standardDeviation, 2)/(Math.pow(standardDeviation, 2) + 0.09));
+                double alf = Math.max(vIn.theta, vOut.theta);
+                double beta = Math.min(vIn.theta, vOut.theta);
+                result = (t.reflectionCoefficient/Math.PI)*(A+B*(Math.max(0, Math.cos(vIn.phi - vOut.phi)))*Math.sin(alf)*Math.sin(beta));
                 break;
             default:
                 result = 0;
@@ -122,6 +131,8 @@ public class LinAlg {
         }
         return result;
     }
+    
+//    public static 
     
     public static Direction calculateVectorDirection(Vertex s, Vertex e)
     {

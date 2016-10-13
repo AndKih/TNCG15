@@ -25,6 +25,7 @@ public class Ray {
     public static final int RAY_LIGHT = 100, RAY_IMPORTANCE = 101, RAY_SHADOW = 102;
     public static final int RAY_REFLECTION = 200, RAY_REFRACTION = 201;
     public final int RAY_TYPE;
+    public int RAY_REFLECTION_TYPE;
     
     public Ray(Vertex s, Vertex e, ColorDbl c)
     {
@@ -150,6 +151,17 @@ public class Ray {
     {
         return rayIndex;
     }
+    
+    public void setReflectionType(int type)
+    {
+        RAY_REFLECTION_TYPE = type;
+    }
+    
+    public int getReflectionType()
+    {
+        return RAY_REFLECTION_TYPE;
+    }
+    
     public boolean equals(Ray ray)
     {
         if(ray.end.x != end.x)

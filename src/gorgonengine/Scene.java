@@ -10,13 +10,14 @@ package gorgonengine;
  * @author Andreas
  */
 
+import static gorgonengine.Camera.N_REFLECTEDRAYS;
 import static gorgonengine.LinAlg.*;
 import java.util.Vector;
 
 public class Scene {
     
     public final static int SIZE = 24;
-    //public static final double EPSILON  = 0.0000001;
+    public final int NROBJECTS;
     public Triangle[] mesh = new Triangle[SIZE];
     Sphere sphere;
     
@@ -195,8 +196,8 @@ public class Scene {
         {
             mesh[idm].setReflectionCoefficient(1);
         }
-        
-        objects = new Object[7];
+        NROBJECTS = 7;
+        objects = new Object[NROBJECTS];
         objects[0] = new Mesh(mesh);
         
         Triangle[] mesh2 = new Triangle[4];
@@ -251,7 +252,10 @@ public class Scene {
         lights[0] = new PointLightSource(new Vertex(2,-3,-1),1.0);
         lights[1] = new PointLightSource(new Vertex(3,4,2),0.7);
         
-        
+        for(int i = 0; i < NROBJECTS; i++)
+        {
+            objects[i].setReflectorType(Object.REFLECTOR_DIFFUSE);
+        }
         
     }
     
@@ -295,98 +299,94 @@ public class Scene {
         }
         if(largestRay.getImportance() > Camera.IMPORTANCETHRESHOLD)
         {
-//            System.out.println("Current importance: " + largestRay.getImportance());
-            r.setData(largestRay);
-            
-            if(largestRay.returnIndex() != -1)
+            int nRefl = N_REFLECTEDRAYS;
+            if(objects[getObjectByTriangleIndex(largestRay.returnIndex())].getReflectorType() == Object.REFLECTOR_SPECULAR)
             {
-                Triangle pick = Triangle.DUMMY;
-                for(int ido = 0; ido < objects.length; ++ido)
-                {
-                    pick = objects[ido].returnTriangleById(largestRay.returnIndex());
-                    if(pick == Triangle.DUMMY)
-                        continue;
-                    else
-                        break;
-                }
-                Direction normal = pick.normal;
-                Vertex refEnd = VektorSubtraktion(dirToVertex(largestRay.dir), VektorMultiplikation( 
-                            VektorMultiplikation(dirToVertex(normal), SkalärProdukt(
-                                    dirToVertex(largestRay.dir), dirToVertex(normal))/Math.pow(returnLength(dirToVertex(normal)), 2))
-                                    , 2));
-                
-                
-                //Random angle reflection
-                refEnd = randomAngle(normal);
-
-                refEnd = normalize(refEnd);
-                reflectedRay = new Ray(largestRay.end, VektorAddition(largestRay.end, refEnd), largestRay.color, largestRay.returnIndex(), Ray.RAY_IMPORTANCE);
-                reflectedRay.setImportance(largestRay.getImportance());
-                rayit = new Node<Ray>(reflectedRay, r);
-                r.addChild(rayit);
+                nRefl = 1;
             }
-            else
+            Ray[] tmpRay = new Ray[nRefl]; 
+            for(int indRefl = 0; indRefl < nRefl; indRefl++)
             {
-                for(int ido = 0; ido < objects.length; ++ido)
+    //            System.out.println("Current importance: " + largestRay.getImportance());
+                r.setData(largestRay);
+
+                if(largestRay.returnIndex() != -1)
                 {
-                    if(!objects[ido].isSphere())
-                        continue;
-                    else
+                    Triangle pick = Triangle.DUMMY;
+                    for(int ido = 0; ido < objects.length; ++ido)
                     {
-                        Direction normal = objects[ido].returnNormal(largestRay.end);
-                        if(normal == Direction.DUMMY)
+                        pick = objects[ido].returnTriangleById(largestRay.returnIndex());
+                        if(pick == Triangle.DUMMY)
                             continue;
                         else
-                        {
-                            Vertex refEnd = VektorSubtraktion(dirToVertex(largestRay.dir), VektorMultiplikation( 
+                            break;
+                    }
+                    Direction normal = pick.normal;
+                    Vertex refEnd = Vertex.DUMMY;
+
+                    //Random angle reflection
+                    if(objects[getObjectByTriangleIndex(largestRay.returnIndex())].getReflectorType() == Object.REFLECTOR_DIFFUSE)
+                        refEnd = randomAngle(normal);
+                    else if(objects[getObjectByTriangleIndex(largestRay.returnIndex())].getReflectorType() == Object.REFLECTOR_SPECULAR)
+                        refEnd = VektorSubtraktion(dirToVertex(largestRay.dir), VektorMultiplikation( 
                                 VektorMultiplikation(dirToVertex(normal), SkalärProdukt(
                                         dirToVertex(largestRay.dir), dirToVertex(normal))/Math.pow(returnLength(dirToVertex(normal)), 2))
                                         , 2));
-                            refEnd = randomAngle(normal);
-                            refEnd = normalize(refEnd);
-                            reflectedRay = new Ray(largestRay.end, VektorAddition(largestRay.end, refEnd), largestRay.color, -1, Ray.RAY_IMPORTANCE);
-                            reflectedRay.setImportance(largestRay.getImportance());
-                            rayit = new Node<Ray>(reflectedRay, r);
-                            r.addChild(rayit);
-                            break;
+                    
+                    refEnd = normalize(refEnd);
+                    reflectedRay = new Ray(largestRay.end, VektorAddition(largestRay.end, refEnd), largestRay.color, largestRay.returnIndex(), Ray.RAY_IMPORTANCE);
+                    reflectedRay.setImportance(largestRay.getImportance());
+                    rayit = new Node<Ray>(reflectedRay, r);
+                    r.addChild(rayit);
+                }
+                else
+                {
+                    for(int ido = 0; ido < objects.length; ++ido)
+                    {
+                        if(!objects[ido].isSphere())
+                            continue;
+                        else
+                        {
+                            Direction normal = objects[ido].returnNormal(largestRay.end);
+                            if(normal == Direction.DUMMY)
+                                continue;
+                            else
+                            {
+                                Vertex refEnd = Vertex.DUMMY;
+                                if(objects[getObjectByTriangleIndex(largestRay.returnIndex())].getReflectorType() == Object.REFLECTOR_DIFFUSE)
+                                    refEnd = randomAngle(normal);
+                                else if(objects[getObjectByTriangleIndex(largestRay.returnIndex())].getReflectorType() == Object.REFLECTOR_SPECULAR)
+                                    refEnd = VektorSubtraktion(dirToVertex(largestRay.dir), VektorMultiplikation( 
+                                        VektorMultiplikation(dirToVertex(normal), SkalärProdukt(
+                                                dirToVertex(largestRay.dir), dirToVertex(normal))/Math.pow(returnLength(dirToVertex(normal)), 2))
+                                                , 2));
+                                refEnd = normalize(refEnd);
+                                reflectedRay = new Ray(largestRay.end, VektorAddition(largestRay.end, refEnd), largestRay.color, -1, Ray.RAY_IMPORTANCE);
+                                reflectedRay.setImportance(largestRay.getImportance());
+                                rayit = new Node<Ray>(reflectedRay, r);
+                                r.addChild(rayit);
+                                break;
+                            }
                         }
                     }
                 }
+                tmpRay[indRefl] = rayIntersection(rayit);
+                ColorDbl col = new ColorDbl(largestRay.color);
+                col.setIntensity(r.returnData().getImportance());
+                tmpRay[indRefl].color.addColor(col);
             }
-            resultRay = rayIntersection(rayit);
-            ColorDbl col = new ColorDbl(largestRay.color);
-            col.setIntensity(r.returnData().getImportance());
-            resultRay.color.addColor(col);
+            resultRay = tmpRay[0];
+            ColorDbl tmpCol = new ColorDbl();
+            for(int indRefl = 0; indRefl < nRefl; indRefl++)
+            {
+                tmpCol.addColor(tmpRay[indRefl].color);
+                tmpCol.r /= nRefl;
+                tmpCol.g /= nRefl;
+                tmpCol.b /= nRefl;
+            }
+            resultRay.color = tmpCol;
             
-//            System.out.println("Triangleindex: " + rayit.returnData().returnIndex());
             
-//            if(largestRay.returnIndex() == 1 && resultRay.getImportance() < EPSILON)
-//            {
-//                System.out.println("resultRay importance: " + resultRay.getImportance());
-//                System.out.println("rayit importance: " + rayit.returnData().getImportance());
-//                System.out.println("largestRay importance: " + largestRay.getImportance());
-//                System.out.println("col value: " + col);
-//                System.out.println("largestRay color: " + largestRay.color);
-//                System.out.println("Assigned ray color: " + resultRay.color);
-//            }
-//            if(largestRay.returnIndex() == 1 && resultRay.color.b < 60)
-//            {
-//                System.out.println("Still going recursive!!!");
-////                System.out.println("Largest ray start: " + largestRay.start);
-////                System.out.println("Northern wall normal: " + normal);
-////                System.out.println("Northern wall largest ray end: " + largestRay.end);
-//                System.out.println("Northern wall largest ray dir: " + largestRay.dir);
-////                System.out.println("Northern wall largest ray dir normalized: " + normalize(largestRay.dir));
-////                System.out.println("refEnd: " + refEnd);
-////                System.out.println("Northern wall reflected ray:" + VektorAddition(largestRay.end, refEnd));
-//                System.out.println("Reflected ray dir: " + reflectedRay.dir);
-//                System.out.println("resultRay importance: " + resultRay.getImportance());
-//                System.out.println("rayit importance: " + rayit.returnData().getImportance());
-//                System.out.println("largestRay importance: " + largestRay.getImportance());
-//                System.out.println("col value: " + col);
-//                System.out.println("largestRay color: " + largestRay.color);
-//                System.out.println("Assigned ray color: " + resultRay.color);
-//            }
         }
         else
         {
@@ -427,9 +427,9 @@ public class Scene {
             {
                 ++length;
                 it = it.returnChild();
-                if(it.returnData().returnIndex() == -1)
-                {
-//                    System.out.println("Current is sphere!");
+//                if(it.returnData().returnIndex() == -1)
+//                {
+////                    System.out.println("Current is sphere!");
 //                    if(it.checkIfParent())
 //                    {
 //                        if(it.returnChild().returnData().returnIndex() == -1)
@@ -441,16 +441,17 @@ public class Scene {
 //                            System.out.println("Child ray Dir: " + it.returnChild().returnData().dir);
 //                            System.out.println("Child ray start: " + it.returnChild().returnData().start);
 //                            System.out.println("Child ray end point: " + it.returnChild().returnData().end);
+//                            System.out.println("Child ray length: " + returnLength(VektorSubtraktion(it.returnChild().returnData().start, it.returnChild().returnData().end)));
 //                        }
 //                    }
-//                    if(it.checkHasParent())
-//                        System.out.println("Previous index: " + it.returnParent().returnData().returnIndex());
-//                    else
-//                        System.out.println("No parent.");
-//                    if(it.checkIfParent())
-//                        System.out.println("Next Index: " + it.returnChild().returnData().returnIndex());
-//                    else
-//                        System.out.println("No child.");
+////                    if(it.checkHasParent())
+////                        System.out.println("Previous index: " + it.returnParent().returnData().returnIndex());
+////                    else
+////                        System.out.println("No parent.");
+////                    if(it.checkIfParent())
+////                        System.out.println("Next Index: " + it.returnChild().returnData().returnIndex());
+////                    else
+////                        System.out.println("No child.");
                 }
 //                System.out.println("Triangleindex: " + it.returnData().returnIndex());
 //                System.out.println("Ray Dir: " + normalize(it.returnData().dir));
@@ -458,7 +459,7 @@ public class Scene {
 //                System.out.println("Ray end point: " + it.returnData().end);
             }
 //            System.out.println("Length of tree: " + length);
-        }
+        
         return resultRay;
     }
     
@@ -477,6 +478,18 @@ public class Scene {
         return hemisToCart(refEndPol);
     }
     
+    private int getObjectByTriangleIndex(int index)
+    {
+        int result = 0;
+        for(int ido = 0; ido < NROBJECTS; ++ido)
+        {
+            if(objects[ido].checkTriangleIndexes(index))
+            {
+                result = ido;
+            }
+        }
+        return result;
+    }
     
     public void rotateX(double angle)
     {
