@@ -86,6 +86,7 @@ public class Sphere extends Object{
                 ColorDbl col = intensityCalc(x1,ls);
                 Ray resultRay = new Ray(r.start, x1, col, -1, Ray.RAY_IMPORTANCE);
                 resultRay.setImportance(r.getImportance()*reflectionCoefficient);
+                resultRay.setSphereIndex(objectID);
                 if(returnLength(VektorSubtraktion(resultRay.start, resultRay.end)) < EPSILON)
                     return Ray.ERROR_RAY;
                 if(returnLength(VektorSubtraktion(resultRay.start, center))-radius<EPSILON && 
@@ -104,6 +105,7 @@ public class Sphere extends Object{
                 ColorDbl col = intensityCalc(x2,ls);
                 Ray resultRay = new Ray(r.start, x2, col, -1, Ray.RAY_IMPORTANCE);
                 resultRay.setImportance(r.getImportance()*reflectionCoefficient);
+                resultRay.setSphereIndex(objectID);
                 if(returnLength(VektorSubtraktion(resultRay.start, resultRay.end)) < EPSILON)
                     return Ray.ERROR_RAY;
                 if(returnLength(VektorSubtraktion(resultRay.start, center))-radius<EPSILON && 

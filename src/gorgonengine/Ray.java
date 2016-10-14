@@ -19,6 +19,7 @@ public class Ray {
     public Direction dir;
     public ColorDbl color;
     private int rayIndex;
+    private int sphereIndex;
     private double t;
     private double radiance;
     private double importance;
@@ -160,6 +161,16 @@ public class Ray {
     public int getReflectionType()
     {
         return RAY_REFLECTION_TYPE;
+    }
+    
+    public void setSphereIndex(int index)
+    {
+        sphereIndex = index;
+    }
+    
+    public int getSphereIndex()
+    {
+        return sphereIndex;
     }
     
     public boolean equals(Ray ray)

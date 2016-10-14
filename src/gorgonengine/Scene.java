@@ -228,31 +228,31 @@ public class Scene {
         ++counter;
         
         objects[0].setObjectReflection(0.5);
-        objects[0].setReflectorType(Object.REFLECTOR_DIFFUSE);
+//        objects[0].setReflectorType(Object.REFLECTOR_DIFFUSE);
         
         objects[1] = new Mesh(mesh2);
         objects[1].setObjectReflection(0.5);
-        objects[1].setReflectorType(Object.REFLECTOR_DIFFUSE);
+//        objects[1].setReflectorType(Object.REFLECTOR_DIFFUSE);
         
         objects[2] = new Sphere(new ColorDbl(40, 20, 60), new Vertex(11, -2, 1), 1, 2);
         objects[2].setObjectReflection(0.5);
-        objects[2].setReflectorType(Object.REFLECTOR_DIFFUSE);
+//        objects[2].setReflectorType(Object.REFLECTOR_DIFFUSE);
         
         objects[3] = new Mesh(new Vertex(7, 2, 2), Mesh.TYPE_RECTANGLE);
         objects[3].setObjectReflection(0.5);
-        objects[3].setReflectorType(Object.REFLECTOR_DIFFUSE);
+//        objects[3].setReflectorType(Object.REFLECTOR_DIFFUSE);
         
         objects[4] = new Mesh(new double[] {2}, new Vertex(5, -3, -2), Mesh.TYPE_CUBE, Mesh.COLOR_ORANGE);
         objects[4].setObjectReflection(0.5);
-        objects[4].setReflectorType(Object.REFLECTOR_DIFFUSE);
+//        objects[4].setReflectorType(Object.REFLECTOR_DIFFUSE);
         
         objects[5] = new Mesh(new double[] {2, 3, 4}, new Vertex(6, 3, -2), Mesh.TYPE_RECTANGLE, Mesh.COLOR_PURPLE);
         objects[5].setObjectReflection(0.5);
-        objects[5].setReflectorType(Object.REFLECTOR_DIFFUSE);
+//        objects[5].setReflectorType(Object.REFLECTOR_DIFFUSE);
         
         objects[6] = new Sphere(ColorDbl.GREEN, new Vertex(10, -3, -4), 1, 6);
         objects[6].setObjectReflection(0.5);
-        objects[6].setReflectorType(Object.REFLECTOR_DIFFUSE);
+//        objects[6].setReflectorType(Object.REFLECTOR_DIFFUSE);
         
         
         lights = new PointLightSource[2];
@@ -263,6 +263,8 @@ public class Scene {
         {
             objects[i].setReflectorType(Object.REFLECTOR_DIFFUSE);
         }
+        
+        objects[2].setReflectorType(Object.REFLECTOR_SPECULAR);
         
     }
     
@@ -289,6 +291,8 @@ public class Scene {
                 if(VektorDistansJämförelse(newRay.end, largestRay.end, r.returnData().start))
                 {
                     largestRay = new Ray(newRay.start, newRay.end, newRay.color, newRay.returnIndex(), Ray.RAY_IMPORTANCE);
+                    if(largestRay.returnIndex() == -1)
+                        largestRay.setSphereIndex(newRay.getSphereIndex());
                     largestRay.setImportance(newRay.getImportance());
                 }
             }
@@ -307,7 +311,13 @@ public class Scene {
         if(largestRay.getImportance() > Camera.IMPORTANCETHRESHOLD)
         {
             int nRefl = N_REFLECTEDRAYS;
-            if(objects[getObjectByTriangleIndex(largestRay.returnIndex())].getReflectorType() == Object.REFLECTOR_SPECULAR)
+            if(largestRay.returnIndex() == -1)
+            {
+//                System.out.println("SphereIndex: " + largestRay.getSphereIndex());
+                if(objects[largestRay.getSphereIndex()].getReflectorType() == Object.REFLECTOR_SPECULAR)
+                    nRefl = 1;
+            }
+            else if(objects[getObjectByTriangleIndex(largestRay.returnIndex())].getReflectorType() == Object.REFLECTOR_SPECULAR)
             {
                 nRefl = 1;
             }
@@ -359,10 +369,15 @@ public class Scene {
                                 continue;
                             else
                             {
+//                                if(ido == 2 && largestRay.getSphereIndex() == 2)
+//                                {
+//                                    System.out.println(objects[ido].getReflectorType());
+//                                    System.out.println("Number of reflections: " + nRefl);
+//                                }
                                 Vertex refEnd = Vertex.DUMMY;
-                                if(objects[getObjectByTriangleIndex(largestRay.returnIndex())].getReflectorType() == Object.REFLECTOR_DIFFUSE)
+                                if(objects[largestRay.getSphereIndex()].getReflectorType() == Object.REFLECTOR_DIFFUSE)
                                     refEnd = randomAngle(normal);
-                                else if(objects[getObjectByTriangleIndex(largestRay.returnIndex())].getReflectorType() == Object.REFLECTOR_SPECULAR)
+                                else if(objects[largestRay.getSphereIndex()].getReflectorType() == Object.REFLECTOR_SPECULAR)
                                     refEnd = VektorSubtraktion(dirToVertex(largestRay.dir), VektorMultiplikation( 
                                         VektorMultiplikation(dirToVertex(normal), SkalärProdukt(
                                                 dirToVertex(largestRay.dir), dirToVertex(normal))/Math.pow(returnLength(dirToVertex(normal)), 2))
@@ -430,15 +445,8 @@ public class Scene {
             {
                 ++length;
                 it = it.returnChild();
-//                
             }
-<<<<<<< HEAD
-            System.out.println("Length of tree: " + length);
         }
-=======
-//            System.out.println("Length of tree: " + length);
-        
->>>>>>> 1fd983d5cb398f973c9ac621821c724027d157fb
         return resultRay;
     }
     
@@ -460,12 +468,19 @@ public class Scene {
     private int getObjectByTriangleIndex(int index)
     {
         int result = 0;
-        for(int ido = 0; ido < NROBJECTS; ++ido)
+        if(index != -1)
         {
-            if(objects[ido].checkTriangleIndexes(index))
+            for(int ido = 0; ido < NROBJECTS; ++ido)
             {
-                result = ido;
+                if(objects[ido].checkTriangleIndexes(index))
+                {
+                    result = ido;
+                }
             }
+        }
+        else
+        {
+            result = -1;
         }
         return result;
     }
