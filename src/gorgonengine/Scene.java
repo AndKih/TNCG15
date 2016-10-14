@@ -256,6 +256,7 @@ public class Scene {
         {
             objects[i].setReflectorType(Object.REFLECTOR_DIFFUSE);
         }
+            objects[2].setReflectorType(Object.REFLECTOR_SPECULAR);
         
     }
     
@@ -328,10 +329,13 @@ public class Scene {
                     if(objects[getObjectByTriangleIndex(largestRay.returnIndex())].getReflectorType() == Object.REFLECTOR_DIFFUSE)
                         refEnd = randomAngle(normal);
                     else if(objects[getObjectByTriangleIndex(largestRay.returnIndex())].getReflectorType() == Object.REFLECTOR_SPECULAR)
+                        {
+                                    //System.out.println("Specular reflection!");
                         refEnd = VektorSubtraktion(dirToVertex(largestRay.dir), VektorMultiplikation( 
                                 VektorMultiplikation(dirToVertex(normal), SkalärProdukt(
                                         dirToVertex(largestRay.dir), dirToVertex(normal))/Math.pow(returnLength(dirToVertex(normal)), 2))
                                         , 2));
+                        }
                     
                     refEnd = normalize(refEnd);
                     reflectedRay = new Ray(largestRay.end, VektorAddition(largestRay.end, refEnd), largestRay.color, largestRay.returnIndex(), Ray.RAY_IMPORTANCE);
@@ -354,12 +358,23 @@ public class Scene {
                             {
                                 Vertex refEnd = Vertex.DUMMY;
                                 if(objects[getObjectByTriangleIndex(largestRay.returnIndex())].getReflectorType() == Object.REFLECTOR_DIFFUSE)
+                                {
                                     refEnd = randomAngle(normal);
+                                }
                                 else if(objects[getObjectByTriangleIndex(largestRay.returnIndex())].getReflectorType() == Object.REFLECTOR_SPECULAR)
+                                {
+                                    //System.out.println("Specular reflection!");
                                     refEnd = VektorSubtraktion(dirToVertex(largestRay.dir), VektorMultiplikation( 
                                         VektorMultiplikation(dirToVertex(normal), SkalärProdukt(
                                                 dirToVertex(largestRay.dir), dirToVertex(normal))/Math.pow(returnLength(dirToVertex(normal)), 2))
                                                 , 2));
+                                }
+                                else
+                                {
+                                    System.out.println("Object "+getObjectByTriangleIndex(largestRay.returnIndex()) + " don't have any specified reflection type.");
+                                }
+                                
+                                
                                 refEnd = normalize(refEnd);
                                 reflectedRay = new Ray(largestRay.end, VektorAddition(largestRay.end, refEnd), largestRay.color, -1, Ray.RAY_IMPORTANCE);
                                 reflectedRay.setImportance(largestRay.getImportance());
