@@ -228,24 +228,31 @@ public class Scene {
         ++counter;
         
         objects[0].setObjectReflection(0.5);
+//        objects[0].setReflectorType(Object.REFLECTOR_DIFFUSE);
         
         objects[1] = new Mesh(mesh2);
         objects[1].setObjectReflection(0.5);
+//        objects[1].setReflectorType(Object.REFLECTOR_DIFFUSE);
         
-        objects[2] = new Sphere(new ColorDbl(40, 20, 60), new Vertex(11, -2, 1), 1, 2);
-        objects[2].setObjectReflection(0.5);
+        objects[2] = new Sphere(new ColorDbl(0, 0, 0), new Vertex(11, -2, 1), 1, 2);
+        objects[2].setObjectReflection(1);
+//        objects[2].setReflectorType(Object.REFLECTOR_DIFFUSE);
         
         objects[3] = new Mesh(new Vertex(7, 2, 2), Mesh.TYPE_RECTANGLE);
         objects[3].setObjectReflection(0.5);
+//        objects[3].setReflectorType(Object.REFLECTOR_DIFFUSE);
         
         objects[4] = new Mesh(new double[] {2}, new Vertex(5, -3, -2), Mesh.TYPE_CUBE, Mesh.COLOR_ORANGE);
         objects[4].setObjectReflection(0.5);
+//        objects[4].setReflectorType(Object.REFLECTOR_DIFFUSE);
         
         objects[5] = new Mesh(new double[] {2, 3, 4}, new Vertex(6, 3, -2), Mesh.TYPE_RECTANGLE, Mesh.COLOR_PURPLE);
         objects[5].setObjectReflection(0.5);
+//        objects[5].setReflectorType(Object.REFLECTOR_DIFFUSE);
         
         objects[6] = new Sphere(ColorDbl.GREEN, new Vertex(10, -3, -4), 1, 6);
         objects[6].setObjectReflection(0.5);
+//        objects[6].setReflectorType(Object.REFLECTOR_DIFFUSE);
         
         
         lights = new PointLightSource[2];
@@ -257,6 +264,8 @@ public class Scene {
             objects[i].setReflectorType(Object.REFLECTOR_DIFFUSE);
         }
             objects[2].setReflectorType(Object.REFLECTOR_SPECULAR);
+        
+        objects[2].setReflectorType(Object.REFLECTOR_SPECULAR);
         
     }
     
@@ -283,6 +292,8 @@ public class Scene {
                 if(VektorDistansJämförelse(newRay.end, largestRay.end, r.returnData().start))
                 {
                     largestRay = new Ray(newRay.start, newRay.end, newRay.color, newRay.returnIndex(), Ray.RAY_IMPORTANCE);
+                    if(largestRay.returnIndex() == -1)
+                        largestRay.setSphereIndex(newRay.getSphereIndex());
                     largestRay.setImportance(newRay.getImportance());
                 }
             }
@@ -301,7 +312,13 @@ public class Scene {
         if(largestRay.getImportance() > Camera.IMPORTANCETHRESHOLD)
         {
             int nRefl = N_REFLECTEDRAYS;
-            if(objects[getObjectByTriangleIndex(largestRay.returnIndex())].getReflectorType() == Object.REFLECTOR_SPECULAR)
+            if(largestRay.returnIndex() == -1)
+            {
+//                System.out.println("SphereIndex: " + largestRay.getSphereIndex());
+                if(objects[largestRay.getSphereIndex()].getReflectorType() == Object.REFLECTOR_SPECULAR)
+                    nRefl = 1;
+            }
+            else if(objects[getObjectByTriangleIndex(largestRay.returnIndex())].getReflectorType() == Object.REFLECTOR_SPECULAR)
             {
                 nRefl = 1;
             }
@@ -356,14 +373,16 @@ public class Scene {
                                 continue;
                             else
                             {
+//                                if(ido == 2 && largestRay.getSphereIndex() == 2)
+//                                {
+//                                    System.out.println(objects[ido].getReflectorType());
+//                                    System.out.println("Number of reflections: " + nRefl);
+//                                }
                                 Vertex refEnd = Vertex.DUMMY;
-                                if(objects[getObjectByTriangleIndex(largestRay.returnIndex())].getReflectorType() == Object.REFLECTOR_DIFFUSE)
-                                {
+                                if(objects[largestRay.getSphereIndex()].getReflectorType() == Object.REFLECTOR_DIFFUSE)
                                     refEnd = randomAngle(normal);
-                                }
-                                else if(objects[getObjectByTriangleIndex(largestRay.returnIndex())].getReflectorType() == Object.REFLECTOR_SPECULAR)
+                                else if(objects[largestRay.getSphereIndex()].getReflectorType() == Object.REFLECTOR_SPECULAR)
                                 {
-                                    //System.out.println("Specular reflection!");
                                     refEnd = VektorSubtraktion(dirToVertex(largestRay.dir), VektorMultiplikation( 
                                         VektorMultiplikation(dirToVertex(normal), SkalärProdukt(
                                                 dirToVertex(largestRay.dir), dirToVertex(normal))/Math.pow(returnLength(dirToVertex(normal)), 2))
@@ -430,51 +449,16 @@ public class Scene {
         
         if(!r.checkHasParent())
         {
-//            System.out.println("Traversing tree...");
             int length = 1;
             
-//            System.out.println("Triangleindex: " + r.returnData().returnIndex());
-//            System.out.println("Ray Dir: " + normalize(r.returnData().dir));
-//            System.out.println("Ray start: " + r.returnData().start);
-//            System.out.println("Ray end point: " + r.returnData().end);
             Node<Ray> it = r;
+            
             while(it.checkIfParent())
             {
                 ++length;
                 it = it.returnChild();
-//                if(it.returnData().returnIndex() == -1)
-//                {
-////                    System.out.println("Current is sphere!");
-//                    if(it.checkIfParent())
-//                    {
-//                        if(it.returnChild().returnData().returnIndex() == -1)
-//                        {
-//                            
-//                            System.out.println("Ray Dir: " + it.returnData().dir);
-//                            System.out.println("Ray start: " + it.returnData().start);
-//                            System.out.println("Ray end point: " + it.returnData().end);
-//                            System.out.println("Child ray Dir: " + it.returnChild().returnData().dir);
-//                            System.out.println("Child ray start: " + it.returnChild().returnData().start);
-//                            System.out.println("Child ray end point: " + it.returnChild().returnData().end);
-//                            System.out.println("Child ray length: " + returnLength(VektorSubtraktion(it.returnChild().returnData().start, it.returnChild().returnData().end)));
-//                        }
-//                    }
-////                    if(it.checkHasParent())
-////                        System.out.println("Previous index: " + it.returnParent().returnData().returnIndex());
-////                    else
-////                        System.out.println("No parent.");
-////                    if(it.checkIfParent())
-////                        System.out.println("Next Index: " + it.returnChild().returnData().returnIndex());
-////                    else
-////                        System.out.println("No child.");
-                }
-//                System.out.println("Triangleindex: " + it.returnData().returnIndex());
-//                System.out.println("Ray Dir: " + normalize(it.returnData().dir));
-//                System.out.println("Ray start: " + it.returnData().start);
-//                System.out.println("Ray end point: " + it.returnData().end);
             }
-//            System.out.println("Length of tree: " + length);
-        
+        }
         return resultRay;
     }
     
@@ -485,23 +469,36 @@ public class Scene {
         //limit so they can't be reflected INTO the plane
         HemisCoords refEndPol = cartToHemis(lim);
         double pi = Math.PI-(2*Math.asin(EPSILON*10));
-        double randAng = (Math.random()*pi) - (pi/2);
+        double randAng = (PDF1()-1)*(pi/2);
         refEndPol.phi +=randAng;
-        randAng = (Math.random()*pi) - (pi/2);
+        //randAng = (Math.random()*pi) - (pi/2);
+        randAng = (PDF1()-1)*(pi/2);
         refEndPol.theta +=randAng;
         
         return hemisToCart(refEndPol);
+    }
+    public double PDF1()
+    {
+        double randVal = Math.random()*2;
+        return 0.75*(1-Math.pow(randVal-1,2));
     }
     
     private int getObjectByTriangleIndex(int index)
     {
         int result = 0;
-        for(int ido = 0; ido < NROBJECTS; ++ido)
+        if(index != -1)
         {
-            if(objects[ido].checkTriangleIndexes(index))
+            for(int ido = 0; ido < NROBJECTS; ++ido)
             {
-                result = ido;
+                if(objects[ido].checkTriangleIndexes(index))
+                {
+                    result = ido;
+                }
             }
+        }
+        else
+        {
+            result = -1;
         }
         return result;
     }
