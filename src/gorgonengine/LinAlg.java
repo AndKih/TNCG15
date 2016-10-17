@@ -15,6 +15,7 @@ import java.lang.Math.*;
 public class LinAlg {
     
     public final static double EPSILON = 0.00000001;
+    public static final double ORENNAYAR_STANDARD_DEVIATION = Math.PI/4;
     
     public static Vertex VektorProdukt(Vertex p0, Vertex p1, Vertex p2)
     {
@@ -118,7 +119,7 @@ public class LinAlg {
                 result = t.reflectionCoefficient/Math.PI;
                 break;
             case Triangle.REFLECTION_ORENNAYAR:
-                double standardDeviation = Math.PI/4;
+                double standardDeviation = ORENNAYAR_STANDARD_DEVIATION;
                 double A = 1 - (Math.pow(standardDeviation, 2)/2*(Math.pow(standardDeviation, 2) + 0.33));
                 double B = (0.45*Math.pow(standardDeviation, 2)/(Math.pow(standardDeviation, 2) + 0.09));
                 double alf = Math.max(vIn.theta, vOut.theta);
@@ -141,7 +142,7 @@ public class LinAlg {
                 result = s.reflectionCoefficient/Math.PI;
                 break;
             case Triangle.REFLECTION_ORENNAYAR:
-                double standardDeviation = Math.PI/16;
+                double standardDeviation = ORENNAYAR_STANDARD_DEVIATION;
                 double A = 1 - (Math.pow(standardDeviation, 2)/2*(Math.pow(standardDeviation, 2) + 0.33));
                 double B = (0.45*Math.pow(standardDeviation, 2)/(Math.pow(standardDeviation, 2) + 0.09));
                 double alf = Math.max(vIn.theta, vOut.theta);

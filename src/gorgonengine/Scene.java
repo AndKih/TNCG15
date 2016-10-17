@@ -234,8 +234,8 @@ public class Scene {
         objects[1].setObjectReflection(0.5);
 //        objects[1].setReflectorType(Object.REFLECTOR_DIFFUSE);
         
-        objects[2] = new Sphere(new ColorDbl(40, 20, 60), new Vertex(11, -2, 1), 1, 2);
-        objects[2].setObjectReflection(0.5);
+        objects[2] = new Sphere(new ColorDbl(0, 0, 0), new Vertex(11, -2, 1), 1, 2);
+        objects[2].setObjectReflection(1);
 //        objects[2].setReflectorType(Object.REFLECTOR_DIFFUSE);
         
         objects[3] = new Mesh(new Vertex(7, 2, 2), Mesh.TYPE_RECTANGLE);
@@ -263,6 +263,7 @@ public class Scene {
         {
             objects[i].setReflectorType(Object.REFLECTOR_DIFFUSE);
         }
+            objects[2].setReflectorType(Object.REFLECTOR_SPECULAR);
         
         objects[2].setReflectorType(Object.REFLECTOR_SPECULAR);
 //        objects[3].setReflectorType(Object.REFLECTOR_SPECULAR);
@@ -346,10 +347,13 @@ public class Scene {
                     if(objects[getObjectByTriangleIndex(largestRay.returnIndex())].getReflectorType() == Object.REFLECTOR_DIFFUSE)
                         refEnd = randomAngle(normal);
                     else if(objects[getObjectByTriangleIndex(largestRay.returnIndex())].getReflectorType() == Object.REFLECTOR_SPECULAR)
+                        {
+                                    //System.out.println("Specular reflection!");
                         refEnd = VektorSubtraktion(dirToVertex(largestRay.dir), VektorMultiplikation( 
                                 VektorMultiplikation(dirToVertex(normal), SkalärProdukt(
                                         dirToVertex(largestRay.dir), dirToVertex(normal))/Math.pow(returnLength(dirToVertex(normal)), 2))
                                         , 2));
+                        }
                     
                     refEnd = normalize(refEnd);
                     reflectedRay = new Ray(largestRay.end, VektorAddition(largestRay.end, refEnd), largestRay.color, largestRay.returnIndex(), Ray.RAY_IMPORTANCE);
@@ -391,10 +395,18 @@ public class Scene {
                                 if(objects[largestRay.getSphereIndex()].getReflectorType() == Object.REFLECTOR_DIFFUSE)
                                     refEnd = randomAngle(normal);
                                 else if(objects[largestRay.getSphereIndex()].getReflectorType() == Object.REFLECTOR_SPECULAR)
+                                {
                                     refEnd = VektorSubtraktion(dirToVertex(largestRay.dir), VektorMultiplikation( 
                                         VektorMultiplikation(dirToVertex(normal), SkalärProdukt(
                                                 dirToVertex(largestRay.dir), dirToVertex(normal))/Math.pow(returnLength(dirToVertex(normal)), 2))
                                                 , 2));
+                                }
+                                else
+                                {
+                                    System.out.println("Object "+getObjectByTriangleIndex(largestRay.returnIndex()) + " don't have any specified reflection type.");
+                                }
+                                
+                                
                                 refEnd = normalize(refEnd);
                                 reflectedRay = new Ray(largestRay.end, VektorAddition(largestRay.end, refEnd), largestRay.color, -1, Ray.RAY_IMPORTANCE);
                                 HemisCoords impIn = cartToHemis(dirToVertex(largestRay.dir));
@@ -475,12 +487,18 @@ public class Scene {
         //limit so they can't be reflected INTO the plane
         HemisCoords refEndPol = cartToHemis(lim);
         double pi = Math.PI-(2*Math.asin(EPSILON*10));
-        double randAng = (Math.random()*pi) - (pi/2);
+        double randAng = (PDF1()-1)*(pi/2);
         refEndPol.phi +=randAng;
-        randAng = (Math.random()*pi) - (pi/2);
+        //randAng = (Math.random()*pi) - (pi/2);
+        randAng = (PDF1()-1)*(pi/2);
         refEndPol.theta +=randAng;
         
         return hemisToCart(refEndPol);
+    }
+    public double PDF1()
+    {
+        double randVal = Math.random()*2;
+        return 0.75*(1-Math.pow(randVal-1,2));
     }
     
     private int getObjectByTriangleIndex(int index)

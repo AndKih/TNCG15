@@ -31,7 +31,7 @@ public class Camera extends JFrame{
     public double width, height;
     private double iMax, iMin;
     public static final double IMPORTANCETHRESHOLD = 0.1;
-    public static final int N_REFLECTEDRAYS = 4;
+    public static final int N_REFLECTEDRAYS = 3;
     Scene scene;
     
     
@@ -69,6 +69,7 @@ public class Camera extends JFrame{
         double newZ;
                 
         int percentEffictivicer = 0;
+        int percentEffictivicer2 = 0;
         for(int px = 0; px<SIZEX; px++)
         {
             //if statement just here to simplify waiting by displaying a number
