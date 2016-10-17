@@ -134,7 +134,8 @@ public class Mesh extends Object{
 //                    System.out.println("res: " + res);
             }
             Ray resultRay = new Ray(r.start, newEnd, res, mesh[savedID].triangleIndex, Ray.RAY_IMPORTANCE);
-            resultRay.setImportance(r.getImportance()*mesh[savedID].reflectionCoefficient);
+            resultRay.setImportance(r.getImportance());
+//            resultRay.setImportance(r.getImportance()*mesh[savedID].reflectionCoefficient);
 //            if(resultRay.returnIndex() == 1)
 //            {
 //                System.out.println("tmpCol: " + tmpCol);

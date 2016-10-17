@@ -17,7 +17,7 @@ public class Sphere extends Object{
     public ColorDbl color;
     public double radius;
     public Vertex center;
-    private double reflectionCoefficient;
+    public double reflectionCoefficient;
     private int objectID;
     private int reflectorType;
     //public Triangle[] mesh;
@@ -85,7 +85,7 @@ public class Sphere extends Object{
                     return Ray.ERROR_RAY;
                 ColorDbl col = intensityCalc(x1,ls);
                 Ray resultRay = new Ray(r.start, x1, col, -1, Ray.RAY_IMPORTANCE);
-                resultRay.setImportance(r.getImportance()*reflectionCoefficient);
+//                resultRay.setImportance(r.getImportance()*reflectionCoefficient);
                 resultRay.setSphereIndex(objectID);
                 if(returnLength(VektorSubtraktion(resultRay.start, resultRay.end)) < EPSILON)
                     return Ray.ERROR_RAY;
@@ -104,7 +104,8 @@ public class Sphere extends Object{
                     return Ray.ERROR_RAY;
                 ColorDbl col = intensityCalc(x2,ls);
                 Ray resultRay = new Ray(r.start, x2, col, -1, Ray.RAY_IMPORTANCE);
-                resultRay.setImportance(r.getImportance()*reflectionCoefficient);
+//                resultRay.setImportance(r.getImportance()*reflectionCoefficient);
+                resultRay.setImportance(r.getImportance());
                 resultRay.setSphereIndex(objectID);
                 if(returnLength(VektorSubtraktion(resultRay.start, resultRay.end)) < EPSILON)
                     return Ray.ERROR_RAY;

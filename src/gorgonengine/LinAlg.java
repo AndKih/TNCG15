@@ -118,12 +118,35 @@ public class LinAlg {
                 result = t.reflectionCoefficient/Math.PI;
                 break;
             case Triangle.REFLECTION_ORENNAYAR:
-                double standardDeviation = Math.PI/16;
+                double standardDeviation = Math.PI/4;
                 double A = 1 - (Math.pow(standardDeviation, 2)/2*(Math.pow(standardDeviation, 2) + 0.33));
                 double B = (0.45*Math.pow(standardDeviation, 2)/(Math.pow(standardDeviation, 2) + 0.09));
                 double alf = Math.max(vIn.theta, vOut.theta);
                 double beta = Math.min(vIn.theta, vOut.theta);
                 result = (t.reflectionCoefficient/Math.PI)*(A+B*(Math.max(0, Math.cos(vIn.phi - vOut.phi)))*Math.sin(alf)*Math.sin(beta));
+                break;
+            default:
+                result = 0;
+                break;
+        }
+        return result;
+    }
+    
+    public static double BRDFsphere(Sphere s, int reflector_type, HemisCoords vIn, HemisCoords vOut)
+    {
+        double result;
+        switch(reflector_type)
+        {
+            case Triangle.REFLECTION_LAMBERTIAN:
+                result = s.reflectionCoefficient/Math.PI;
+                break;
+            case Triangle.REFLECTION_ORENNAYAR:
+                double standardDeviation = Math.PI/16;
+                double A = 1 - (Math.pow(standardDeviation, 2)/2*(Math.pow(standardDeviation, 2) + 0.33));
+                double B = (0.45*Math.pow(standardDeviation, 2)/(Math.pow(standardDeviation, 2) + 0.09));
+                double alf = Math.max(vIn.theta, vOut.theta);
+                double beta = Math.min(vIn.theta, vOut.theta);
+                result = (s.reflectionCoefficient/Math.PI)*(A+B*(Math.max(0, Math.cos(vIn.phi - vOut.phi)))*Math.sin(alf)*Math.sin(beta));
                 break;
             default:
                 result = 0;
