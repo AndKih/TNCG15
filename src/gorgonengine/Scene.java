@@ -272,7 +272,7 @@ public class Scene {
     
     public Ray rayIntersection(Node<Ray> r)
     {
-        Ray newRay, reflectedRay = new Ray(r.returnData()), resultRay;
+        Ray newRay, reflectedRay = new Ray(r.returnData()), refractedRay = new Ray(r.returnData()), resultRay;
         
         Node<Ray> rayit = new Node<Ray>();
         
@@ -293,6 +293,7 @@ public class Scene {
                 if(VektorDistansJämförelse(newRay.end, largestRay.end, r.returnData().start))
                 {
                     largestRay = new Ray(newRay.start, newRay.end, newRay.color, newRay.returnIndex(), Ray.RAY_IMPORTANCE);
+                    largestRay.setReflectionType(Ray.RAY_REFLECTION);
                     if(largestRay.returnIndex() == -1)
                         largestRay.setSphereIndex(newRay.getSphereIndex());
                     largestRay.setImportance(newRay.getImportance());
@@ -306,7 +307,7 @@ public class Scene {
         
         if(r.returnData().returnIndex() == largestRay.returnIndex() && r.returnData().returnIndex() != -1 && largestRay.returnIndex() != -1)
         {
-            System.out.println("Same index.");
+            System.out.println("Same index:" + largestRay.returnIndex());
             System.out.println("LargestRay start: " + largestRay.start + "\nLargestRay   end: " + largestRay.end);
             System.out.println("returnedRay start:" + r.returnData().start + "\nreturnedRay   end:" + r.returnData().end);
         }
@@ -354,21 +355,29 @@ public class Scene {
                                         dirToVertex(largestRay.dir), dirToVertex(normal))/Math.pow(returnLength(dirToVertex(normal)), 2))
                                         , 2));
                         }
-                    
                     refEnd = normalize(refEnd);
                     reflectedRay = new Ray(largestRay.end, VektorAddition(largestRay.end, refEnd), largestRay.color, largestRay.returnIndex(), Ray.RAY_IMPORTANCE);
+                    reflectedRay.setReflectionType(Ray.RAY_REFLECTION);
                     HemisCoords impIn = cartToHemis(dirToVertex(largestRay.dir));
                     HemisCoords impOut = cartToHemis(dirToVertex(reflectedRay.dir));
-                    reflectedRay.setImportance(largestRay.getImportance()*Math.PI*BRDF(
+                    if(objects[getObjectByTriangleIndex(largestRay.returnIndex())].getReflectorType() == Object.REFLECTOR_SPECULAR)
+                    {
+                        reflectedRay.setImportance(largestRay.getImportance()*Math.PI*BRDF(
+                            objects[getObjectByTriangleIndex(largestRay.returnIndex())].
+                            returnTriangleById(largestRay.returnIndex()), 
+                            Triangle.REFLECTION_COOKTORRANCE, impIn, impOut));
+                    }
+                    else
+                    {
+                        reflectedRay.setImportance(largestRay.getImportance()*Math.PI*BRDF(
                             objects[getObjectByTriangleIndex(largestRay.returnIndex())].
                             returnTriangleById(largestRay.returnIndex()), 
                             Triangle.REFLECTION_ORENNAYAR, impIn, impOut));
-//                    if(getObjectByTriangleIndex(largestRay.returnIndex()) == 3)
-//                    {
-//                        
-//                        System.out.println("Importance: " + reflectedRay.getImportance());
-//                    }
-                        
+                    }
+//                    reflectedRay.setImportance(largestRay.getImportance()*Math.PI*BRDF(
+//                            objects[getObjectByTriangleIndex(largestRay.returnIndex())].
+//                            returnTriangleById(largestRay.returnIndex()), 
+//                            Triangle.REFLECTION_ORENNAYAR, impIn, impOut));
 //                    reflectedRay.setImportance(largestRay.getImportance());
                     rayit = new Node<Ray>(reflectedRay, r);
                     r.addChild(rayit);
@@ -409,11 +418,21 @@ public class Scene {
                                 
                                 refEnd = normalize(refEnd);
                                 reflectedRay = new Ray(largestRay.end, VektorAddition(largestRay.end, refEnd), largestRay.color, -1, Ray.RAY_IMPORTANCE);
+                                reflectedRay.setReflectionType(Ray.RAY_REFLECTION);
                                 HemisCoords impIn = cartToHemis(dirToVertex(largestRay.dir));
                                 HemisCoords impOut = cartToHemis(dirToVertex(reflectedRay.dir));
-                                reflectedRay.setImportance(largestRay.getImportance()*Math.PI*BRDFsphere(
+                                if(objects[reflectedRay.getSphereIndex()].getReflectorType() == Object.REFLECTOR_SPECULAR)
+                                {
+                                    reflectedRay.setImportance(largestRay.getImportance()*Math.PI*BRDFsphere(
+                                        (Sphere)objects[largestRay.getSphereIndex()], 
+                                        Triangle.REFLECTION_COOKTORRANCE, impIn, impOut));
+                                }
+                                else
+                                {
+                                    reflectedRay.setImportance(largestRay.getImportance()*Math.PI*BRDFsphere(
                                         (Sphere)objects[largestRay.getSphereIndex()], 
                                         Triangle.REFLECTION_ORENNAYAR, impIn, impOut));
+                                }
 //                                reflectedRay.setImportance(largestRay.getImportance());
                                 rayit = new Node<Ray>(reflectedRay, r);
                                 r.addChild(rayit);

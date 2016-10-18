@@ -20,6 +20,8 @@ public class Sphere extends Object{
     public double reflectionCoefficient;
     private int objectID;
     private int reflectorType;
+    private boolean lightsource;
+    private boolean transparent;
     //public Triangle[] mesh;
     
     public Sphere(ColorDbl c, Vertex center, double radius, int index)
@@ -29,6 +31,19 @@ public class Sphere extends Object{
         this.radius = radius;
         color = c;
         objectID = index;
+        lightsource = false;
+        transparent = false;
+    }
+    
+    public Sphere(ColorDbl c, Vertex center, double radius, int index, boolean ls, boolean trans)
+    {
+        setReflectorType(Object.REFLECTOR_SPECULAR);
+        this.center = center;
+        this.radius = radius;
+        color = c;
+        objectID = index;
+        lightsource = ls;
+        transparent = trans;
     }
     
     public void setObjectReflection(double p)
@@ -267,6 +282,16 @@ public class Sphere extends Object{
     public boolean isSphere()
     {
         return true;
+    }
+    
+    public boolean isTransparent()
+    {
+        return transparent;
+    }
+    
+    public boolean isLightsource()
+    {
+        return lightsource;
     }
     
     public int getReflectorType()

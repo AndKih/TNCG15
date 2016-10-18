@@ -126,6 +126,27 @@ public class LinAlg {
                 double beta = Math.min(vIn.theta, vOut.theta);
                 result = (t.reflectionCoefficient/Math.PI)*(A+B*(Math.max(0, Math.cos(vIn.phi - vOut.phi)))*Math.sin(alf)*Math.sin(beta));
                 break;
+            case Triangle.REFLECTION_COOKTORRANCE:
+                Vertex bisectorOfLight = VektorAddition(
+                        VektorMultiplikation(hemisToCart(vIn), returnLength(hemisToCart(vOut))), 
+                        VektorMultiplikation(hemisToCart(vOut), returnLength(hemisToCart(vIn))));
+                double t_var = SkalärProdukt(bisectorOfLight, dirToVertex(t.normal));
+                double u_var = SkalärProdukt(bisectorOfLight, hemisToCart(vOut));
+                double v_var = SkalärProdukt(hemisToCart(vOut), dirToVertex(t.normal));
+                double vprim_var = SkalärProdukt(hemisToCart(vIn), dirToVertex(t.normal));
+                double d = 0, s = 1;
+                double diff_wavelength = 0.5;
+                double fresnel_wavelength = 0.5;
+                double non_light_obstruction = 0.9;
+                double facet_slope_dist = 100;
+                result = ((d/Math.PI)*diff_wavelength) + 
+                        (s/(4*Math.PI)*SkalärProdukt(hemisToCart(vOut), hemisToCart(vIn)))*
+                        fresnel_wavelength*non_light_obstruction*facet_slope_dist;
+//                double w_var = SkalärProdukt(surface tangent vector and projection of bisector on surface);
+                break;
+            case Triangle.REFLECTION_WARD:
+                result = 0;
+                break;
             default:
                 result = 0;
                 break;
@@ -148,6 +169,27 @@ public class LinAlg {
                 double alf = Math.max(vIn.theta, vOut.theta);
                 double beta = Math.min(vIn.theta, vOut.theta);
                 result = (s.reflectionCoefficient/Math.PI)*(A+B*(Math.max(0, Math.cos(vIn.phi - vOut.phi)))*Math.sin(alf)*Math.sin(beta));
+                break;
+                case Triangle.REFLECTION_COOKTORRANCE:
+//                Vertex bisectorOfLight = VektorAddition(
+//                        VektorMultiplikation(hemisToCart(vIn), returnLength(hemisToCart(vOut))), 
+//                        VektorMultiplikation(hemisToCart(vOut), returnLength(hemisToCart(vIn))));
+//                double t_var = SkalärProdukt(bisectorOfLight, dirToVertex(t.normal));
+//                double u_var = SkalärProdukt(bisectorOfLight, hemisToCart(vOut));
+//                double v_var = SkalärProdukt(hemisToCart(vOut), dirToVertex(t.normal));
+//                double vprim_var = SkalärProdukt(hemisToCart(vIn), dirToVertex(t.normal));
+                double d = 0, s_var = 1;
+                double diff_wavelength = 0.5;
+                double fresnel_wavelength = 0.5;
+                double non_light_obstruction = 0.9;
+                double facet_slope_dist = 100;
+                result = ((d/Math.PI)*diff_wavelength) + 
+                        (s_var/(4*Math.PI)*SkalärProdukt(hemisToCart(vOut), hemisToCart(vIn)))*
+                        fresnel_wavelength*non_light_obstruction*facet_slope_dist;
+//                double w_var = SkalärProdukt(surface tangent vector and projection of bisector on surface);
+                break;
+            case Triangle.REFLECTION_WARD:
+                result = 0;
                 break;
             default:
                 result = 0;

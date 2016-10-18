@@ -21,6 +21,8 @@ public class Mesh extends Object{
     public final int SIZE;
     public Triangle[] mesh;
     private int reflectorType;
+    private boolean lightsource;
+    private boolean transparent;
     
     public Mesh(Triangle[] shape)
     {
@@ -32,6 +34,20 @@ public class Mesh extends Object{
 //            System.out.println("TriangleID: " + shape[i].triangleIndex);
             mesh[i] = new Triangle(shape[i].p, shape[i].color, shape[i].triangleIndex);
         }
+    }
+    
+    public Mesh(Triangle[] shape, boolean ls, boolean trans)
+    {
+        SIZE = shape.length;
+        mesh = new Triangle[SIZE];
+        setReflectorType(Object.REFLECTOR_SPECULAR);
+        for(int i = 0; i < shape.length; i++)
+        {
+//            System.out.println("TriangleID: " + shape[i].triangleIndex);
+            mesh[i] = new Triangle(shape[i].p, shape[i].color, shape[i].triangleIndex);
+        }
+        lightsource = ls;
+        transparent = trans;
     }
     
     public Mesh(Vertex center, int type)
@@ -53,6 +69,29 @@ public class Mesh extends Object{
                 SIZE = 0;
                 break;
         }
+    }
+    
+    public Mesh(Vertex center, int type, boolean ls, boolean trans)
+    {
+        setReflectorType(Object.REFLECTOR_SPECULAR);
+        switch(type)
+        {
+            case TYPE_CUBE:
+                SIZE = 12;
+                mesh = new Triangle[SIZE];
+                buildDefaultCube(center);
+                break;
+            case TYPE_RECTANGLE:
+                SIZE = 12;
+                mesh = new Triangle[SIZE];
+                buildDefaultRectangle(center);
+                break;
+            default:
+                SIZE = 0;
+                break;
+        }
+        lightsource = ls;
+        transparent = trans;
     }
     
     public Mesh(double[] lengths, Vertex center, int type, ColorDbl[] colorList)
@@ -77,6 +116,30 @@ public class Mesh extends Object{
         }
     }
     
+    public Mesh(double[] lengths, Vertex center, int type, ColorDbl[] colorList, boolean ls, boolean trans)
+    {
+        setReflectorType(Object.REFLECTOR_SPECULAR);
+        switch(type)
+        {
+            case TYPE_CUBE:
+                SIZE = 12;
+                mesh = new Triangle[SIZE];
+                buildCube(lengths[0], center, colorList);
+                break;
+            case TYPE_RECTANGLE:
+                SIZE = 12;
+                mesh = new Triangle[SIZE];
+                buildRectangle(lengths[0], lengths[1], lengths[2], center, colorList);
+                break;
+            default:
+                SIZE = 0;
+                break;
+                
+        }
+        lightsource = ls;
+        transparent = trans;
+    }
+    
     public Mesh(double[] lengths, Vertex center, int type, int colortype)
     {
         setReflectorType(Object.REFLECTOR_SPECULAR);
@@ -97,6 +160,30 @@ public class Mesh extends Object{
                 break;
                 
         }
+    }
+    
+    public Mesh(double[] lengths, Vertex center, int type, int colortype, boolean ls, boolean trans)
+    {
+        setReflectorType(Object.REFLECTOR_SPECULAR);
+        switch(type)
+        {
+            case TYPE_CUBE:
+                SIZE = 12;
+                mesh = new Triangle[SIZE];
+                buildCube(lengths[0], center, colortype);
+                break;
+            case TYPE_RECTANGLE:
+                SIZE = 12;
+                mesh = new Triangle[SIZE];
+                buildRectangle(lengths[0], lengths[1], lengths[2], center, colortype);
+                break;
+            default:
+                SIZE = 0;
+                break;
+                
+        }
+        lightsource = ls;
+        transparent = trans;
     }
         
     public Ray rayIntersection(Ray r, PointLightSource[] ls)
@@ -1005,6 +1092,16 @@ public class Mesh extends Object{
     public boolean isSphere()
     {
         return false;
+    }
+    
+    public boolean isTransparent()
+    {
+        return transparent;
+    }
+    
+    public boolean isLightsource()
+    {
+        return lightsource;
     }
     
     public Direction returnNormal(Vertex vr)

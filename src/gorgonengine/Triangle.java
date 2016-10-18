@@ -21,6 +21,7 @@ public class Triangle {
     public ColorDbl color;
     public final int REFLECTION_TYPE;
     public static final int REFLECTION_LAMBERTIAN = 100, REFLECTION_ORENNAYAR = 101;
+    public static final int REFLECTION_COOKTORRANCE = 102, REFLECTION_WARD = 103;
     public final int triangleIndex;
     // reflectionCoeff. p is 0<=p<=1.
     public double reflectionCoefficient;
