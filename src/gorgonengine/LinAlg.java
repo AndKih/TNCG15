@@ -414,4 +414,32 @@ public class LinAlg {
         return h;
     }
     
+    public static Vertex H_getterSphere(Sphere sph, Vertex rayEnd, Direction hLine)
+    {
+        Vertex normal = VektorSubtraktion(rayEnd,sph.center);
+        
+        Vertex vi = new Vertex(1,0,0);
+        //if normal parallell med x-planet
+        if(Math.abs(normal.y) < EPSILON && Math.abs(normal.z) < EPSILON)
+        {
+            vi = new Vertex(0,1,0);
+        }
+        
+        Vertex vi_n = VektorMultiplikation(normal,SkalärProdukt(vi, normal)/SkalärProdukt(normal,normal));
+        
+        Vertex v1 = normalize(VektorSubtraktion(vi,vi_n));
+        Vertex v2 = KryssProdukt(v1,normal);
+        
+        Vertex hl = dirToVertex(hLine);
+        
+        double mult = SkalärProdukt(hl, v1)/SkalärProdukt(v1,v1);
+        Vertex h_v1 = VektorMultiplikation(v1,mult);
+        
+        mult = SkalärProdukt(hl, v2)/SkalärProdukt(v2,v2);
+        Vertex h_v2 = VektorMultiplikation(v2,mult);
+        
+        Vertex h = VektorAddition(h_v1,h_v2);
+        return h;
+    }
+    
 }
