@@ -17,9 +17,11 @@ public class Sphere extends Object{
     public ColorDbl color;
     public double radius;
     public Vertex center;
-    private double reflectionCoefficient;
+    public double reflectionCoefficient;
     private int objectID;
     private int reflectorType;
+    private boolean lightsource;
+    private boolean transparent;
     //public Triangle[] mesh;
     
     public Sphere(ColorDbl c, Vertex center, double radius, int index)
@@ -29,6 +31,19 @@ public class Sphere extends Object{
         this.radius = radius;
         color = c;
         objectID = index;
+        lightsource = false;
+        transparent = false;
+    }
+    
+    public Sphere(ColorDbl c, Vertex center, double radius, int index, boolean ls, boolean trans)
+    {
+        setReflectorType(Object.REFLECTOR_SPECULAR);
+        this.center = center;
+        this.radius = radius;
+        color = c;
+        objectID = index;
+        lightsource = ls;
+        transparent = trans;
     }
     
     public void setObjectReflection(double p)
@@ -85,7 +100,7 @@ public class Sphere extends Object{
                     return Ray.ERROR_RAY;
                 ColorDbl col = intensityCalc(x1,ls);
                 Ray resultRay = new Ray(r.start, x1, col, -1, Ray.RAY_IMPORTANCE);
-                resultRay.setImportance(r.getImportance()*reflectionCoefficient);
+//                resultRay.setImportance(r.getImportance()*reflectionCoefficient);
                 resultRay.setSphereIndex(objectID);
                 if(returnLength(VektorSubtraktion(resultRay.start, resultRay.end)) < EPSILON)
                     return Ray.ERROR_RAY;
@@ -104,7 +119,8 @@ public class Sphere extends Object{
                     return Ray.ERROR_RAY;
                 ColorDbl col = intensityCalc(x2,ls);
                 Ray resultRay = new Ray(r.start, x2, col, -1, Ray.RAY_IMPORTANCE);
-                resultRay.setImportance(r.getImportance()*reflectionCoefficient);
+//                resultRay.setImportance(r.getImportance()*reflectionCoefficient);
+                resultRay.setImportance(r.getImportance());
                 resultRay.setSphereIndex(objectID);
                 if(returnLength(VektorSubtraktion(resultRay.start, resultRay.end)) < EPSILON)
                     return Ray.ERROR_RAY;
@@ -266,6 +282,16 @@ public class Sphere extends Object{
     public boolean isSphere()
     {
         return true;
+    }
+    
+    public boolean isTransparent()
+    {
+        return transparent;
+    }
+    
+    public boolean isLightsource()
+    {
+        return lightsource;
     }
     
     public int getReflectorType()

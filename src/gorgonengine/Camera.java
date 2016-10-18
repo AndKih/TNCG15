@@ -31,11 +31,11 @@ public class Camera extends JFrame{
     public double width, height;
     private double iMax, iMin;
     public static final double IMPORTANCETHRESHOLD = 0.1;
-    public static final int N_REFLECTEDRAYS = 3;
+    public static final int N_REFLECTEDRAYS = 4;
     Scene scene;
     
     
-    public int raysPerPixel = 2;
+    public int raysPerPixel = 4;
     
     private double deltax;
     private double deltay;
@@ -97,6 +97,7 @@ public class Camera extends JFrame{
     //                System.out.println("Target: " + target);
     //                System.out.println("Start: " + vp);
                     r = new Ray(vp, target, new ColorDbl(0, 0, 0), -2, Ray.RAY_IMPORTANCE);
+                    r.setReflectionType(Ray.RAY_REFLECTION);
                     Node<Ray> raystart = new Node<Ray>(r);
                     r = scene.rayIntersection(raystart);
                     cam[px][py].addColor(r.color);
