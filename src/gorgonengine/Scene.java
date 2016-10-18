@@ -432,13 +432,13 @@ public class Scene {
                                 if(objects[reflectedRay.getSphereIndex()].getReflectorType() == Object.REFLECTOR_SPECULAR)
                                 {
                                     reflectedRay.setImportance(largestRay.getImportance()*Math.PI*BRDFsphere(
-                                        (Sphere)objects[largestRay.getSphereIndex()], 
+                                        (Sphere)objects[largestRay.getSphereIndex()], reflectedRay.end,
                                         Triangle.REFLECTION_COOKTORRANCE, impIn, impOut));
                                 }
                                 else
                                 {
                                     reflectedRay.setImportance(largestRay.getImportance()*Math.PI*BRDFsphere(
-                                        (Sphere)objects[largestRay.getSphereIndex()], 
+                                        (Sphere)objects[largestRay.getSphereIndex()], reflectedRay.end,
                                         Triangle.REFLECTION_ORENNAYAR, impIn, impOut));
                                 }
 //                                reflectedRay.setImportance(largestRay.getImportance());
