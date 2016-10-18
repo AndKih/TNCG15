@@ -12,12 +12,17 @@ package gorgonengine;
 public abstract class Object {
     
     public static final int REFLECTOR_DIFFUSE = 500, REFLECTOR_SPECULAR = 501;
+    public static final double PROP_AIR = 1.000277, PROP_ICE = 1.31, PROP_LIQUIDHELIUM = 1.025, 
+                               PROP_VACUUM = 1, PROP_LIVER = 1.396, PROP_GERMANIUM = 4.05, PROP_GLASS = 1.458;
     private int reflectorType;
-    public boolean transparent = false;
+    public double reflectionCoefficient;
+    private boolean lightsource;
+    private boolean transparent;
+    private final double MATERIAL_PROPERTY;
     
     public Object()
     {
-        
+        MATERIAL_PROPERTY = PROP_AIR;
     }
     
     public abstract Ray rayIntersection(Ray r, PointLightSource ls[]);
@@ -36,6 +41,7 @@ public abstract class Object {
     public abstract Direction returnNormal(Vertex vr);
     public abstract int getReflectorType();
     public abstract void setReflectorType(int newType);
+    public abstract double returnProperty();
 
     public abstract void rotateX(double angle);
     public abstract void rotateY(double angle);

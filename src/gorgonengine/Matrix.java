@@ -9,6 +9,9 @@ package gorgonengine;
  *
  * @author Andreas
  */
+
+import java.lang.Math.*;
+
 public class Matrix {
     
     private final int DIMENSIONS;
@@ -147,6 +150,11 @@ public class Matrix {
     public int returnDim()
     {
         return DIMENSIONS;
+    }
+    
+    public double returnDimRoot()
+    {
+        return Math.sqrt(DIMENSIONS);
     }
     
 }
