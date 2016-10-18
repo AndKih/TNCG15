@@ -196,7 +196,7 @@ public class Scene {
         {
             mesh[idm].setReflectionCoefficient(1);
         }
-        NROBJECTS = 7;
+        NROBJECTS = 4;
         objects = new Object[NROBJECTS];
         objects[0] = new Mesh(mesh);
         
@@ -238,20 +238,21 @@ public class Scene {
         objects[2].setObjectReflection(1);
 //        objects[2].setReflectorType(Object.REFLECTOR_DIFFUSE);
         
-        objects[3] = new Mesh(new Vertex(7, 2, 2), Mesh.TYPE_RECTANGLE);
-        objects[3].setObjectReflection(0.5);
-//        objects[3].setReflectorType(Object.REFLECTOR_DIFFUSE);
-        
-        objects[4] = new Mesh(new double[] {2}, new Vertex(5, -3, -2), Mesh.TYPE_CUBE, Mesh.COLOR_ORANGE);
-        objects[4].setObjectReflection(0.5);
+//        objects[4] = new Mesh(new Vertex(7, 2, 2), Mesh.TYPE_RECTANGLE);
+//        objects[4].setObjectReflection(0.5);
 //        objects[4].setReflectorType(Object.REFLECTOR_DIFFUSE);
         
-        objects[5] = new Mesh(new double[] {2, 3, 4}, new Vertex(6, 3, -2), Mesh.TYPE_RECTANGLE, Mesh.COLOR_PURPLE);
-        objects[5].setObjectReflection(0.5);
+        objects[3] = new Mesh(new double[] {2}, new Vertex(5, -3, -2), Mesh.TYPE_CUBE, Mesh.COLOR_ORANGE);
+        objects[3].setObjectReflection(0.5);
+//        objects[3].transparent = true;
+//        objects[4].setReflectorType(Object.REFLECTOR_DIFFUSE);
+        
+//        objects[5] = new Mesh(new double[] {2, 3, 4}, new Vertex(6, 3, -2), Mesh.TYPE_RECTANGLE, Mesh.COLOR_PURPLE);
+//        objects[5].setObjectReflection(0.5);
 //        objects[5].setReflectorType(Object.REFLECTOR_DIFFUSE);
         
-        objects[6] = new Sphere(ColorDbl.GREEN, new Vertex(10, -3, -4), 1, 6);
-        objects[6].setObjectReflection(0.5);
+//        objects[6] = new Sphere(ColorDbl.GREEN, new Vertex(10, -3, -4), 1, 6);
+//        objects[6].setObjectReflection(0.5);
 //        objects[6].setReflectorType(Object.REFLECTOR_DIFFUSE);
         
         
@@ -263,9 +264,8 @@ public class Scene {
         {
             objects[i].setReflectorType(Object.REFLECTOR_DIFFUSE);
         }
-            objects[2].setReflectorType(Object.REFLECTOR_SPECULAR);
-        
         objects[2].setReflectorType(Object.REFLECTOR_SPECULAR);
+        
         
     }
     
@@ -306,21 +306,29 @@ public class Scene {
         if(r.returnData().returnIndex() == largestRay.returnIndex() && r.returnData().returnIndex() != -1 && largestRay.returnIndex() != -1)
         {
             System.out.println("Same index.");
-            System.out.println("LargestRay start: " + largestRay.start + "\nLargestRay   end: " + largestRay.end);
-            System.out.println("returnedRay start:" + r.returnData().start + "\nreturnedRay   end:" + r.returnData().end);
+//            System.out.println("LargestRay start: " + largestRay.start + "\nLargestRay   end: " + largestRay.end);
+//            System.out.println("returnedRay start:" + r.returnData().start + "\nreturnedRay   end:" + r.returnData().end);
         }
         if(largestRay.getImportance() > Camera.IMPORTANCETHRESHOLD)
         {
             int nRefl = N_REFLECTEDRAYS;
+            int objIndex = getObjectByTriangleIndex(largestRay.returnIndex());
             if(largestRay.returnIndex() == -1)
             {
+                objIndex = largestRay.getSphereIndex();
 //                System.out.println("SphereIndex: " + largestRay.getSphereIndex());
                 if(objects[largestRay.getSphereIndex()].getReflectorType() == Object.REFLECTOR_SPECULAR)
+                {
                     nRefl = 1;
+                }
             }
             else if(objects[getObjectByTriangleIndex(largestRay.returnIndex())].getReflectorType() == Object.REFLECTOR_SPECULAR)
             {
                 nRefl = 1;
+            }
+            if(objects[objIndex].transparent)
+            {
+                nRefl *=2;
             }
             Ray[] tmpRay = new Ray[nRefl]; 
             for(int indRefl = 0; indRefl < nRefl; indRefl++)
@@ -353,10 +361,23 @@ public class Scene {
                                         dirToVertex(largestRay.dir), dirToVertex(normal))/Math.pow(returnLength(dirToVertex(normal)), 2))
                                         , 2));
                         }
-                    
-                    refEnd = normalize(refEnd);
-                    reflectedRay = new Ray(largestRay.end, VektorAddition(largestRay.end, refEnd), largestRay.color, largestRay.returnIndex(), Ray.RAY_IMPORTANCE);
-                    reflectedRay.setImportance(largestRay.getImportance());
+//                    if(objects[objIndex].transparent && indRefl > nRefl/2)
+//                    {
+////                        System.out.println(refEnd.toString());
+//                        refEnd = VektorSubtraktion(refEnd,VektorMultiplikation(refEnd,2));
+////                        System.out.println(refEnd.toString()+"\n");
+//                        refEnd = normalize(refEnd);
+//                        reflectedRay = new Ray(largestRay.end, VektorAddition(largestRay.end, refEnd), ColorDbl.BLACK, largestRay.returnIndex(), Ray.RAY_IMPORTANCE);
+//                        reflectedRay.setImportance(largestRay.getImportance()/2); 
+//                        reflectedRay.setReflectionType(Ray.RAY_REFRACTION);
+//                    }
+//                    else
+//                    {
+                        refEnd = normalize(refEnd);
+                        reflectedRay = new Ray(largestRay.end, VektorAddition(largestRay.end, refEnd), largestRay.color, largestRay.returnIndex(), Ray.RAY_IMPORTANCE);
+                        reflectedRay.setImportance(largestRay.getImportance()); 
+                        reflectedRay.setReflectionType(Ray.RAY_REFLECTION);
+//                    }
                     rayit = new Node<Ray>(reflectedRay, r);
                     r.addChild(rayit);
                 }

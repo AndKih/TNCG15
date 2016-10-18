@@ -13,6 +13,7 @@ public abstract class Object {
     
     public static final int REFLECTOR_DIFFUSE = 500, REFLECTOR_SPECULAR = 501;
     private int reflectorType;
+    public boolean transparent = false;
     
     public Object()
     {
