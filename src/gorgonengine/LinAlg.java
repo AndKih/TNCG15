@@ -409,6 +409,7 @@ public class LinAlg {
         Vertex h_v2 = VektorMultiplikation(v2,mult);
         
         Vertex h = VektorAddition(h_v1,h_v2);
+        h = VektorSubtraktion(h,VektorMultiplikation(h,2));
         h = normalize(h);
         return h;
     }
