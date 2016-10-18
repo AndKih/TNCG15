@@ -462,5 +462,22 @@ public class LinAlg {
 //        
 //        return new HemisCoords(theta, 0, 0);
 //    }
+    public static Vertex H_getter(Triangle tri, Direction hLine)
+    {
+        Vertex hl = dirToVertex(hLine);
+        Vertex v1 = VektorSubtraktion(tri.p[1],tri.p[0]);
+        Vertex v2 = VektorSubtraktion(tri.p[2],tri.p[0]);
+        
+        double mult = SkalärProdukt(hl, v1)/SkalärProdukt(v1,v1);
+        Vertex h_v1 = VektorMultiplikation(v1,mult);
+        
+        mult = SkalärProdukt(hl, v2)/SkalärProdukt(v2,v2);
+        Vertex h_v2 = VektorMultiplikation(v2,mult);
+        
+        Vertex h = VektorAddition(h_v1,h_v2);
+        h = VektorSubtraktion(h,VektorMultiplikation(h,2));
+        h = normalize(h);
+        return h;
+    }
     
 }
