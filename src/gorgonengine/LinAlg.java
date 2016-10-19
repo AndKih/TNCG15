@@ -128,51 +128,51 @@ public class LinAlg {
                 double beta = Math.min(vIn.theta, vOut.theta);
                 result = (t.reflectionCoefficient/Math.PI)*(A+B*(Math.max(0, Math.cos(vIn.phi - vOut.phi)))*Math.sin(alf)*Math.sin(beta));
                 break;
-            case Triangle.REFLECTION_COOKTORRANCE:
-                bisectorOfLight = VektorAddition(
-                        VektorMultiplikation(hemisToCart(vIn), returnLength(hemisToCart(vOut))), 
-                        VektorMultiplikation(hemisToCart(vOut), returnLength(hemisToCart(vIn))));
-                h_projection = projection_getter(t, vertexToDir(bisectorOfLight));
-                t_line = tangent_getter(t, vertexToDir(bisectorOfLight));
-                t_var = SkalärProdukt(bisectorOfLight, dirToVertex(t.normal));
-                u_var = SkalärProdukt(bisectorOfLight, hemisToCart(vOut));
-                v_var = SkalärProdukt(hemisToCart(vOut), dirToVertex(t.normal));
-                vprim_var = SkalärProdukt(hemisToCart(vIn), dirToVertex(t.normal));
-                w_var = SkalärProdukt(t_line, h_projection);
-                d = 0;
-                s = 1;
-                diff_wavelength = 0.5;
-                fresnel_wavelength = 0.5;
-                non_light_obstruction = 0.9;
-                facet_slope_dist = 100;
-                result = ((d/Math.PI)*diff_wavelength) + 
-                        (s/(4*Math.PI)*SkalärProdukt(hemisToCart(vOut), hemisToCart(vIn)))*
-                        fresnel_wavelength*non_light_obstruction*facet_slope_dist;
-//                double w_var = SkalärProdukt(surface tangent vector and projection of bisector on surface);
-                break;
-            case Triangle.REFLECTION_WARD:
-                bisectorOfLight = VektorAddition(
-                        VektorMultiplikation(hemisToCart(vIn), returnLength(hemisToCart(vOut))), 
-                        VektorMultiplikation(hemisToCart(vOut), returnLength(hemisToCart(vIn))));
-                h_projection = projection_getter(t, vertexToDir(bisectorOfLight));
-                t_line = tangent_getter(t, vertexToDir(bisectorOfLight));
-                t_var = SkalärProdukt(bisectorOfLight, dirToVertex(t.normal));
-                u_var = SkalärProdukt(bisectorOfLight, hemisToCart(vOut));
-                v_var = SkalärProdukt(hemisToCart(vOut), dirToVertex(t.normal));
-                vprim_var = SkalärProdukt(hemisToCart(vIn), dirToVertex(t.normal));
-                w_var = SkalärProdukt(t_line, h_projection);
-                double m = 0.2, n = 0.2;
-                double exponent = ((Math.pow(t_var, 2) - 1)/Math.pow(t_var, 2)) * 
-                        ((Math.pow(w_var, 2)/Math.pow(m, 2)) + ((1 - Math.pow(w_var, 2))/Math.pow(n, 2)));
-                facet_slope_dist = (1/m*n)*Math.exp(exponent);
-                diff_wavelength = 0;
-                s = 1;
-                d = 0;
-                fresnel_wavelength = 0.5;
-                result = ((d/Math.PI)*diff_wavelength) + 
-                        (s/(4*Math.PI*Math.sqrt(SkalärProdukt(hemisToCart(vOut), hemisToCart(vIn)))))*
-                        fresnel_wavelength*facet_slope_dist;
-                break;
+//            case Triangle.REFLECTION_COOKTORRANCE:
+//                bisectorOfLight = VektorAddition(
+//                        VektorMultiplikation(hemisToCart(vIn), returnLength(hemisToCart(vOut))), 
+//                        VektorMultiplikation(hemisToCart(vOut), returnLength(hemisToCart(vIn))));
+//                h_projection = projection_getter(t, vertexToDir(bisectorOfLight));
+//                t_line = tangent_getter(t, vertexToDir(bisectorOfLight));
+//                t_var = SkalärProdukt(bisectorOfLight, dirToVertex(t.normal));
+//                u_var = SkalärProdukt(bisectorOfLight, hemisToCart(vOut));
+//                v_var = SkalärProdukt(hemisToCart(vOut), dirToVertex(t.normal));
+//                vprim_var = SkalärProdukt(hemisToCart(vIn), dirToVertex(t.normal));
+//                w_var = SkalärProdukt(t_line, h_projection);
+//                d = 0;
+//                s = 1;
+//                diff_wavelength = 0.5;
+//                fresnel_wavelength = 0.5;
+//                non_light_obstruction = 0.9;
+//                facet_slope_dist = 100;
+//                result = ((d/Math.PI)*diff_wavelength) + 
+//                        (s/(4*Math.PI)*SkalärProdukt(hemisToCart(vOut), hemisToCart(vIn)))*
+//                        fresnel_wavelength*non_light_obstruction*facet_slope_dist;
+////                double w_var = SkalärProdukt(surface tangent vector and projection of bisector on surface);
+//                break;
+//            case Triangle.REFLECTION_WARD:
+//                bisectorOfLight = VektorAddition(
+//                        VektorMultiplikation(hemisToCart(vIn), returnLength(hemisToCart(vOut))), 
+//                        VektorMultiplikation(hemisToCart(vOut), returnLength(hemisToCart(vIn))));
+//                h_projection = projection_getter(t, vertexToDir(bisectorOfLight));
+//                t_line = tangent_getter(t, vertexToDir(bisectorOfLight));
+//                t_var = SkalärProdukt(bisectorOfLight, dirToVertex(t.normal));
+//                u_var = SkalärProdukt(bisectorOfLight, hemisToCart(vOut));
+//                v_var = SkalärProdukt(hemisToCart(vOut), dirToVertex(t.normal));
+//                vprim_var = SkalärProdukt(hemisToCart(vIn), dirToVertex(t.normal));
+//                w_var = SkalärProdukt(t_line, h_projection);
+//                double m = 0.2, n = 0.2;
+//                double exponent = ((Math.pow(t_var, 2) - 1)/Math.pow(t_var, 2)) * 
+//                        ((Math.pow(w_var, 2)/Math.pow(m, 2)) + ((1 - Math.pow(w_var, 2))/Math.pow(n, 2)));
+//                facet_slope_dist = (1/m*n)*Math.exp(exponent);
+//                diff_wavelength = 0;
+//                s = 1;
+//                d = 0;
+//                fresnel_wavelength = 0.5;
+//                result = ((d/Math.PI)*diff_wavelength) + 
+//                        (s/(4*Math.PI*Math.sqrt(SkalärProdukt(hemisToCart(vOut), hemisToCart(vIn)))))*
+//                        fresnel_wavelength*facet_slope_dist;
+//                break;
             default:
                 result = 0;
                 break;
@@ -196,27 +196,27 @@ public class LinAlg {
                 double beta = Math.min(vIn.theta, vOut.theta);
                 result = (s.reflectionCoefficient/Math.PI)*(A+B*(Math.max(0, Math.cos(vIn.phi - vOut.phi)))*Math.sin(alf)*Math.sin(beta));
                 break;
-                case Triangle.REFLECTION_COOKTORRANCE:
-//                Vertex bisectorOfLight = VektorAddition(
-//                        VektorMultiplikation(hemisToCart(vIn), returnLength(hemisToCart(vOut))), 
-//                        VektorMultiplikation(hemisToCart(vOut), returnLength(hemisToCart(vIn))));
-//                double t_var = SkalärProdukt(bisectorOfLight, dirToVertex(t.normal));
-//                double u_var = SkalärProdukt(bisectorOfLight, hemisToCart(vOut));
-//                double v_var = SkalärProdukt(hemisToCart(vOut), dirToVertex(t.normal));
-//                double vprim_var = SkalärProdukt(hemisToCart(vIn), dirToVertex(t.normal));
-                double d = 0, s_var = 1;
-                double diff_wavelength = 0.5;
-                double fresnel_wavelength = 0.5;
-                double non_light_obstruction = 0.9;
-                double facet_slope_dist = 100;
-                result = ((d/Math.PI)*diff_wavelength) + 
-                        (s_var/(4*Math.PI)*SkalärProdukt(hemisToCart(vOut), hemisToCart(vIn)))*
-                        fresnel_wavelength*non_light_obstruction*facet_slope_dist;
-//                double w_var = SkalärProdukt(surface tangent vector and projection of bisector on surface);
-                break;
-            case Triangle.REFLECTION_WARD:
-                result = 0;
-                break;
+//                case Triangle.REFLECTION_COOKTORRANCE:
+////                Vertex bisectorOfLight = VektorAddition(
+////                        VektorMultiplikation(hemisToCart(vIn), returnLength(hemisToCart(vOut))), 
+////                        VektorMultiplikation(hemisToCart(vOut), returnLength(hemisToCart(vIn))));
+////                double t_var = SkalärProdukt(bisectorOfLight, dirToVertex(t.normal));
+////                double u_var = SkalärProdukt(bisectorOfLight, hemisToCart(vOut));
+////                double v_var = SkalärProdukt(hemisToCart(vOut), dirToVertex(t.normal));
+////                double vprim_var = SkalärProdukt(hemisToCart(vIn), dirToVertex(t.normal));
+//                double d = 0, s_var = 1;
+//                double diff_wavelength = 0.5;
+//                double fresnel_wavelength = 0.5;
+//                double non_light_obstruction = 0.9;
+//                double facet_slope_dist = 100;
+//                result = ((d/Math.PI)*diff_wavelength) + 
+//                        (s_var/(4*Math.PI)*SkalärProdukt(hemisToCart(vOut), hemisToCart(vIn)))*
+//                        fresnel_wavelength*non_light_obstruction*facet_slope_dist;
+////                double w_var = SkalärProdukt(surface tangent vector and projection of bisector on surface);
+//                break;
+//            case Triangle.REFLECTION_WARD:
+//                result = 0;
+//                break;
             default:
                 result = 0;
                 break;
@@ -295,6 +295,12 @@ public class LinAlg {
         return result;
     }
     
+    public static Direction invert(Direction dir)
+    {
+        Direction result = new Direction(-dir.x, -dir.y, -dir.z);
+        return result;
+    }
+    
     public static Vertex reflect(Vertex vr, Direction norm)
     {
         Vertex result = new Vertex(0, 0, 0);
@@ -357,6 +363,16 @@ public class LinAlg {
         return Math.sqrt(Math.pow(p.x, 2) + Math.pow(p.y, 2) + Math.pow(p.z, 2));
     }
     
+    public static double SnellsLaw(double n1, double n2, double angle1)
+    {
+        return Math.asin((n1*Math.sin(angle1))/n2);
+    }
+    
+    public static double BrewsterAngle(double n1, double n2)
+    {
+        return Math.asin(n2/n1);
+    }
+    
     public static ColorDbl getLightIntensity(Direction normal, Vertex endpt, PointLightSource ls, int triangleID)
     {
         int objectID = -1;
@@ -393,6 +409,12 @@ public class LinAlg {
 //            System.out.println("pos: " + endpt.toString());
         ColorDbl res = new ColorDbl(ls.color);
         res.setIntensity(angle);
+        return res;
+    }
+    
+    public static ColorDbl getLightIntensity(Direction normal, Vertex endpt, Mesh[] ls, int triangleID)
+    {
+        ColorDbl res = new ColorDbl();
         return res;
     }
     
@@ -502,28 +524,27 @@ public class LinAlg {
         
         Vertex hLineProjection = VektorAddition(h_v1,h_v2);
         return hLineProjection;
-        
     }
     
-    public static Vertex tangent_getter(Triangle tri, Direction hLine)
+    public static Vertex tangent_getter(Triangle tri, Vertex inLight)
     {
-        Vertex hl = dirToVertex(hLine);
         Vertex v1 = VektorSubtraktion(tri.p[1],tri.p[0]);
         Vertex v2 = VektorSubtraktion(tri.p[2],tri.p[0]);
         
-        double mult = SkalärProdukt(hl, v1)/SkalärProdukt(v1,v1);
+        double mult = SkalärProdukt(inLight, v1)/SkalärProdukt(v1,v1);
         Vertex h_v1 = VektorMultiplikation(v1,mult);
         
-        mult = SkalärProdukt(hl, v2)/SkalärProdukt(v2,v2);
+        mult = SkalärProdukt(inLight, v2)/SkalärProdukt(v2,v2);
         Vertex h_v2 = VektorMultiplikation(v2,mult);
         
         Vertex tangentProjection = VektorAddition(h_v1,h_v2);
+        
         tangentProjection = VektorSubtraktion(tangentProjection,VektorMultiplikation(tangentProjection,2));
         tangentProjection = normalize(tangentProjection);
         return tangentProjection;
     }
     
-    public static Vertex H_getterSphere(Sphere sph, Vertex rayEnd, Direction hLine)
+    public static Vertex projection_getter_sphere(Sphere sph, Vertex rayEnd, Direction hLine)
     {
         Vertex normal = VektorSubtraktion(rayEnd,sph.center);
         

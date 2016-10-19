@@ -20,12 +20,15 @@ public class Mesh extends Object{
     public static final int COLOR_PURPLE = 106, COLOR_ORANGE = 107, COLOR_BLACK = 108;
     public final int SIZE;
     public Triangle[] mesh;
+    private int objectID;
     private int reflectorType;
     private boolean lightsource;
     private boolean transparent;
+    private final double MATERIAL_PROPERTY;
     
-    public Mesh(Triangle[] shape)
+    public Mesh(int index, Triangle[] shape)
     {
+        objectID = index;
         SIZE = shape.length;
         mesh = new Triangle[SIZE];
         setReflectorType(Object.REFLECTOR_SPECULAR);
@@ -34,10 +37,12 @@ public class Mesh extends Object{
 //            System.out.println("TriangleID: " + shape[i].triangleIndex);
             mesh[i] = new Triangle(shape[i].p, shape[i].color, shape[i].triangleIndex);
         }
+        MATERIAL_PROPERTY = Object.PROP_AIR;
     }
     
-    public Mesh(Triangle[] shape, boolean ls, boolean trans)
+    public Mesh(int index, Triangle[] shape, boolean ls, boolean trans)
     {
+        objectID = index;
         SIZE = shape.length;
         mesh = new Triangle[SIZE];
         setReflectorType(Object.REFLECTOR_SPECULAR);
@@ -48,10 +53,12 @@ public class Mesh extends Object{
         }
         lightsource = ls;
         transparent = trans;
+        MATERIAL_PROPERTY = Object.PROP_GLASS;
     }
     
-    public Mesh(Vertex center, int type)
+    public Mesh(int index, Vertex center, int type)
     {
+        objectID = index;
         setReflectorType(Object.REFLECTOR_SPECULAR);
         switch(type)
         {
@@ -69,10 +76,12 @@ public class Mesh extends Object{
                 SIZE = 0;
                 break;
         }
+        MATERIAL_PROPERTY = Object.PROP_AIR;
     }
     
-    public Mesh(Vertex center, int type, boolean ls, boolean trans)
+    public Mesh(int index, Vertex center, int type, boolean ls, boolean trans)
     {
+        objectID = index;
         setReflectorType(Object.REFLECTOR_SPECULAR);
         switch(type)
         {
@@ -92,10 +101,12 @@ public class Mesh extends Object{
         }
         lightsource = ls;
         transparent = trans;
+        MATERIAL_PROPERTY = Object.PROP_GLASS;
     }
     
-    public Mesh(double[] lengths, Vertex center, int type, ColorDbl[] colorList)
+    public Mesh(int index, double[] lengths, Vertex center, int type, ColorDbl[] colorList)
     {
+        objectID = index;
         setReflectorType(Object.REFLECTOR_SPECULAR);
         switch(type)
         {
@@ -112,12 +123,13 @@ public class Mesh extends Object{
             default:
                 SIZE = 0;
                 break;
-                
         }
+        MATERIAL_PROPERTY = Object.PROP_AIR;
     }
     
-    public Mesh(double[] lengths, Vertex center, int type, ColorDbl[] colorList, boolean ls, boolean trans)
+    public Mesh(int index, double[] lengths, Vertex center, int type, ColorDbl[] colorList, boolean ls, boolean trans)
     {
+        objectID = index;
         setReflectorType(Object.REFLECTOR_SPECULAR);
         switch(type)
         {
@@ -134,14 +146,38 @@ public class Mesh extends Object{
             default:
                 SIZE = 0;
                 break;
-                
         }
         lightsource = ls;
         transparent = trans;
+        MATERIAL_PROPERTY = Object.PROP_GLASS;
     }
     
-    public Mesh(double[] lengths, Vertex center, int type, int colortype)
+    public Mesh(int index, double[] lengths, Vertex center, int type, int colortype)
     {
+        objectID = index;
+        setReflectorType(Object.REFLECTOR_SPECULAR);
+        switch(type)
+        {
+            case TYPE_CUBE:
+                SIZE = 12;
+                mesh = new Triangle[SIZE];
+                buildCube(lengths[0], center, colortype);
+                break;
+            case TYPE_RECTANGLE:
+                SIZE = 12;
+                mesh = new Triangle[SIZE];
+                buildRectangle(lengths[0], lengths[1], lengths[2], center, colortype);
+                break;
+            default:
+                SIZE = 0;
+                break;
+        }
+        MATERIAL_PROPERTY = Object.PROP_AIR;
+    }
+    
+    public Mesh(int index, double[] lengths, Vertex center, int type, int colortype, boolean ls, boolean trans)
+    {
+        objectID = index;
         setReflectorType(Object.REFLECTOR_SPECULAR);
         switch(type)
         {
@@ -160,30 +196,9 @@ public class Mesh extends Object{
                 break;
                 
         }
-    }
-    
-    public Mesh(double[] lengths, Vertex center, int type, int colortype, boolean ls, boolean trans)
-    {
-        setReflectorType(Object.REFLECTOR_SPECULAR);
-        switch(type)
-        {
-            case TYPE_CUBE:
-                SIZE = 12;
-                mesh = new Triangle[SIZE];
-                buildCube(lengths[0], center, colortype);
-                break;
-            case TYPE_RECTANGLE:
-                SIZE = 12;
-                mesh = new Triangle[SIZE];
-                buildRectangle(lengths[0], lengths[1], lengths[2], center, colortype);
-                break;
-            default:
-                SIZE = 0;
-                break;
-                
-        }
         lightsource = ls;
         transparent = trans;
+        MATERIAL_PROPERTY = Object.PROP_GLASS;
     }
         
     public Ray rayIntersection(Ray r, PointLightSource[] ls)
@@ -222,6 +237,7 @@ public class Mesh extends Object{
             }
             Ray resultRay = new Ray(r.start, newEnd, res, mesh[savedID].triangleIndex, Ray.RAY_IMPORTANCE);
             resultRay.setImportance(r.getImportance());
+            resultRay.setObjectIndex(objectID);
 //            resultRay.setImportance(r.getImportance()*mesh[savedID].reflectionCoefficient);
 //            if(resultRay.returnIndex() == 1)
 //            {
@@ -263,6 +279,121 @@ public class Mesh extends Object{
 //        if(triangleID == 1)
 //            System.out.println("SmallT: " + smallT);
         return false;
+    }
+    
+   
+
+    @Override
+    public void rotateX(double angle) {
+        for(int i = 0; i<mesh.length; i++)
+        {
+            for(int t = 0; t<3; t++)
+            {
+                mesh[i].p[t] = rotateXVertex(mesh[i].p[t], angle);
+            }
+            
+        }
+    }
+    
+    public void rotateY(double angle) {
+        for(int i = 0; i<mesh.length; i++)
+        {
+            for(int t = 0; t<3; t++)
+            {
+                mesh[i].p[t] = rotateYVertex(mesh[i].p[t], angle);
+            }
+            
+        }
+    }
+    
+    public void rotateZ(double angle) {
+        for(int i = 0; i<mesh.length; i++)
+        {
+            for(int t = 0; t<3; t++)
+            {
+                mesh[i].p[t] = rotateZVertex(mesh[i].p[t], angle);
+            }
+            
+        }
+    }
+    
+    public void setObjectReflection(double p)
+    {
+        
+        for(int idm = 0; idm < SIZE; ++idm)
+        {
+            mesh[idm].setReflectionCoefficient(p);
+        }
+        
+    }
+    
+    public double returnSize()
+    {
+        return (double)SIZE;
+    }
+    
+    public boolean isSphere()
+    {
+        return false;
+    }
+    
+    public boolean isTransparent()
+    {
+        return transparent;
+    }
+    
+    public boolean isLightsource()
+    {
+        return lightsource;
+    }
+    
+    public Direction returnNormal(Vertex vr)
+    {
+        return Direction.DUMMY;
+    }
+    
+    public Triangle returnTriangleByIndex(int index)
+    {
+        return mesh[index];
+    }
+    
+    public Triangle returnTriangleById(int id)
+    {
+        for(int idt = 0; idt < SIZE; ++idt)
+        {
+            if(mesh[idt].triangleIndex == id)
+                return mesh[idt];
+        }
+        return Triangle.DUMMY;
+    }
+    
+    public int getReflectorType()
+    {
+        return reflectorType;
+    }
+    
+    public void setReflectorType(int newType)
+    {
+        reflectorType = newType;
+    }
+    
+    public double returnProperty()
+    {
+        return MATERIAL_PROPERTY;
+    }
+    
+    public boolean checkTriangleIndexes(int index)
+    {
+        boolean result = false;
+        for(int idt = 0; idt < SIZE; ++idt)
+        {
+            if(mesh[idt].triangleIndex == index)
+            {
+                result = true;
+                break;
+            }
+        }
+        return result;
     }
     
     private void buildDefaultCube(Vertex center)
@@ -1038,114 +1169,6 @@ public class Mesh extends Object{
         
         ++Scene.counter;
         
-    }
-
-    @Override
-    public void rotateX(double angle) {
-        for(int i = 0; i<mesh.length; i++)
-        {
-            for(int t = 0; t<3; t++)
-            {
-                mesh[i].p[t] = rotateXVertex(mesh[i].p[t], angle);
-            }
-            
-        }
-    }
-    
-    public void rotateY(double angle) {
-        for(int i = 0; i<mesh.length; i++)
-        {
-            for(int t = 0; t<3; t++)
-            {
-                mesh[i].p[t] = rotateYVertex(mesh[i].p[t], angle);
-            }
-            
-        }
-    }
-    
-    public void rotateZ(double angle) {
-        for(int i = 0; i<mesh.length; i++)
-        {
-            for(int t = 0; t<3; t++)
-            {
-                mesh[i].p[t] = rotateZVertex(mesh[i].p[t], angle);
-            }
-            
-        }
-    }
-    
-    public void setObjectReflection(double p)
-    {
-        
-        for(int idm = 0; idm < SIZE; ++idm)
-        {
-            mesh[idm].setReflectionCoefficient(p);
-        }
-        
-    }
-    
-    public double returnSize()
-    {
-        return (double)SIZE;
-    }
-    
-    public boolean isSphere()
-    {
-        return false;
-    }
-    
-    public boolean isTransparent()
-    {
-        return transparent;
-    }
-    
-    public boolean isLightsource()
-    {
-        return lightsource;
-    }
-    
-    public Direction returnNormal(Vertex vr)
-    {
-        return Direction.DUMMY;
-    }
-    
-    public Triangle returnTriangleByIndex(int index)
-    {
-        return mesh[index];
-    }
-    
-    public Triangle returnTriangleById(int id)
-    {
-        for(int idt = 0; idt < SIZE; ++idt)
-        {
-            if(mesh[idt].triangleIndex == id)
-                return mesh[idt];
-        }
-        return Triangle.DUMMY;
-    }
-    
-    public int getReflectorType()
-    {
-        return reflectorType;
-    }
-    
-    public void setReflectorType(int newType)
-    {
-        reflectorType = newType;
-    }
-    
-    public boolean checkTriangleIndexes(int index)
-    {
-        boolean result = false;
-        for(int idt = 0; idt < SIZE; ++idt)
-        {
-            if(mesh[idt].triangleIndex == index)
-            {
-                result = true;
-                break;
-            }
-        }
-        return result;
     }
     
 }

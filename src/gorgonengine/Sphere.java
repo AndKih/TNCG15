@@ -22,6 +22,7 @@ public class Sphere extends Object{
     private int reflectorType;
     private boolean lightsource;
     private boolean transparent;
+    private double MATERIAL_PROPERTY;
     //public Triangle[] mesh;
     
     public Sphere(ColorDbl c, Vertex center, double radius, int index)
@@ -33,6 +34,7 @@ public class Sphere extends Object{
         objectID = index;
         lightsource = false;
         transparent = false;
+        MATERIAL_PROPERTY = Object.PROP_AIR;
     }
     
     public Sphere(ColorDbl c, Vertex center, double radius, int index, boolean ls, boolean trans)
@@ -44,6 +46,7 @@ public class Sphere extends Object{
         objectID = index;
         lightsource = ls;
         transparent = trans;
+        MATERIAL_PROPERTY = Object.PROP_GLASS;
     }
     
     public void setObjectReflection(double p)
@@ -101,7 +104,7 @@ public class Sphere extends Object{
                 ColorDbl col = intensityCalc(x1,ls);
                 Ray resultRay = new Ray(r.start, x1, col, -1, Ray.RAY_IMPORTANCE);
 //                resultRay.setImportance(r.getImportance()*reflectionCoefficient);
-                resultRay.setSphereIndex(objectID);
+                resultRay.setObjectIndex(objectID);
                 if(returnLength(VektorSubtraktion(resultRay.start, resultRay.end)) < EPSILON)
                     return Ray.ERROR_RAY;
                 if(returnLength(VektorSubtraktion(resultRay.start, center))-radius<EPSILON && 
@@ -121,7 +124,7 @@ public class Sphere extends Object{
                 Ray resultRay = new Ray(r.start, x2, col, -1, Ray.RAY_IMPORTANCE);
 //                resultRay.setImportance(r.getImportance()*reflectionCoefficient);
                 resultRay.setImportance(r.getImportance());
-                resultRay.setSphereIndex(objectID);
+                resultRay.setObjectIndex(objectID);
                 if(returnLength(VektorSubtraktion(resultRay.start, resultRay.end)) < EPSILON)
                     return Ray.ERROR_RAY;
                 if(returnLength(VektorSubtraktion(resultRay.start, center))-radius<EPSILON && 
@@ -302,6 +305,11 @@ public class Sphere extends Object{
     public void setReflectorType(int newType)
     {
         reflectorType = newType;
+    }
+    
+    public double returnProperty()
+    {
+        return MATERIAL_PROPERTY;
     }
     
     public boolean checkTriangleIndexes(int index)
