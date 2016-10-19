@@ -5,6 +5,8 @@
  */
 package gorgonengine;
 
+import static gorgonengine.LinAlg.cartToHemis;
+import static gorgonengine.LinAlg.hemisToCart;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.Image.*;
@@ -39,6 +41,7 @@ public class GorgonEngine
 //        camera.rotateCameraZ(Math.PI);
 //        camera.rotateCameraX(0);
 //        camera.rotateCameraY(0);
+        System.out.println(hemisToCart(cartToHemis(new Vertex(0,1,0))));
         
         camera.render();
         

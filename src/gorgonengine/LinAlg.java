@@ -250,12 +250,12 @@ public class LinAlg {
         {
             return new HemisCoords();
         }
-        result.theta = Math.atan(cart.y/cart.x);
+        result.theta = Math.acos(cart.z/result.r);
         //Phi def. range is [0, 2*Math.pi[
-        result.phi = Math.atan((Math.sqrt(Math.pow(cart.x, 2) + Math.pow(cart.y, 2))/2));
-        if(result.phi >= Math.PI*2)
-            while(result.phi > Math.PI*2)
-                result.phi -= Math.PI*2;
+        result.phi = Math.atan(cart.y/cart.x);
+//        if(result.phi >= Math.PI*2)
+//            while(result.phi > Math.PI*2)
+//                result.phi -= Math.PI*2;
         return result;
     }
     
