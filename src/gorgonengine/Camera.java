@@ -98,6 +98,7 @@ public class Camera extends JFrame{
     //                System.out.println("Start: " + vp);
                     r = new Ray(vp, target, new ColorDbl(0, 0, 0), -2, Ray.RAY_IMPORTANCE);
                     r.setReflectionType(Ray.RAY_REFLECTION);
+                    r.setObjectIndex(-1);
                     Node<Ray> raystart = new Node<Ray>(r);
                     r = scene.rayIntersection(raystart);
                     cam[px][py].addColor(r.color);

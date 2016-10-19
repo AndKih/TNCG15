@@ -223,7 +223,7 @@ public class Mesh extends Object{
                 savedID = idt;
             }
         }
-        if(smallT != -10 && smallT > EPSILON)
+        if(smallT != -10 && smallT > EPSILON && savedID != r.returnIndex())
         {
             normal = mesh[savedID].normal;
             ColorDbl tmpCol = new ColorDbl(mesh[savedID].color);

@@ -12,8 +12,11 @@ package gorgonengine;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 
-public class Node<T> {
+public class Node<T> //implements Iterable<Node<T>>, Iterator<Node<T>>
+{
     
     private T data;
     private Node<T> parent;
@@ -121,5 +124,25 @@ public class Node<T> {
     {
         return hasPapa;
     }
+    
+    public int returnChildrenAmount()
+    {
+        return numChildren;
+    }
+    
+//    public Iterator<Node<T>> iterator()
+//    {
+//        return this;
+//    }
+//    
+//    public Node<T> next(int index)
+//    {
+//        return returnChild
+//    }
+//    
+//    public boolean hasNext()
+//    {
+//        
+//    }
     
 }

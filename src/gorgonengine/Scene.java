@@ -274,57 +274,78 @@ public class Scene {
     {
         Ray newRay, reflectedRay = new Ray(r.returnData()), refractedRay = Ray.ERROR_RAY, resultRay;
         
-        Node<Ray> rayit = new Node<Ray>();
+        Node<Ray> rayit = new Node<Ray>(), rayfrit = new Node<Ray>();
         
         Ray largestRay = objects[0].rayIntersection(r.returnData(), lights);
+//        boolean failsafe = true;
 //        if(largestRay.returnIndex() == -3)
 //            System.out.println("Wall mesh rayintersection returns an error ray!");
         for(int idt = 1; idt < objects.length; ++idt)
         {
+            if(r.returnData().getObjectIndex() == idt && r.returnData().getReflectionType() != Ray.RAY_REFRACTION && !objects[idt].isTransparent())
+                continue;
             newRay = objects[idt].rayIntersection(r.returnData(), lights);
 //            if(idt==1 && VektorDistansJämförelse(r.end, newRay.end))
 //            {
 //                System.out.println(newRay.end.toString()+"   |   "+
 //                        largestRay.end.toString());
 //            }
-            
+//            if(failsafe && r.returnData().returnIndex() <= 24 && r.returnData().returnIndex() == largestRay.returnIndex())
+//            {
+//                System.out.println("Failsafe.");
+//                largestRay = new Ray(newRay.start, newRay.end, newRay.color, newRay.returnIndex(), Ray.RAY_IMPORTANCE);
+//                largestRay.setReflectionType(Ray.RAY_REFLECTION);
+//                largestRay.setObjectIndex(newRay.getObjectIndex());
+//                largestRay.setImportance(newRay.getImportance());
+//                failsafe = false;
+//                continue;
+//            }
             if(newRay.returnIndex() != -3)
             {
                 if(VektorDistansJämförelse(newRay.end, largestRay.end, r.returnData().start))
                 {
+                    
                     largestRay = new Ray(newRay.start, newRay.end, newRay.color, newRay.returnIndex(), Ray.RAY_IMPORTANCE);
                     largestRay.setReflectionType(Ray.RAY_REFLECTION);
-                    if(largestRay.returnIndex() == -1)
-                        largestRay.setObjectIndex(newRay.getObjectIndex());
+                    largestRay.setObjectIndex(newRay.getObjectIndex());
                     largestRay.setImportance(newRay.getImportance());
                 }
             }
+        }
+        if(r.returnData().getObjectIndex() == 0 && largestRay.getObjectIndex() == 0 && r.returnData().returnIndex() == largestRay.returnIndex())
+        {
+            System.out.println("The walls are reflecting themselves into itself again! Index: " + largestRay.returnIndex());
+            System.out.println("R Index: " + r.returnData().returnIndex());
+            System.out.println("LargestRay start: " + largestRay.start + "\nLargestRay   end: " + largestRay.end);
+            System.out.println("returnedRay start:" + r.returnData().start + "\nreturnedRay   end:" + r.returnData().end);
+            System.out.println("Directions: \nlargest: " + largestRay.dir + "\nargumentRay: " + r.returnData().dir);
+            System.out.println("Reflected? : " + r.returnData().getObjectIndex());
         }
 //        if(largestRay.returnIndex() ==  -3)
 //        {
 //            System.out.println("LargestRay is now an error ray!");
 //        }
         
-        if(r.returnData().returnIndex() == largestRay.returnIndex() && r.returnData().returnIndex() != -1 && largestRay.returnIndex() != -1)
-        {
-            System.out.println("Same index:" + largestRay.returnIndex());
-            System.out.println("LargestRay start: " + largestRay.start + "\nLargestRay   end: " + largestRay.end);
-            System.out.println("returnedRay start:" + r.returnData().start + "\nreturnedRay   end:" + r.returnData().end);
-        }
+//        if(r.returnData().returnIndex() == largestRay.returnIndex() && r.returnData().returnIndex() != -1 && largestRay.returnIndex() != -1)
+//        {
+//            System.out.println("Same index:" + largestRay.returnIndex());
+//            System.out.println("LargestRay start: " + largestRay.start + "\nLargestRay   end: " + largestRay.end);
+//            System.out.println("returnedRay start:" + r.returnData().start + "\nreturnedRay   end:" + r.returnData().end);
+//        }
         if(largestRay.getImportance() > Camera.IMPORTANCETHRESHOLD)
         {
             int nRefl = N_REFLECTEDRAYS;
             int objIndex = getObjectByTriangleIndex(largestRay.returnIndex());
-            if(objects[objIndex].isTransparent())
-            {
-                nRefl = 2;
-            }
-            else if(objects[largestRay.getObjectIndex()].getReflectorType() == Object.REFLECTOR_SPECULAR)
+//            if(objects[objIndex].isTransparent())
+//            {
+//                nRefl = 2;
+//            }
+            if(objects[largestRay.getObjectIndex()].getReflectorType() == Object.REFLECTOR_SPECULAR)
             {
                 nRefl = 1;
             }
             
-            Ray[] tmpRay = new Ray[nRefl]; 
+//            Ray[] tmpRay = new Ray[nRefl]; 
             for(int indRefl = 0; indRefl < nRefl; indRefl++)
             {
     //            System.out.println("Current importance: " + largestRay.getImportance());
@@ -359,8 +380,7 @@ public class Scene {
                     if(objects[largestRay.getObjectIndex()].getReflectorType() == Object.REFLECTOR_SPECULAR)
                     {
                         reflectedRay.setImportance(largestRay.getImportance()*
-                                objects[getObjectByTriangleIndex(largestRay.returnIndex())].
-                                        returnTriangleById(largestRay.returnIndex()).reflectionCoefficient);
+                                objects[largestRay.getObjectIndex()].returnTriangleById(largestRay.returnIndex()).reflectionCoefficient);
                     }
                     else
                     {
@@ -374,9 +394,18 @@ public class Scene {
                     {
                         Vertex refrEnd = Vertex.DUMMY;
                         double refrAngle = SnellsLaw(Object.PROP_AIR, objects[largestRay.getObjectIndex()].returnProperty(), largestAngle);
-                        
+                        Vertex projDir = projection_getter(pick, invert(largestRay.dir));
+                        Vertex ortoDir = VektorSubtraktion(dirToVertex(largestRay.dir), projDir);
+                        refrEnd = VektorAddition(VektorMultiplikation(dirToVertex(normal), Math.cos(refrAngle)), 
+                                VektorMultiplikation(ortoDir, Math.sin(refrAngle)/returnLength(ortoDir)));
+                        refractedRay = new Ray(largestRay.end, VektorAddition(largestRay.end, refrEnd), largestRay.color, largestRay.returnIndex(), Ray.RAY_IMPORTANCE);
+                        refractedRay.setReflectionType(Ray.RAY_REFRACTION);
+                        refractedRay.setObjectIndex(largestRay.getObjectIndex());
+                        refractedRay.setImportance(largestRay.getImportance()*
+                                objects[largestRay.getObjectIndex()].returnTriangleById(largestRay.returnIndex()).reflectionCoefficient);
+                        rayfrit = new Node<Ray>(refractedRay, r);
+                        r.addChild(rayfrit);
                     }
-                    
                     rayit = new Node<Ray>(reflectedRay, r);
                     r.addChild(rayit);
                 }
@@ -435,20 +464,37 @@ public class Scene {
                         }
                     }
                 }
-                tmpRay[indRefl] = rayIntersection(rayit);
+                
+//                tmpRay[indRefl] = rayIntersection(rayit);
+//                ColorDbl col = new ColorDbl(largestRay.color);
+//                col.setIntensity(r.returnData().getImportance());
+//                tmpRay[indRefl].color.addColor(col);
+            }
+            Ray[] tmpRay = new Ray[r.returnChildrenAmount()];
+            for(int idn = 0; idn < r.returnChildrenAmount(); ++idn)
+            {
+                Node<Ray> it = r.returnChild(idn);
+                tmpRay[idn] = rayIntersection(it);
                 ColorDbl col = new ColorDbl(largestRay.color);
                 col.setIntensity(r.returnData().getImportance());
-                tmpRay[indRefl].color.addColor(col);
+                tmpRay[idn].color.addColor(col);
             }
             resultRay = tmpRay[0];
             ColorDbl tmpCol = new ColorDbl();
-            for(int indRefl = 0; indRefl < nRefl; indRefl++)
+            for(int idn = 0; idn < r.returnChildrenAmount(); ++idn)
             {
-                tmpCol.addColor(tmpRay[indRefl].color);
-                tmpCol.r /= nRefl;
-                tmpCol.g /= nRefl;
-                tmpCol.b /= nRefl;
+                tmpCol.addColor(tmpRay[idn].color);
+                tmpCol.r /= r.returnChildrenAmount();
+                tmpCol.g /= r.returnChildrenAmount();
+                tmpCol.b /= r.returnChildrenAmount();
             }
+//            for(int indRefl = 0; indRefl < nRefl; indRefl++)
+//            {
+//                tmpCol.addColor(tmpRay[indRefl].color);
+//                tmpCol.r /= nRefl;
+//                tmpCol.g /= nRefl;
+//                tmpCol.b /= nRefl;
+//            }
             resultRay.color = tmpCol;
             
             
@@ -505,8 +551,19 @@ public class Scene {
         //randAng = (Math.random()*pi) - (pi/2);
         randAng = (PDF1()-1)*(pi/2);
         refEndPol.theta +=randAng;
-        
-        return hemisToCart(refEndPol);
+        Vertex result = hemisToCart(refEndPol);
+        if(Math.abs(result.x) < EPSILON || Math.abs(result.y) < EPSILON)
+        {
+            System.out.println("In: " + limit);
+            HemisCoords test1 = cartToHemis(lim);
+            System.out.println("TEST1PHI: " + test1.phi);
+            System.out.println("TEST1THETA: " + test1.theta);
+            System.out.println("randAng: " + randAng);
+            System.out.println("Phi: " + refEndPol.phi);
+            System.out.println("Theta: " + refEndPol.theta);
+            System.out.println("Out: " + result);
+        }
+        return result;
     }
     public double PDF1()
     {
