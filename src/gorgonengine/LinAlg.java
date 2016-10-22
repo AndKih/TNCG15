@@ -246,13 +246,24 @@ public class LinAlg {
         HemisCoords result = new HemisCoords();
         result.r = returnLength(cart);
         //Theta def. range is [0, (Math.pi/2)].
-        if(Math.atan(cart.y/cart.x) > (Math.PI/2))
-        {
-            return new HemisCoords();
-        }
+//        if(Math.acos(cart.z/returnLength(cart)) > (Math.PI/2) && Math.acos(cart.z/returnLength(cart)) < 0)
+//        {
+//            return new HemisCoords();
+//        }
         result.theta = Math.acos(cart.z/result.r);
         //Phi def. range is [0, 2*Math.pi[
-        result.phi = Math.atan(cart.y/cart.x);
+        if(cart.y == 0 && cart.x == 0)
+            result.phi = 0;
+        else
+            result.phi = Math.atan(cart.y/cart.x);
+        while(result.phi >= 2*Math.PI)
+        {
+            result.phi -= 2*Math.PI;
+        }
+        while(result.phi < 0)
+        {
+            result.phi += 2*Math.PI;
+        }
 //        if(result.phi >= Math.PI*2)
 //            while(result.phi > Math.PI*2)
 //                result.phi -= Math.PI*2;
@@ -375,13 +386,10 @@ public class LinAlg {
     
     public static ColorDbl getLightIntensity(Direction normal, Vertex endpt, PointLightSource ls, int triangleID)
     {
-        int objectID = -1;
-        if(triangleID == -1)
-            objectID = 2;
         Vertex n = dirToVertex(normal);
         Vertex l = ls.getLightVectorFrom(endpt);
         Ray shadowRay = new Ray(endpt, ls.pos, new ColorDbl(0, 0, 0), -1, Ray.RAY_SHADOW);
-        Vertex vr = new Vertex(VektorSubtraktion(shadowRay.end, shadowRay.start));
+//        Vertex vr = new Vertex(VektorSubtraktion(shadowRay.end, shadowRay.start));
         
         for(int ids = 0; ids < Scene.objects.length; ++ids)
         {
@@ -495,6 +503,14 @@ public class LinAlg {
     public static double VektorVinkel(Vertex v1, Vertex v2)
     {
         return SkalärProdukt(v1,v2)/(returnLength(v1)*returnLength(v2));
+    }
+    
+    
+    
+    public static double VektorVinkel(Direction d1, Direction d2)
+    {
+        
+        return Math.acos(SkalärProdukt(dirToVertex(d1), dirToVertex(d2))/(returnLength(dirToVertex(d1))*returnLength(dirToVertex(d2))));
     }
     
 //    public static Vertex perspectiveProjection(Triangle t, Vertex start, Vertex p)

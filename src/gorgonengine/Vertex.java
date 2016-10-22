@@ -70,11 +70,11 @@ public class Vertex {
     
     public boolean equals(Vertex v)
     {
-        if(x != v.x)
+        if(x - v.x > Mesh.EPSILON)
             return false;
-        if(y != v.y)
+        if(y - v.y > Mesh.EPSILON)
             return false;
-        if(z != v.z)
+        if(z - v.z > Mesh.EPSILON)
             return false;
         return true;
     }

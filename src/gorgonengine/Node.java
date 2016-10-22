@@ -106,6 +106,31 @@ public class Node<T> //implements Iterable<Node<T>>, Iterator<Node<T>>
         return children.get(index);
     }
     
+    public void removeChild(int index)
+    {
+        if(index >= numChildren)
+            return;
+        if(children.get(index).equals(null))
+            return;
+        children.remove(index);
+        --numChildren;
+    }
+    
+    public void removeChild(T data)
+    {
+        for(int idd = 0; idd < numChildren; ++idd)
+        {
+            if(returnChild(idd).returnData().equals(data))
+            {
+//                System.out.println("Node, removing child: " + data.toString());
+//                System.out.println("Current size: " + numChildren);
+                removeChild(idd);
+//                System.out.println("Current size: " + numChildren);
+                break;
+            }
+        }
+    }
+    
     public Node<T> returnChild()
     {
         if(children.get(0).equals(null))
@@ -118,6 +143,13 @@ public class Node<T> //implements Iterable<Node<T>>, Iterator<Node<T>>
         if(children.size() == 0)
             return false;
         return true;
+    }
+    
+    public boolean isEmpty()
+    {
+        if(data == null)
+            return true;
+        return false;
     }
     
     public boolean checkHasParent()

@@ -52,13 +52,24 @@ public class Direction {
     
     public boolean equals(Direction dir)
     {
+//        System.out.println("Stats:\n" + toString() + "\n" + dir.toString());
         boolean result = true;
-        if(x != dir.x)
+        if(x - dir.x > Mesh.EPSILON)
+        {
+//            System.out.println("X fail: " + (x - dir.x));
             return false;
-        else if(y != dir.y)
-            return false;
-        else if(z != dir.z)
-            return false;
+        }
+        else if(y - dir.y  > Mesh.EPSILON)
+        {
+//            System.out.println("Y fail: " + (y - dir.y));
+            return false; 
+        }
+        else if(z - dir.z  > Mesh.EPSILON)
+        {
+//            System.out.println("Z fail: " + (z - dir.z));
+            return false;  
+        }
+           
         else
             return result;
     }

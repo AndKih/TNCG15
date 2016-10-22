@@ -101,6 +101,10 @@ public class Camera extends JFrame{
                     r.setObjectIndex(-1);
                     Node<Ray> raystart = new Node<Ray>(r);
                     r = scene.rayIntersection(raystart);
+                    if(r.equals(Ray.ERROR_RAY))
+                    {
+                        System.out.println("SOMETHING HAS GONE HORRIBLY WRONG");
+                    }
                     cam[px][py].addColor(r.color);
                 }
 //                System.out.println(r.color.toString());
@@ -135,6 +139,7 @@ public class Camera extends JFrame{
     
     private void createImage()
     {
+        System.out.println("Largest color value: " + iMax);
         BufferedImage im = new BufferedImage(SIZEX, SIZEY, BufferedImage.TYPE_INT_RGB);
         for(int px = 0; px < SIZEX; ++px)
         {
