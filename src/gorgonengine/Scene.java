@@ -196,7 +196,7 @@ public class Scene {
         {
             mesh[idm].setReflectionCoefficient(1);
         }
-        NROBJECTS = 4;
+        NROBJECTS = 5;
         objects = new Object[NROBJECTS];
         objects[0] = new Mesh(0, mesh);
         
@@ -241,11 +241,13 @@ public class Scene {
 //        objects[4] = new Mesh(new Vertex(7, 2, 2), Mesh.TYPE_RECTANGLE);
 //        objects[4].setObjectReflection(0.5);
 //        objects[4].setReflectorType(Object.REFLECTOR_DIFFUSE);
-
-        objects[3] = new Mesh(3, new double[] {2}, new Vertex(5, -3, -2), Mesh.TYPE_CUBE, Mesh.COLOR_ORANGE, false, false);
-
-        objects[3].setObjectReflection(0.5);
-//        objects[3].transparent = true;
+        
+        objects[3] = new Mesh(3, new double[] {2}, new Vertex(5, -3, -2), Mesh.TYPE_CUBE, Mesh.COLOR_ORANGE, false, true);
+        objects[3].setObjectReflection(0.8);
+        
+        
+        objects[4] = new Sphere(ColorDbl.GREEN, new Vertex(8, -3.5, -2.5), 1, 4);
+        objects[4].setObjectReflection(0.5);
 //        objects[4].setReflectorType(Object.REFLECTOR_DIFFUSE);
         
 //        objects[5] = new Mesh(new double[] {2, 3, 4}, new Vertex(6, 3, -2), Mesh.TYPE_RECTANGLE, Mesh.COLOR_PURPLE);
@@ -258,8 +260,8 @@ public class Scene {
         
         
         lights = new PointLightSource[2];
-        lights[0] = new PointLightSource(new Vertex(2,-3,-1),1.0);
-        lights[1] = new PointLightSource(new Vertex(3,4,2),0.7);
+        lights[0] = new PointLightSource(new Vertex(2,-3,-2),1.0);
+        lights[1] = new PointLightSource(new Vertex(3,4,-3),0.7);
         
         for(int i = 0; i < NROBJECTS; i++)
         {
@@ -278,6 +280,7 @@ public class Scene {
         Node<Ray> rayit = new Node<Ray>(), rayfrit = new Node<Ray>();
         
         Ray largestRay = objects[0].rayIntersection(r.returnData(), lights);
+        largestRay.setReflectionType(Ray.RAY_REFLECTION);
 //        boolean failsafe = true;
 //        if(largestRay.returnIndex() == -3)
 //            System.out.println("Wall mesh rayintersection returns an error ray!");
@@ -313,44 +316,29 @@ public class Scene {
                 }
             }
         }
-        if(r.returnData().equals(largestRay))
-            System.out.println("WTF");
-        if(r.returnData().getObjectIndex() == 0 && largestRay.getObjectIndex() == 0 && r.returnData().returnIndex() == largestRay.returnIndex())
+        
+        if(largestRay.equals(Ray.ERROR_RAY))
         {
-            System.out.println("The walls are reflecting themselves into itself again! Index: " + largestRay.returnIndex());
-            System.out.println("R Index: " + r.returnData().returnIndex());
-            System.out.println("LargestRay start: " + largestRay.start + "\nLargestRay   end: " + largestRay.end);
-            System.out.println("returnedRay start:" + r.returnData().start + "\nreturnedRay   end:" + r.returnData().end);
-            System.out.println("Directions: \nlargest: " + largestRay.dir + "\nargumentRay: " + r.returnData().dir);
-            System.out.println("Reflected? : " + r.returnData().getObjectIndex());
+            System.out.println("largestRay is an ERROR_RAY! Incoming ray is: " + r.returnData().returnIndex() + " and " + r.returnData().getObjectIndex());
+            System.out.println("Full ray stats: " + r.returnData().toString());
+            Node<Ray> traverse = r;
+            int length = 0;
+            while(traverse.checkHasParent())
+            {
+                ++length;
+                traverse = traverse.returnParent();
+                System.out.println("Current node: " + traverse.returnData());
+//                if(length > 4)
+//                {
+//                    System.out.println("Length greater than 4! Stuck in:" + traverse.returnData().getObjectIndex());
+//                    System.out.println("Current importance: " + traverse.returnData().getImportance());
+//                }
+                    
+                
+            }
+            System.out.println("Length of tree at this point: " + length);
         }
-//        if(r.returnData().getObjectIndex() == 2 && largestRay.equals(Ray.ERROR_RAY))
-//        {
-//            System.out.println("Sphere error detected!");
-//            System.out.println(r.returnData());
-//        }
-            
-//        if(largestRay.equals(Ray.ERROR_RAY))
-//        {
-//            System.out.println("largestRay is an ERROR_RAY! Incoming ray is: " + r.returnData().returnIndex() + " and " + r.returnData().getObjectIndex());
-//            System.out.println("Full ray stats: " + r.returnData().toString());
-//            Node<Ray> traverse = r;
-//            int length = 0;
-//            while(traverse.checkHasParent())
-//            {
-//                ++length;
-//                traverse = traverse.returnParent();
-//                System.out.println("Current node: " + traverse.returnData());
-////                if(length > 4)
-////                {
-////                    System.out.println("Length greater than 4! Stuck in:" + traverse.returnData().getObjectIndex());
-////                    System.out.println("Current importance: " + traverse.returnData().getImportance());
-////                }
-//                    
-//                
-//            }
-//            System.out.println("Length of tree at this point: " + length);
-//        }
+        
             
 //        if(r.returnData().returnIndex() == 1)
 //            System.out.println("Triangle 1: " + r.returnData().color);
@@ -368,7 +356,6 @@ public class Scene {
         if(largestRay.getImportance() > Camera.IMPORTANCETHRESHOLD)
         {
             int nRefl = N_REFLECTEDRAYS;
-            int objIndex = getObjectByTriangleIndex(largestRay.returnIndex());
 //            if(objects[objIndex].isTransparent())
 //            {
 //                nRefl = 2;
@@ -389,10 +376,19 @@ public class Scene {
                     Triangle pick = objects[largestRay.getObjectIndex()].returnTriangleById(largestRay.returnIndex());
                     Direction normal = pick.normal;
                     Vertex refEnd = Vertex.DUMMY;
-                    double largestAngle = Math.acos((SkalärProdukt(invert(dirToVertex(largestRay.dir)), dirToVertex(normal))));
+//                    double largestAngle = Math.acos((SkalärProdukt(invert(dirToVertex(largestRay.dir)), dirToVertex(normal))));
+                    double largestAngle = VektorVinkel(invert(largestRay.dir), normal);
                     boolean totalReflection = false;
-                    if(largestAngle > BrewsterAngle(Object.PROP_AIR, objects[largestRay.getObjectIndex()].returnProperty()))
-                        totalReflection = true;
+                    if(r.returnData().getReflectionType() == Ray.RAY_REFLECTION)
+                    {
+                        if(largestAngle > BrewsterAngle(Object.PROP_AIR, objects[largestRay.getObjectIndex()].returnProperty()))
+                            totalReflection = true;
+                    }
+                    else
+                    {
+                        if(largestAngle > BrewsterAngle(objects[largestRay.getObjectIndex()].returnProperty(), Object.PROP_AIR))
+                            totalReflection = true;
+                    }
                     //Random angle reflection
                     if(objects[largestRay.getObjectIndex()].getReflectorType() == Object.REFLECTOR_DIFFUSE)
                         refEnd = randomAngle(normal, objects[largestRay.getObjectIndex()].returnTriangleById(largestRay.returnIndex()));
@@ -432,6 +428,7 @@ public class Scene {
 //                    }
                     reflectedRay = new Ray(largestRay.end, VektorAddition(largestRay.end, refEnd), largestRay.color, largestRay.returnIndex(), Ray.RAY_IMPORTANCE);
                     reflectedRay.setReflectionType(Ray.RAY_REFLECTION);
+//                    System.out.println("reflectedRay reflectionType: " + reflectedRay.getReflectionType());
                     reflectedRay.setObjectIndex(largestRay.getObjectIndex());
                     HemisCoords impIn = cartToHemis(dirToVertex(largestRay.dir));
                     HemisCoords impOut = cartToHemis(dirToVertex(reflectedRay.dir));
@@ -451,20 +448,38 @@ public class Scene {
                     if(objects[largestRay.getObjectIndex()].isTransparent() && !totalReflection)
                     {
                         Vertex refrEnd = Vertex.DUMMY;
-                        double refrAngle = SnellsLaw(Object.PROP_AIR, objects[largestRay.getObjectIndex()].returnProperty(), largestAngle);
+                        double refrAngle = 0;
+                        if(r.returnData().getReflectionType() == Ray.RAY_REFLECTION)
+                            refrAngle = SnellsLaw(Object.PROP_AIR, objects[largestRay.getObjectIndex()].returnProperty(), largestAngle);
+                        else
+                            refrAngle = SnellsLaw(objects[largestRay.getObjectIndex()].returnProperty(), Object.PROP_AIR, largestAngle);
                         Vertex projDir = projection_getter(pick, invert(largestRay.dir));
                         Vertex ortoDir = VektorSubtraktion(dirToVertex(largestRay.dir), projDir);
                         refrEnd = VektorAddition(VektorMultiplikation(dirToVertex(normal), Math.cos(refrAngle)), 
                                 VektorMultiplikation(ortoDir, Math.sin(refrAngle)/returnLength(ortoDir)));
                         refractedRay = new Ray(largestRay.end, VektorAddition(largestRay.end, refrEnd), largestRay.color, largestRay.returnIndex(), Ray.RAY_IMPORTANCE);
                         refractedRay.setReflectionType(Ray.RAY_REFRACTION);
+//                        System.out.println("refractedRay reflectionType: " + refractedRay.getReflectionType());
                         refractedRay.setObjectIndex(largestRay.getObjectIndex());
                         refractedRay.setImportance(largestRay.getImportance()*
                                 objects[largestRay.getObjectIndex()].returnTriangleById(largestRay.returnIndex()).reflectionCoefficient);
+//                        if(Double.isNaN(refractedRay.end.x) || Double.isNaN(refractedRay.end.y) || Double.isNaN(refractedRay.end.z))
+//                        {
+//                            System.out.println("NaN detected in refractedRay!");
+//                            System.out.println("Ray stats: " + refractedRay);
+//                            System.out.println("Parent ray: " + r.returnData());
+//                            System.out.println("refrAngle: " + refrAngle);
+//                            System.out.println("largestAngle: " + largestAngle);
+//                            System.out.println("projDir: " + projDir);
+//                            System.out.println("ortoDir: " + ortoDir);
+//                            System.out.println("refrEnd: " + refrEnd);
+//                        }
                         rayfrit = new Node<Ray>(refractedRay, r);
+//                        System.out.println("rayfrit reflectionType: " + rayfrit.returnData().getReflectionType());
                         r.addChild(rayfrit);
                     }
                     rayit = new Node<Ray>(reflectedRay, r);
+//                    System.out.println("rayit reflectionType: " + rayit.returnData().getReflectionType());
                     r.addChild(rayit);
                 }
                 else
@@ -528,21 +543,35 @@ public class Scene {
 //                col.setIntensity(r.returnData().getImportance());
 //                tmpRay[indRefl].color.addColor(col);
             }
+//            for(int idc = 0; idc < r.returnChildrenAmount(); ++idc)
+//            {
+//                Node<Ray> it = r.returnChild(idc);
+//                System.out.println("Stored reflectionTypes: " + it.returnData().getReflectionType());
+////                if(Double.isNaN(it.returnData().end.x) || Double.isNaN(it.returnData().end.y) || Double.isNaN(it.returnData().end.z))
+////                {
+////                    System.out.println("NaN detected!");
+////                    System.out.println("Ray stats: " + it.returnData());
+////                    System.out.println("Reflection model: " + it.returnData().getReflectionType());
+////                    System.out.println("Current importance: " + it.returnData().getImportance());
+////                    System.out.println("Parent ray: " + r.returnData());
+////                }
+//            }
+            
             Vector<Ray> tmpRay = new Vector<>();
-            Node<Ray> traverse = r;
-            int length = 0;
-            while(traverse.checkHasParent())
-            {
-                ++length;
-                traverse = traverse.returnParent();
-                if(length > 4)
-                {
-                    System.out.println("Length greater than 4! Stuck in:" + traverse.returnData().getObjectIndex());
-                    System.out.println("Current importance: " + traverse.returnData().getImportance());
-                }
-                    
-                
-            }
+//            Node<Ray> traverse = r;
+//            int length = 0;
+//            while(traverse.checkHasParent())
+//            {
+//                ++length;
+//                traverse = traverse.returnParent();
+//                if(length > 4)
+//                {
+//                    System.out.println("Length greater than 4! Stuck in:" + traverse.returnData().getObjectIndex());
+//                    System.out.println("Current importance: " + traverse.returnData().getImportance());
+//                }
+//                    
+//                
+//            }
             int offset = 0;
             int initLimit = r.returnChildrenAmount();
             for(int idn = 0; idn < initLimit; ++idn)
@@ -575,9 +604,11 @@ public class Scene {
 //                    }
                     continue;
                 }
+                
                 ColorDbl col = new ColorDbl(largestRay.color);
                 col.setIntensity(r.returnData().getImportance());
                 tmpRay.get(idn - offset).color.addColor(col);
+                tmpRay.get(idn - offset).setReflectionType(it.returnData().getReflectionType());
 //                System.out.println("POSTADD:\nSize1: " + r.returnChildrenAmount() + "\nSize2: " + tmpRay.size());
             }
 //            if(r.returnChildrenAmount() != tmpRay.size())
@@ -602,13 +633,26 @@ public class Scene {
                 return endRay;
             }
             resultRay = tmpRay.get(0);
+            resultRay.setReflectionType(Ray.RAY_REFLECTION);
             ColorDbl tmpCol = new ColorDbl();
             for(int idn = 0; idn < r.returnChildrenAmount(); ++idn)
             {
+                if(r.returnChild(idn).returnData().getReflectionType() == Ray.RAY_REFRACTION)
+                {
+                    System.out.println("Refracted ray adding to colour!");
+                    resultRay.setReflectionType(Ray.RAY_REFRACTION);
+                }
+                    
 //                System.out.println("Index: " + idn + " gets " + tmpRay.get(0) + "from tmp");
 //                System.out.println("Index: " + idn + " gets " + r.returnChild(0).returnData() + "from r");
 //                System.out.println("Size1: " + r.returnChildrenAmount() + "\nSize2: " + tmpRay.size());
-                tmpCol.addColor(tmpRay.get(idn).color);
+                if(objects[largestRay.getObjectIndex()].isTransparent() && r.returnChild(idn).returnData().getReflectionType() == Ray.RAY_REFLECTION)
+                {
+                    tmpCol.addColor(tmpRay.get(idn).color);
+                    tmpCol.setIntensity(0.2);
+                }
+                else
+                    tmpCol.addColor(tmpRay.get(idn).color);
                 tmpCol.r /= r.returnChildrenAmount();
                 tmpCol.g /= r.returnChildrenAmount();
                 tmpCol.b /= r.returnChildrenAmount();
@@ -621,7 +665,6 @@ public class Scene {
 //                tmpCol.b /= nRefl;
 //            }
             resultRay.color = tmpCol;
-            
             
         }
         else
@@ -638,6 +681,7 @@ public class Scene {
 //            r.addChild(rayit);
             resultRay = new Ray(largestRay);
             resultRay.color.setIntensity(r.returnData().getImportance());
+            resultRay.setReflectionType(r.returnData().getReflectionType());
 //            System.out.println("Triangleindex end: " + rayit.returnData().returnIndex());
 //            Node <Ray> it = rayit.returnParent();
 //            do
@@ -648,6 +692,17 @@ public class Scene {
             
                 
         }
+//        if(!r.checkHasParent() && r.returnData().getObjectIndex() == 3)
+//        {
+//            int length = 0;
+//            System.out.println(r.returnData());
+//            Node<Ray> it = r;
+//            while(it.checkIfParent())
+//            {
+//                ++length;
+//                
+//            }
+//        }
 //        if(!r.checkHasParent() && r.returnData().getObjectIndex() != 0)
 //        {
 //            System.out.println("Final color for non wall ray: " + r.returnData().color);
@@ -672,7 +727,8 @@ public class Scene {
 //            System.out.println(r.returnData());
 //            System.out.println(resultRay);
 //        }
-        
+        if(resultRay.getReflectionType() == Ray.RAY_REFRACTION)
+            System.out.println("Refraction ray returned!");
         return resultRay;
     }
     
@@ -705,7 +761,7 @@ public class Scene {
         
         result = hemisToCart(refEndPol);
         test = vertexToDir(result);
-        }while(VektorVinkel(test, t.normal) > Math.PI/2);
+        }while(VektorVinkel(test, t.normal) > Math.PI/2 - 2*Math.asin(EPSILON*10));
         
         
 //        if(Math.abs(result.x) < EPSILON || Math.abs(result.y) < EPSILON)
@@ -778,6 +834,10 @@ public class Scene {
         {
             objects[i].rotateX(angle);
         }
+        for(int idl = 0; idl < lights.length; ++idl)
+        {
+            lights[idl].rotateX(angle);
+        }
     }
     public void rotateY(double angle)
     {
@@ -785,12 +845,20 @@ public class Scene {
         {
             objects[i].rotateY(angle);
         }
+        for(int idl = 0; idl < lights.length; ++idl)
+        {
+            lights[idl].rotateY(angle);
+        }
     }
     public void rotateZ(double angle)
     {
         for(int i = 0; i < objects.length; i++)
         {
             objects[i].rotateZ(angle);
+        }
+        for(int idl = 0; idl < lights.length; ++idl)
+        {
+            lights[idl].rotateZ(angle);
         }
     }
 }
