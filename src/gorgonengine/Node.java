@@ -12,8 +12,11 @@ package gorgonengine;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 
-public class Node<T> {
+public class Node<T> //implements Iterable<Node<T>>, Iterator<Node<T>>
+{
     
     private T data;
     private Node<T> parent;
@@ -103,6 +106,31 @@ public class Node<T> {
         return children.get(index);
     }
     
+    public void removeChild(int index)
+    {
+        if(index >= numChildren)
+            return;
+        if(children.get(index).equals(null))
+            return;
+        children.remove(index);
+        --numChildren;
+    }
+    
+    public void removeChild(T data)
+    {
+        for(int idd = 0; idd < numChildren; ++idd)
+        {
+            if(returnChild(idd).returnData().equals(data))
+            {
+//                System.out.println("Node, removing child: " + data.toString());
+//                System.out.println("Current size: " + numChildren);
+                removeChild(idd);
+//                System.out.println("Current size: " + numChildren);
+                break;
+            }
+        }
+    }
+    
     public Node<T> returnChild()
     {
         if(children.get(0).equals(null))
@@ -117,9 +145,36 @@ public class Node<T> {
         return true;
     }
     
+    public boolean isEmpty()
+    {
+        if(data == null)
+            return true;
+        return false;
+    }
+    
     public boolean checkHasParent()
     {
         return hasPapa;
     }
+    
+    public int returnChildrenAmount()
+    {
+        return numChildren;
+    }
+    
+//    public Iterator<Node<T>> iterator()
+//    {
+//        return this;
+//    }
+//    
+//    public Node<T> next(int index)
+//    {
+//        return returnChild
+//    }
+//    
+//    public boolean hasNext()
+//    {
+//        
+//    }
     
 }

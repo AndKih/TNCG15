@@ -39,13 +39,13 @@ public class Sphere extends Object{
     
     public Sphere(ColorDbl c, Vertex center, double radius, int index, boolean ls, boolean trans)
     {
-        setReflectorType(Object.REFLECTOR_SPECULAR);
         this.center = center;
         this.radius = radius;
         color = c;
         objectID = index;
         lightsource = ls;
         transparent = trans;
+        setReflectorType(Object.REFLECTOR_SPECULAR);
         MATERIAL_PROPERTY = Object.PROP_GLASS;
     }
     
@@ -56,6 +56,8 @@ public class Sphere extends Object{
     
     public Ray rayIntersection(Ray r, PointLightSource[] ls)
     {
+        if(!transparent && r.getObjectIndex() == objectID)
+            return Ray.ERROR_RAY;
         //final double EPSILON = 0.000001;
         //||x - C||^2 = r^2
         //x = o + dI
@@ -96,14 +98,13 @@ public class Sphere extends Object{
                     returnLength(VektorSubtraktion(x2, r.start)))
             {
                 Ray dirtest = new Ray(r.start, x1, ColorDbl.BLACK, -1, Ray.RAY_SHADOW);
-                Vertex dir1 = dirToVertex(r.dir);
-                Vertex dir2 = dirToVertex(dirtest.dir);
-                double angle = SkalärProdukt(dir1,dir2)/(returnLength(dir1)*returnLength(dir2));
+                double angle = VektorVinkel(r.dir, dirtest.dir);
                 if(angle > Math.PI/2 || angle < 0)
                     return Ray.ERROR_RAY;
                 ColorDbl col = intensityCalc(x1,ls);
                 Ray resultRay = new Ray(r.start, x1, col, -1, Ray.RAY_IMPORTANCE);
 //                resultRay.setImportance(r.getImportance()*reflectionCoefficient);
+                resultRay.setImportance(r.getImportance());
                 resultRay.setObjectIndex(objectID);
                 if(returnLength(VektorSubtraktion(resultRay.start, resultRay.end)) < EPSILON)
                     return Ray.ERROR_RAY;
@@ -137,7 +138,6 @@ public class Sphere extends Object{
         {
             return Ray.ERROR_RAY;
         }
-            
     }
     
     public boolean shadowRayIntersection(Ray r, PointLightSource ls, int sphereid)
@@ -221,7 +221,7 @@ public class Sphere extends Object{
             }
         }
         
-        if(smallT != -10 && smallT <= 1)
+        if(smallT != -10 && smallT <= 1 && !transparent)
         {
 //            System.out.println("TEST");
             return true;
@@ -304,7 +304,10 @@ public class Sphere extends Object{
     
     public void setReflectorType(int newType)
     {
-        reflectorType = newType;
+        if(!transparent)
+            reflectorType = newType;
+        else
+            reflectorType = Object.REFLECTOR_SPECULAR;
     }
     
     public double returnProperty()

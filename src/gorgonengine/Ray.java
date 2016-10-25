@@ -173,29 +173,40 @@ public class Ray {
         return objectIndex;
     }
     
+    public String toString()
+    {
+        String result = "Start: " + start + "\n"
+                + "End: " + end + "\n"
+                + "Dir: " + dir + "\n"
+                + "Index: " + rayIndex + "\n"
+                + "ObjectID: " + objectIndex + "\n"
+                + "Color: " + color;
+        return result;
+    }
+    
     public boolean equals(Ray ray)
     {
-        if(ray.end.x != end.x)
+        if(ray.end.x - end.x > Mesh.EPSILON)
         {
             return false;
         }
-        if(ray.end.y != end.y)
+        if(ray.end.y - end.y > Mesh.EPSILON)
         {
             return false;
         }
-        if(ray.end.z != end.z)
+        if(ray.end.z - end.z > Mesh.EPSILON)
         {
             return false;
         }
-        if(ray.start.x != start.x)
+        if(ray.start.x - start.x > Mesh.EPSILON)
         {
             return false;
         }
-        if(ray.start.y != start.y)
+        if(ray.start.y - start.y > Mesh.EPSILON)
         {
             return false;
         }
-        if(ray.start.z != start.z)
+        if(ray.start.z - start.z > Mesh.EPSILON)
         {
             return false;
         }

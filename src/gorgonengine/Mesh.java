@@ -18,6 +18,7 @@ public class Mesh extends Object{
     public static final int COLOR_RED = 100, COLOR_BLUE = 101, COLOR_GREEN = 102;
     public static final int COLOR_MAGENTA = 103, COLOR_YELLOW = 104, COLOR_CYAN = 105;
     public static final int COLOR_PURPLE = 106, COLOR_ORANGE = 107, COLOR_BLACK = 108;
+    public static final double EPSILON = 0.000001;
     public final int SIZE;
     public Triangle[] mesh;
     private int objectID;
@@ -53,6 +54,8 @@ public class Mesh extends Object{
         }
         lightsource = ls;
         transparent = trans;
+        if(transparent)
+            setReflectorType(Object.REFLECTOR_SPECULAR);
         MATERIAL_PROPERTY = Object.PROP_GLASS;
     }
     
@@ -101,6 +104,8 @@ public class Mesh extends Object{
         }
         lightsource = ls;
         transparent = trans;
+        if(transparent)
+            setReflectorType(Object.REFLECTOR_SPECULAR);
         MATERIAL_PROPERTY = Object.PROP_GLASS;
     }
     
@@ -149,6 +154,8 @@ public class Mesh extends Object{
         }
         lightsource = ls;
         transparent = trans;
+        if(transparent)
+            setReflectorType(Object.REFLECTOR_SPECULAR);
         MATERIAL_PROPERTY = Object.PROP_GLASS;
     }
     
@@ -198,11 +205,19 @@ public class Mesh extends Object{
         }
         lightsource = ls;
         transparent = trans;
+        if(transparent)
+            setReflectorType(Object.REFLECTOR_SPECULAR);
         MATERIAL_PROPERTY = Object.PROP_GLASS;
     }
         
     public Ray rayIntersection(Ray r, PointLightSource[] ls)
     {
+        if(!transparent && r.getObjectIndex() == objectID && objectID != 0)
+        {
+            System.out.println("MESH, object " + objectID + " trying to hit itself!");
+            return Ray.ERROR_RAY;
+        }
+        
         double t = -1, smallT = -10;
         //double EPSILON = 0.00000001;
         Boolean firstHit = true;
@@ -210,6 +225,12 @@ public class Mesh extends Object{
         Direction normal = new Direction();
         for(int idt = 0; idt < SIZE; ++idt)
         {
+            if(mesh[idt].triangleIndex == r.returnIndex())
+            {
+//                System.out.println("Will not target self.");
+                continue;
+            }
+                
             t = mesh[idt].rayIntersection(r);
             if(firstHit && t>= EPSILON)
             {
@@ -223,7 +244,7 @@ public class Mesh extends Object{
                 savedID = idt;
             }
         }
-        if(smallT != -10 && smallT > EPSILON)
+        if(smallT != -10 && smallT > EPSILON && savedID != r.returnIndex())
         {
             normal = mesh[savedID].normal;
             ColorDbl tmpCol = new ColorDbl(mesh[savedID].color);
@@ -238,14 +259,23 @@ public class Mesh extends Object{
             Ray resultRay = new Ray(r.start, newEnd, res, mesh[savedID].triangleIndex, Ray.RAY_IMPORTANCE);
             resultRay.setImportance(r.getImportance());
             resultRay.setObjectIndex(objectID);
-//            resultRay.setImportance(r.getImportance()*mesh[savedID].reflectionCoefficient);
+            if(r.returnIndex() == resultRay.returnIndex())
+            {
+                System.out.println("Hit self.");
+                return Ray.ERROR_RAY;
+            }
+            if(returnLength(VektorSubtraktion(resultRay.start, resultRay.end)) < EPSILON)
+            {
+                System.out.println("Ray is too short, probably hit self.");
+                return Ray.ERROR_RAY;
+            }
+            resultRay.setImportance(r.getImportance()*mesh[savedID].reflectionCoefficient);
 //            if(resultRay.returnIndex() == 1)
 //            {
 //                System.out.println("tmpCol: " + tmpCol);
 //                System.out.println("res: " + res);
 //                System.out.println("Mesh ray color: " + resultRay.color);
 //            }
-                
             return resultRay;
         }
         return Ray.ERROR_RAY;
@@ -374,7 +404,10 @@ public class Mesh extends Object{
     
     public void setReflectorType(int newType)
     {
-        reflectorType = newType;
+        if(!transparent)
+            reflectorType = newType;
+        else
+            reflectorType = Object.REFLECTOR_SPECULAR;
     }
     
     public double returnProperty()
