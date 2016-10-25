@@ -57,7 +57,10 @@ public class Sphere extends Object{
     public Ray rayIntersection(Ray r, PointLightSource[] ls)
     {
         if(!transparent && r.getObjectIndex() == objectID)
+        {
+            System.out.println("Non transparent objects cant hit self.");
             return Ray.ERROR_RAY;
+        }
         //final double EPSILON = 0.000001;
         //||x - C||^2 = r^2
         //x = o + dI
@@ -87,10 +90,16 @@ public class Sphere extends Object{
             
         if(returnLength(VektorSubtraktion(x1, r.end)) < EPSILON || 
                 returnLength(VektorSubtraktion(x2, r.end)) < EPSILON)
+        {
+            System.out.println("Distance between x1/x2 and r.end is too short");
             return Ray.ERROR_RAY;
+        }
         if(returnLength(VektorSubtraktion(x1, r.start)) < EPSILON || 
                 returnLength(VektorSubtraktion(x2, r.start)) < EPSILON)
+        {
+//            System.out.println("Distance between x1/x2 and r.start is too short");
             return Ray.ERROR_RAY;
+        }
         if(returnLength(VektorSubtraktion(x2, center))-radius<EPSILON || 
                 returnLength(VektorSubtraktion(x1, center))-radius<EPSILON)
         {
@@ -100,17 +109,27 @@ public class Sphere extends Object{
                 Ray dirtest = new Ray(r.start, x1, ColorDbl.BLACK, -1, Ray.RAY_SHADOW);
                 double angle = VektorVinkel(r.dir, dirtest.dir);
                 if(angle > Math.PI/2 || angle < 0)
+                {
+//                    System.out.println("Angle between incoming ray and normal too large");
                     return Ray.ERROR_RAY;
+                }
                 ColorDbl col = intensityCalc(x1,ls);
                 Ray resultRay = new Ray(r.start, x1, col, -1, Ray.RAY_IMPORTANCE);
 //                resultRay.setImportance(r.getImportance()*reflectionCoefficient);
                 resultRay.setImportance(r.getImportance());
                 resultRay.setObjectIndex(objectID);
                 if(returnLength(VektorSubtraktion(resultRay.start, resultRay.end)) < EPSILON)
+                {
+                    System.out.println("resultray length too short.");
                     return Ray.ERROR_RAY;
+                }
                 if(returnLength(VektorSubtraktion(resultRay.start, center))-radius<EPSILON && 
-                        returnLength(VektorSubtraktion(resultRay.end, center))-radius<EPSILON)
+                        returnLength(VektorSubtraktion(resultRay.end, center))-radius<EPSILON && 
+                        !transparent)
+                {
+                    System.out.println("resultRay start and end is on sphere");
                     return Ray.ERROR_RAY;
+                }
                 return resultRay;
             }
             else
@@ -120,17 +139,28 @@ public class Sphere extends Object{
                 Vertex dir2 = dirToVertex(dirtest.dir);
                 double angle = SkalärProdukt(dir1,dir2)/(returnLength(dir1)*returnLength(dir2));
                 if(angle > Math.PI/2 || angle < 0)
+                    {
+//                    System.out.println("Angle between incoming ray and normal too large");
                     return Ray.ERROR_RAY;
+                }
                 ColorDbl col = intensityCalc(x2,ls);
                 Ray resultRay = new Ray(r.start, x2, col, -1, Ray.RAY_IMPORTANCE);
 //                resultRay.setImportance(r.getImportance()*reflectionCoefficient);
                 resultRay.setImportance(r.getImportance());
                 resultRay.setObjectIndex(objectID);
                 if(returnLength(VektorSubtraktion(resultRay.start, resultRay.end)) < EPSILON)
+                {
+                    System.out.println("resultray length too short.");
                     return Ray.ERROR_RAY;
+                }
+                    
                 if(returnLength(VektorSubtraktion(resultRay.start, center))-radius<EPSILON && 
-                        returnLength(VektorSubtraktion(resultRay.end, center))-radius<EPSILON)
+                        returnLength(VektorSubtraktion(resultRay.end, center))-radius<EPSILON && 
+                        !transparent)
+                {
+                    System.out.println("resultRay start and end is on sphere");
                     return Ray.ERROR_RAY;
+                }
                 return resultRay;
             }
         }

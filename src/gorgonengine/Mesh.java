@@ -18,7 +18,7 @@ public class Mesh extends Object{
     public static final int COLOR_RED = 100, COLOR_BLUE = 101, COLOR_GREEN = 102;
     public static final int COLOR_MAGENTA = 103, COLOR_YELLOW = 104, COLOR_CYAN = 105;
     public static final int COLOR_PURPLE = 106, COLOR_ORANGE = 107, COLOR_BLACK = 108;
-    public static final double EPSILON = 0.000001;
+    public static final double EPSILON = 0.000000001;
     public final int SIZE;
     public Triangle[] mesh;
     private int objectID;
@@ -232,19 +232,19 @@ public class Mesh extends Object{
             }
                 
             t = mesh[idt].rayIntersection(r);
-            if(firstHit && t>= EPSILON)
+            if(firstHit && t > 0)
             {
                 smallT = t;
                 savedID = idt;
                 firstHit = false;
             }
-            else if(!firstHit && t >= EPSILON && t < smallT)
+            else if(!firstHit && t > 0 && t < smallT)
             {
                 smallT = t;
                 savedID = idt;
             }
         }
-        if(smallT != -10 && smallT > EPSILON && savedID != r.returnIndex())
+        if(smallT != -10 && smallT > EPSILON && mesh[savedID].triangleIndex != r.returnIndex())
         {
             normal = mesh[savedID].normal;
             ColorDbl tmpCol = new ColorDbl(mesh[savedID].color);
@@ -264,11 +264,11 @@ public class Mesh extends Object{
                 System.out.println("Hit self.");
                 return Ray.ERROR_RAY;
             }
-            if(returnLength(VektorSubtraktion(resultRay.start, resultRay.end)) < EPSILON)
-            {
-                System.out.println("Ray is too short, probably hit self.");
-                return Ray.ERROR_RAY;
-            }
+//            if(returnLength(VektorSubtraktion(resultRay.start, resultRay.end)) < EPSILON)
+//            {
+//                System.out.println("Ray is too short, probably hit self.");
+//                return Ray.ERROR_RAY;
+//            }
             resultRay.setImportance(r.getImportance()*mesh[savedID].reflectionCoefficient);
 //            if(resultRay.returnIndex() == 1)
 //            {
@@ -278,6 +278,13 @@ public class Mesh extends Object{
 //            }
             return resultRay;
         }
+        if(objectID == 0)
+        {
+            System.out.println("Hit nothing at all.");
+            System.out.println("Ray used: " + r.toString());
+            System.out.println("smallT: " + smallT);
+        }
+            
         return Ray.ERROR_RAY;
     }
     

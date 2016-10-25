@@ -376,6 +376,7 @@ public class LinAlg {
     
     public static double SnellsLaw(double n1, double n2, double angle1)
     {
+//        System.out.println("Sneeeeels lååååååå");
         return Math.asin((n1*Math.sin(angle1))/n2);
     }
     

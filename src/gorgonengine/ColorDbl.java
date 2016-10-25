@@ -11,7 +11,7 @@ package gorgonengine;
  */
 public class ColorDbl {
     
-    public static final ColorDbl BLACK = new ColorDbl(0, 0, 0), PURPLE =  new ColorDbl(90, 0, 100), ORANGE  = new ColorDbl(100, 55, 0);
+    public static final ColorDbl BLACK = new ColorDbl(0, 0, 0), PURPLE =  new ColorDbl(90, 0, 100), ORANGE  = new ColorDbl(10, 5.5, 0);
     public static final ColorDbl RED = new ColorDbl(100, 0, 0), GREEN = new ColorDbl(0, 100, 0), BLUE = new ColorDbl(0, 0, 100);
     public static final ColorDbl CYAN = new ColorDbl(0, 100, 100), MAGENTA = new ColorDbl(100, 0, 100), YELLOW = new ColorDbl(100, 100, 0);
     public double r, g, b;

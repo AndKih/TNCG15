@@ -180,7 +180,8 @@ public class Ray {
                 + "Dir: " + dir + "\n"
                 + "Index: " + rayIndex + "\n"
                 + "ObjectID: " + objectIndex + "\n"
-                + "Color: " + color;
+                + "Color: " + color + "\n"
+                + "ReflectionType: " + RAY_REFLECTION_TYPE;
         return result;
     }
     
