@@ -242,7 +242,8 @@ public class Scene {
 //        objects[4].setObjectReflection(0.5);
 //        objects[4].setReflectorType(Object.REFLECTOR_DIFFUSE);
         
-        objects[3] = new Mesh(3, new double[] {2}, new Vertex(5, -3, -2), Mesh.TYPE_CUBE, Mesh.COLOR_ORANGE, false, true);
+//        objects[3] = new Mesh(3, new double[] {2}, new Vertex(5, -3, -2), Mesh.TYPE_CUBE, Mesh.COLOR_ORANGE, false, true);
+        objects[3] = new Mesh(3, new double[] {2}, new Vertex(5, -3, -2), Mesh.TYPE_CUBE, Mesh.COLOR_ORANGE);
         objects[3].setObjectReflection(0.5);
 //        objects[3].transparent = true;
 //        objects[4].setReflectorType(Object.REFLECTOR_DIFFUSE);
