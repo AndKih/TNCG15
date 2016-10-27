@@ -212,6 +212,7 @@ public class Mesh extends Object{
         
     public Ray rayIntersection(Ray r, PointLightSource[] ls)
     {
+            ColorDbl errorChecker = mesh[0].color;
         if(!transparent && r.getObjectIndex() == objectID && objectID != 0)
         {
             System.out.println("MESH, object " + objectID + " trying to hit itself!");
@@ -250,11 +251,22 @@ public class Mesh extends Object{
             ColorDbl tmpCol = new ColorDbl(mesh[savedID].color);
             ColorDbl res = new ColorDbl();
             Vertex newEnd = VektorAddition(r.start, VektorMultiplikation(VektorSubtraktion(r.end, r.start), smallT));
-            for(int i = 0; i<ls.length; i++)
+            ColorDbl retint;
+            if(Camera.areaLightsource)
             {
-                res.setIntensity(getLightIntensity(normal, newEnd, ls[i], mesh[savedID].triangleIndex), tmpCol);
-//                if(mesh[savedID].triangleIndex == 1)
-//                    System.out.println("res: " + res);
+                retint = getMCAreaLightIntensity(normal, newEnd, mesh[savedID].triangleIndex);
+                res.setIntensity(retint, tmpCol);
+            }else{
+//            System.out.println("MCArea:\n"+retint);
+//            res = new ColorDbl();
+                for(int i = 0; i<ls.length; i++)
+                {
+                    retint=getLightIntensity(normal, newEnd, ls[i], mesh[savedID].triangleIndex);
+                    res.setIntensity(retint, tmpCol);
+    //                if(mesh[savedID].triangleIndex == 1)
+    //                    System.out.println("res: " + retint);
+                }
+//            System.out.println("Point:\n"+res);
             }
             Ray resultRay = new Ray(r.start, newEnd, res, mesh[savedID].triangleIndex, Ray.RAY_IMPORTANCE);
             resultRay.setImportance(r.getImportance());
@@ -276,14 +288,24 @@ public class Mesh extends Object{
 //                System.out.println("res: " + res);
 //                System.out.println("Mesh ray color: " + resultRay.color);
 //            }
+            if(mesh[0].color.r != errorChecker.r || mesh[0].color.g != errorChecker.g || 
+                    mesh[0].color.b != errorChecker.b)
+            {
+                System.out.println("Before: "+errorChecker+"\nAfter : "+mesh[0].color);
+            }
             return resultRay;
         }
         if(objectID == 0)
         {
-            System.out.println("Hit nothing at all.");
-            System.out.println("Ray used: " + r.toString());
-            System.out.println("smallT: " + smallT);
+//            System.out.println("Hit nothing at all.");
+//            System.out.println("Ray used: " + r.toString());
+//            System.out.println("smallT: " + smallT);
         }
+            if(mesh[0].color.r != errorChecker.r || mesh[0].color.g != errorChecker.g || 
+                    mesh[0].color.b != errorChecker.b)
+            {
+                System.out.println("Before: "+errorChecker+"\nAfter : "+mesh[0].color);
+            }
             
         return Ray.ERROR_RAY;
     }
@@ -1209,6 +1231,9 @@ public class Mesh extends Object{
         
         ++Scene.counter;
         
+    }
+    public void setLightsource() {
+        lightsource = true;
     }
     
 }

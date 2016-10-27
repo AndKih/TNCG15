@@ -16,6 +16,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.util.Calendar;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 
 
 
@@ -35,7 +39,9 @@ public class Camera extends JFrame{
     Scene scene;
     
     
-    public int raysPerPixel = 2;
+    public int raysPerPixel = 4;
+    public static boolean areaLightsource = false;
+    public static boolean logScale = false;
     
     private double deltax;
     private double deltay;
@@ -105,7 +111,18 @@ public class Camera extends JFrame{
                     {
                         System.out.println("SOMETHING HAS GONE HORRIBLY WRONG");
                     }
-                    cam[px][py].addColor(r.color);
+                    if(logScale)
+                    {
+                        double konstant = 5;
+                        ColorDbl toAdd = new ColorDbl(Math.log10((r.color.r)*konstant),
+                                Math.log10((r.color.g)*konstant),Math.log10((r.color.b)*konstant));
+    ////                    ColorDbl toAdd = new ColorDbl(Math.log(r.color.r*konstant),
+    ////                            Math.log(r.color.g*konstant),Math.log(r.color.b*konstant));
+                        cam[px][py].addColor(toAdd);
+                    }else{
+                        cam[px][py].addColor(r.color);
+                    }
+                    
                 }
 //                System.out.println(r.color.toString());
                 if(iMax < cam[px][py].color.r)
@@ -132,6 +149,8 @@ public class Camera extends JFrame{
                 {
                     iMin = cam[px][py].color.b;
                 }
+//                iMin=0;
+//                iMax=180;
             }
         }
         createImage();
@@ -161,6 +180,27 @@ public class Camera extends JFrame{
         this.pack();
         this.setVisible(true);
         
+        saveImage(im);
+    }
+    private void saveImage(BufferedImage im)
+    {
+        Calendar calendar = Calendar.getInstance();
+        String name = System.getProperty("user.dir")+"\\";
+        
+        name+="savedImage_date_"+calendar.get(Calendar.YEAR)+(calendar.get(Calendar.MONTH)+1)
+                +calendar.get(Calendar.DATE)+"_time_h"+calendar.get(Calendar.HOUR_OF_DAY)
+                +"m"+calendar.get(Calendar.MINUTE)+"s"+calendar.get(Calendar.SECOND)
+                +".png";
+        
+        
+        try {
+            if(ImageIO.write(im, "png", new File(name)))
+            {
+                System.out.println("Image saved as:\n"+name);
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(Camera.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     public Vertex getViewpoint()

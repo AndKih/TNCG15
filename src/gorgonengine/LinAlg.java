@@ -387,6 +387,122 @@ public class LinAlg {
     
     public static ColorDbl getLightIntensity(Direction normal, Vertex endpt, PointLightSource ls, int triangleID)
     {
+//        getMCAreaLightIntensity(normal, endpt, ls, triangleID);
+        return getPointLightIntensity(normal, endpt, ls, triangleID);
+    }
+    public static ColorDbl getMCAreaLightIntensity(Direction normal, Vertex endpt, int triangleID)
+    {
+        ColorDbl intensity = new ColorDbl();
+        Vertex axis1;
+        Vertex axis2;
+        Triangle triangle;
+        double length1, length2;
+        
+        PointLightSource fakePoint;
+        
+        Vertex endPoint;
+        ColorDbl returnedIntensity;
+        for(int r = 0; r<20; r++)
+        {
+            for(int i =0; i< Scene.objects.length; i++)
+            {
+                if(Scene.objects[i].isLightsource() && !Scene.objects[i].isSphere())
+                {
+                    triangle = Scene.objects[i].returnTriangleByIndex(0);
+                    axis1 = VektorSubtraktion(triangle.p[1],triangle.p[0]);
+                    axis2 = VektorSubtraktion(triangle.p[2],triangle.p[0]);
+                    length1 = Math.random();
+                    length2 = Math.random();
+                    while(length1+length2>1)
+                    {
+                        length1 = Math.random();
+                        length2 = Math.random();
+                    }
+
+                    //endpoint = p0 + axis1*length1 + axis2*length2
+                    endPoint = triangle.p[0];
+                    endPoint = VektorAddition(VektorMultiplikation(axis1,length1), endPoint);
+                    endPoint = VektorAddition(VektorMultiplikation(axis2,length2), endPoint);
+
+
+                    if((endPoint.x > triangle.p[0].x && endPoint.x > triangle.p[1].x && 
+                            endPoint.x > triangle.p[2].x) || (endPoint.x < triangle.p[0].x 
+                            && endPoint.x < triangle.p[1].x && endPoint.x < triangle.p[2].x))
+                    {
+                        System.out.println(endPoint);
+                    }
+
+                    fakePoint = new PointLightSource(endPoint, triangle.color.meanIntensity()/Scene.LIGHTCOLOR.meanIntensity());
+                    returnedIntensity = getPointLightIntensity(normal, endpt,fakePoint , triangleID);
+                    returnedIntensity.setIntensity(0.05);
+                    intensity.addColor(returnedIntensity);
+                }
+            }
+        }
+        if(intensity.meanIntensity()>100)
+        {
+            System.out.println(intensity);
+        }
+        return intensity;
+    }
+    
+    public static ColorDbl OLDgetMCAreaLightIntensity(Direction normal, Vertex endpt, int triangleID)
+    {
+        int nrays = 5;
+        ColorDbl intensity = new ColorDbl();
+        Vertex axis1;
+        Vertex axis2;
+        Triangle triangle;
+        double length1, length2;
+        
+        ColorDbl tmpCol = new ColorDbl();
+        PointLightSource fakePoint;
+        
+        Vertex endPoint;
+        ColorDbl supertemporary;
+        for(int i =0; i< Scene.objects.length; i++)
+        {
+            if(Scene.objects[i].isLightsource() && !Scene.objects[i].isSphere())
+            {
+                tmpCol = ColorDbl.BLACK; //get rid of garbage vals from prev iteration
+                //at this moment ONLY runs for the FIRST triangle in mesh
+                
+                for(int rays=0; rays<nrays; rays++)
+                {
+                    triangle = Scene.objects[i].returnTriangleByIndex(0);
+                    axis1 = VektorSubtraktion(triangle.p[1],triangle.p[0]);
+                    axis2 = VektorSubtraktion(triangle.p[2],triangle.p[0]);
+                    length1 = Math.random();
+                    length2 = Math.random();
+                   
+                    //endpoint = p0 + axis1*length1 + axis2*length2
+                    endPoint = triangle.p[0];
+                    endPoint = VektorAddition(VektorMultiplikation(axis1,length1), endPoint);
+                    endPoint = VektorAddition(VektorMultiplikation(axis2,length2), endPoint);
+                    
+                    fakePoint = new PointLightSource(endPoint, triangle.color.meanIntensity()/100);
+                    supertemporary=getPointLightIntensity(normal, endpt,fakePoint , triangleID);
+                    System.out.println("Point: ");
+                    System.out.println(fakePoint.color);
+                    System.out.println(fakePoint.pos);
+                    System.out.println(fakePoint.radiance);
+                    System.out.println("supertemporary "+supertemporary);
+                    tmpCol.addColor(supertemporary);
+                    
+                }
+                double mean = (double)1/nrays;
+//                System.out.println("mean "+mean);
+                tmpCol.setIntensity(mean);
+//                if(tmpCol.meanIntensity()>0.5)
+//                System.out.println(tmpCol);
+                intensity.addColor(tmpCol);
+            }
+        }
+        return intensity;
+    }
+    
+    public static ColorDbl getPointLightIntensity(Direction normal, Vertex endpt, PointLightSource ls, int triangleID)
+    {
         Vertex n = dirToVertex(normal);
         Vertex l = ls.getLightVectorFrom(endpt);
         Ray shadowRay = new Ray(endpt, ls.pos, new ColorDbl(0, 0, 0), -1, Ray.RAY_SHADOW);
@@ -402,7 +518,6 @@ public class LinAlg {
             }
         }
         double angle =  SkalärProdukt(n,l)/(returnLength(n)*returnLength(l));
-        
 //        if(angle < 0)
 //        {
 //            System.out.println("Endpt  " + endpt);
@@ -418,6 +533,18 @@ public class LinAlg {
 //            System.out.println("pos: " + endpt.toString());
         ColorDbl res = new ColorDbl(ls.color);
         res.setIntensity(angle);
+//        if(res.meanIntensity()>100)
+//        {
+//            System.out.println(res);
+//            System.out.println("length n "+returnLength(n));
+//            System.out.println("length l "+returnLength(l));
+//        }
+        if(Double.isInfinite(res.r) || Double.isInfinite(res.g) || Double.isInfinite(res.b))
+        {
+            System.out.println(res);
+            System.out.println("length n "+returnLength(n));
+            System.out.println("length l "+returnLength(l));
+        }
         return res;
     }
     

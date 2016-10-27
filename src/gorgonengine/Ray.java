@@ -34,7 +34,10 @@ public class Ray {
         start = s;
         end = e;
         dir = calculateVectorDirection(s, e);
-        color = c;
+        color= new ColorDbl();
+        color.r= c.r;
+        color.g= c.g;
+        color.b= c.b;
         rayIndex = -1;
         RAY_TYPE = RAY_LIGHT;
         radiance = 1;

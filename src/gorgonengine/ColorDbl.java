@@ -87,4 +87,17 @@ public class ColorDbl {
     {
         return "(" + r + ", " + g + ", " + b + ")";
     }
+
+    public double meanIntensity() {
+        double oldr = r;
+        double oldg = g;
+        double oldb = b;
+        double mean = r + g + b;
+        mean /= 3;
+        if(r!=oldr || g != oldg || b != oldb)
+        {
+            System.out.println(toString());
+        }
+        return mean;
+    }
 }

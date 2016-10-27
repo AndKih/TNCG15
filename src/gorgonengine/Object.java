@@ -38,6 +38,7 @@ public abstract class Object {
     public abstract boolean isSphere();
     public abstract boolean isTransparent();
     public abstract boolean isLightsource();
+    public abstract void setLightsource();
     public abstract Direction returnNormal(Vertex vr);
     public abstract int getReflectorType();
     public abstract void setReflectorType(int newType);
