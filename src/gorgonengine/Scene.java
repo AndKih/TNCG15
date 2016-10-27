@@ -238,7 +238,10 @@ public class Scene {
         pnew2[1] = new Vertex(13, 0, 4.999);
         pnew2[2] = new Vertex(0, 0, 4.999);
         
-        mesh3[0] = new Triangle(pnew2, new ColorDbl(50,50,50), counter);
+//        pnew2[0] = new Vertex(-3, 0, 4.999);
+//        pnew2[1] = new Vertex(0, 6, 4.999);
+//        pnew2[2] = new Vertex(0, 0, 4.999);
+        mesh3[0] = new Triangle(pnew2, new ColorDbl(100,100,100), counter);
         
         
         ++counter;
@@ -280,10 +283,42 @@ public class Scene {
 //        objects[6].setObjectReflection(0.5);
 //        objects[6].setReflectorType(Object.REFLECTOR_DIFFUSE);
         
+        if(false)
+        {
+            int n=20;
+            lights = new PointLightSource[n];
+            
+            Triangle triangle = Scene.objects[4].returnTriangleByIndex(0);
+            Vertex axis1;
+            Vertex axis2;
+            double length1;
+            double length2;
+            Vertex endPoint;
+            for(int i = 0; i<n; i++)
+            {
+                axis1 = VektorSubtraktion(triangle.p[1],triangle.p[0]);
+                axis2 = VektorSubtraktion(triangle.p[2],triangle.p[0]);
+                length1 = Math.random();
+                length2 = Math.random();
+                while(length1+length2>1)
+                {
+                    length1 = Math.random();
+                    length2 = Math.random();
+                }
+
+                //endpoint = p0 + axis1*length1 + axis2*length2
+                endPoint = triangle.p[0];
+                endPoint = VektorAddition(VektorMultiplikation(axis1,length1), endPoint);
+                endPoint = VektorAddition(VektorMultiplikation(axis2,length2), endPoint);
+                lights[i] = new PointLightSource(endPoint,0.33);
+            }
+            
+        }else{
+            lights = new PointLightSource[2];
+            lights[0] = new PointLightSource(new Vertex(2,-3,-2),1.0);
+            lights[1] = new PointLightSource(new Vertex(3,4,-3),0.7);
+        }
         
-        lights = new PointLightSource[2];
-        lights[0] = new PointLightSource(new Vertex(2,-3,-2),1.0);
-        lights[1] = new PointLightSource(new Vertex(3,4,-3),0.7);
         
         for(int i = 0; i < NROBJECTS; i++)
         {

@@ -255,17 +255,21 @@ public class Mesh extends Object{
             if(Camera.areaLightsource)
             {
                 retint = getMCAreaLightIntensity(normal, newEnd, mesh[savedID].triangleIndex);
+//                System.out.println("retint "+retint.toString());
                 res.setIntensity(retint, tmpCol);
+//                System.out.println("res: "+res.toString()+"\n");
             }else{
 //            System.out.println("MCArea:\n"+retint);
 //            res = new ColorDbl();
                 for(int i = 0; i<ls.length; i++)
                 {
                     retint=getLightIntensity(normal, newEnd, ls[i], mesh[savedID].triangleIndex);
+//                System.out.println("retint "+retint.toString());
                     res.setIntensity(retint, tmpCol);
     //                if(mesh[savedID].triangleIndex == 1)
     //                    System.out.println("res: " + retint);
                 }
+//                System.out.println("res: "+res.toString()+"\n");
 //            System.out.println("Point:\n"+res);
             }
             Ray resultRay = new Ray(r.start, newEnd, res, mesh[savedID].triangleIndex, Ray.RAY_IMPORTANCE);

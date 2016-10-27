@@ -38,11 +38,11 @@ public class GorgonEngine
         viewPoint[1] = new Vertex(-2, 0, 0);
         viewPoint[2] = new Vertex(-0.2, 0, 0);
         
-        Camera camera = new Camera(700, 500, viewPoint, new Vertex(0, 0, 0), 2.0, 2.0);
+        Camera camera = new Camera(400, 400, viewPoint, new Vertex(0, 0, 0), 2.0, 2.0);
         camera.setViewpoint(0);
 //        camera.translateCamera(new Vertex(-10,0,0));
 //        
-//        camera.rotateCameraZ(Math.PI);
+//        camera.rotateCameraZ(0.3*Math.PI);
 //        camera.rotateCameraX(0);
 //        camera.rotateCameraY(0);
         
