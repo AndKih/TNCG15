@@ -387,6 +387,134 @@ public class LinAlg {
     
     public static ColorDbl getLightIntensity(Direction normal, Vertex endpt, PointLightSource ls, int triangleID)
     {
+//        getMCAreaLightIntensity(normal, endpt, ls, triangleID);
+        return getPointLightIntensity(normal, endpt, ls, triangleID);
+    }
+    public static ColorDbl getMCAreaLightIntensity(Direction normal, Vertex endpt, int triangleID)
+    {
+        ColorDbl intensity = new ColorDbl();
+        Vertex axis1;
+        Vertex axis2;
+        Triangle triangle;
+        double length1, length2;
+        
+        PointLightSource fakePoint;
+        
+        Vertex endPoint;
+        ColorDbl returnedIntensity;
+        double nHits =0;
+        
+        for(int i =0; i< Scene.objects.length; i++)
+        {
+            if(Scene.objects[i].isLightsource() && !Scene.objects[i].isSphere())
+            {
+                nHits++;
+                for(int r = 0; r<Camera.N_AREALIGHTSOURCEPOINTS; r++)
+                {
+                    triangle = Scene.objects[i].returnTriangleByIndex(0);
+                    axis1 = VektorSubtraktion(triangle.p[1],triangle.p[0]);
+                    axis2 = VektorSubtraktion(triangle.p[2],triangle.p[0]);
+                    length1 = Math.random();
+                    length2 = Math.random();
+                    while(length1+length2>1)
+                    {
+                        length1 = Math.random();
+                        length2 = Math.random();
+                    }
+
+                    //endpoint = p0 + axis1*length1 + axis2*length2
+                    endPoint = triangle.p[0];
+                    endPoint = VektorAddition(VektorMultiplikation(axis1,length1), endPoint);
+                    endPoint = VektorAddition(VektorMultiplikation(axis2,length2), endPoint);
+
+
+                    if((endPoint.x > triangle.p[0].x && endPoint.x > triangle.p[1].x && 
+                            endPoint.x > triangle.p[2].x) || (endPoint.x < triangle.p[0].x 
+                            && endPoint.x < triangle.p[1].x && endPoint.x < triangle.p[2].x))
+                    {
+                        System.out.println(endPoint);
+                    }
+
+                    fakePoint = new PointLightSource(endPoint, triangle.color.meanIntensity()/Scene.LIGHTCOLOR.meanIntensity());
+                    returnedIntensity = getPointLightIntensity(normal, endpt,fakePoint , triangleID);
+                    double area = 0.5*Math.abs(SkalärProdukt(axis1,axis2));
+//                    System.out.println("area "+area);
+//                    System.out.println("\n\nArea"+area+"\n\n");
+//                    returnedIntensity.setIntensity(1/Camera.N_AREALIGHTSOURCEPOINTS);
+                    returnedIntensity.setIntensity(1/area);
+                    intensity.addColor(returnedIntensity);
+                }
+            }
+        }
+//        System.out.println("Intensity "+intensity);
+//        intensity.setIntensity((double)1/((double)Camera.N_AREALIGHTSOURCEPOINTS*nHits));
+////        System.out.println("Intensity "+intensity+"\n-----------------\n");
+        
+        if(intensity.meanIntensity()>100)
+        {
+            System.out.println(intensity);
+        }
+//                    System.out.println("Intensity " + intensity);
+        return intensity;
+    }
+    
+    public static ColorDbl OLDgetMCAreaLightIntensity(Direction normal, Vertex endpt, int triangleID)
+    {
+        int nrays = 5;
+        ColorDbl intensity = new ColorDbl();
+        Vertex axis1;
+        Vertex axis2;
+        Triangle triangle;
+        double length1, length2;
+        
+        ColorDbl tmpCol = new ColorDbl();
+        PointLightSource fakePoint;
+        
+        Vertex endPoint;
+        ColorDbl supertemporary;
+        for(int i =0; i< Scene.objects.length; i++)
+        {
+            if(Scene.objects[i].isLightsource() && !Scene.objects[i].isSphere())
+            {
+                tmpCol = ColorDbl.BLACK; //get rid of garbage vals from prev iteration
+                //at this moment ONLY runs for the FIRST triangle in mesh
+                
+                for(int rays=0; rays<nrays; rays++)
+                {
+                    triangle = Scene.objects[i].returnTriangleByIndex(0);
+                    axis1 = VektorSubtraktion(triangle.p[1],triangle.p[0]);
+                    axis2 = VektorSubtraktion(triangle.p[2],triangle.p[0]);
+                    length1 = Math.random();
+                    length2 = Math.random();
+                   
+                    //endpoint = p0 + axis1*length1 + axis2*length2
+                    endPoint = triangle.p[0];
+                    endPoint = VektorAddition(VektorMultiplikation(axis1,length1), endPoint);
+                    endPoint = VektorAddition(VektorMultiplikation(axis2,length2), endPoint);
+                    
+                    fakePoint = new PointLightSource(endPoint, triangle.color.meanIntensity()/100);
+                    supertemporary=getPointLightIntensity(normal, endpt,fakePoint , triangleID);
+                    System.out.println("Point: ");
+                    System.out.println(fakePoint.color);
+                    System.out.println(fakePoint.pos);
+                    System.out.println(fakePoint.radiance);
+                    System.out.println("supertemporary "+supertemporary);
+                    tmpCol.addColor(supertemporary);
+                    
+                }
+                double mean = (double)1/nrays;
+//                System.out.println("mean "+mean);
+                tmpCol.setIntensity(mean);
+//                if(tmpCol.meanIntensity()>0.5)
+//                System.out.println(tmpCol);
+                intensity.addColor(tmpCol);
+            }
+        }
+        return intensity;
+    }
+    
+    public static ColorDbl getPointLightIntensity(Direction normal, Vertex endpt, PointLightSource ls, int triangleID)
+    {
         Vertex n = dirToVertex(normal);
         Vertex l = ls.getLightVectorFrom(endpt);
         Ray shadowRay = new Ray(endpt, ls.pos, new ColorDbl(0, 0, 0), -1, Ray.RAY_SHADOW);
@@ -402,7 +530,6 @@ public class LinAlg {
             }
         }
         double angle =  SkalärProdukt(n,l)/(returnLength(n)*returnLength(l));
-        
 //        if(angle < 0)
 //        {
 //            System.out.println("Endpt  " + endpt);
@@ -418,6 +545,18 @@ public class LinAlg {
 //            System.out.println("pos: " + endpt.toString());
         ColorDbl res = new ColorDbl(ls.color);
         res.setIntensity(angle);
+//        if(res.meanIntensity()>100)
+//        {
+//            System.out.println(res);
+//            System.out.println("length n "+returnLength(n));
+//            System.out.println("length l "+returnLength(l));
+//        }
+        if(Double.isInfinite(res.r) || Double.isInfinite(res.g) || Double.isInfinite(res.b))
+        {
+            System.out.println(res);
+            System.out.println("length n "+returnLength(n));
+            System.out.println("length l "+returnLength(l));
+        }
         return res;
     }
     
@@ -587,6 +726,45 @@ public class LinAlg {
         
         Vertex h = VektorAddition(h_v1,h_v2);
         return h;
+    }
+    public static HemisCoords HemisAddition(HemisCoords a1, HemisCoords a2)
+    {
+        HemisCoords retval = new HemisCoords(a1.theta+a2.theta,a1.phi+a2.phi,a1.r+a2.r);
+        retval = negativeAngleFixer(retval);
+        return retval;
+    }
+    public static HemisCoords HemisSubtraction(HemisCoords a1, HemisCoords a2)
+    {
+        HemisCoords retval = new HemisCoords(a1.theta-a2.theta,a1.phi-a2.phi,a1.r-a2.r);
+        retval = negativeAngleFixer(retval);
+        return retval;
+    }
+    public static HemisCoords negativeAngleFixer(HemisCoords in)
+    {
+        double phi = in.phi;
+        double theta = in.theta;
+        while(phi<0)
+            phi+=Math.PI*2;
+        while(theta<0)
+            theta+=Math.PI*2;
+        return new HemisCoords(theta, phi, in.r);
+            
+    }
+    public static Vertex rotateVertexAroundAxis(Vertex point, Direction axis, double angle)
+    {
+        Vertex u = dirToVertex(axis);
+        double newx = (Math.cos(angle)+Math.pow(u.x,2)*(1-Math.cos(angle)))*point.x;
+        newx += (u.x*u.y*(1-Math.cos(angle)))*point.y;
+        newx += (u.x*u.z*(1-Math.cos(angle))+u.y*Math.sin(angle))*point.z;
+        
+        double newy = (u.y*u.x*(1-Math.cos(angle))+u.z*Math.signum(angle))*point.x;
+        newy += (Math.cos(angle)+Math.pow(u.y, 2)*(1-Math.cos(angle)))*point.y;
+        newy += (u.y*u.z*(1-Math.cos(angle))-u.x*Math.sin(angle))*point.z;
+        
+        double newz = (u.z*u.x*(1-Math.cos(angle)))*point.x;
+        newz += (u.z*u.y*(1-Math.cos(angle))+u.x*Math.sin(angle))*point.y;
+        newz += (Math.cos(angle)+Math.pow(u.z, 2)*(1-Math.cos(angle)))*point.z;
+        return new Vertex(newx,newy,newz);
     }
     
 //    public boolean russianRoullette()

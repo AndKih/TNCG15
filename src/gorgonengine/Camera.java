@@ -16,6 +16,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.util.Calendar;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 
 
 
@@ -31,14 +35,20 @@ public class Camera extends JFrame{
     public double width, height;
     private double iMax, iMin;
     public static final double IMPORTANCETHRESHOLD = 0.1;
-    public static final int N_REFLECTEDRAYS = 4;
+    public static final int N_REFLECTEDRAYS = 1;
+    public static final int N_AREALIGHTSOURCEPOINTS = 20;
     Scene scene;
     
     
-    public int raysPerPixel = 4;
+    public int raysPerPixel = 3;
+    public static boolean areaLightsource = true;
+    public static boolean logScale = false;
     
     private double deltax;
     private double deltay;
+    private double time;
+    private double prevtime;
+    
     
     public Camera(int sizex, int sizey, Vertex[] e1, Vertex pos, double wdth, double hght)
     {
@@ -58,10 +68,14 @@ public class Camera extends JFrame{
         
         iMax = 0; iMin = 1000000000;
         calcDelta();
+        time = 0;
+        prevtime = 0;
     }
     
     public void render()
     {
+        prevtime = System.currentTimeMillis();
+        double timeCalc;
         Ray r;
         Vertex vp = getViewpoint();
         Vertex target;
@@ -77,6 +91,14 @@ public class Camera extends JFrame{
             {
                 System.out.println("Rays are: " + percentEffictivicer +"% done");
                 percentEffictivicer++;
+                
+                time = System.currentTimeMillis()/1000;
+                timeCalc = time-prevtime;
+                timeCalc *=100-percentEffictivicer;
+                System.out.println("        Runtime: "+(time)+", predicted runtime: "+timeCalc);
+                timeCalc = time-prevtime;
+                System.out.println("        Time passed since last percent: "+(time-prevtime));
+                prevtime = time;
             }
             
             for(int py = 0; py<SIZEY; py++)
@@ -105,7 +127,18 @@ public class Camera extends JFrame{
                     {
                         System.out.println("SOMETHING HAS GONE HORRIBLY WRONG");
                     }
-                    cam[px][py].addColor(r.color);
+                    if(logScale)
+                    {
+                        double konstant = 1;
+                        ColorDbl toAdd = new ColorDbl(Math.log10((r.color.r)*konstant),
+                                Math.log10((r.color.g)*konstant),Math.log10((r.color.b)*konstant));
+    ////                    ColorDbl toAdd = new ColorDbl(Math.log(r.color.r*konstant),
+    ////                            Math.log(r.color.g*konstant),Math.log(r.color.b*konstant));
+                        cam[px][py].addColor(toAdd);
+                    }else{
+                        cam[px][py].addColor(r.color);
+                    }
+                    
                 }
 //                System.out.println(r.color.toString());
                 if(iMax < cam[px][py].color.r)
@@ -132,6 +165,8 @@ public class Camera extends JFrame{
                 {
                     iMin = cam[px][py].color.b;
                 }
+//                iMin=0;
+//                iMax=50;
             }
         }
         createImage();
@@ -149,6 +184,12 @@ public class Camera extends JFrame{
                 r = (int)(cam[px][py].color.r*(255.99/iMax));
                 g = (int)(cam[px][py].color.g*(255.99/iMax));
                 b = (int)(cam[px][py].color.b*(255.99/iMax));
+                if(r>255)
+                    r=255;
+                if(g>255)
+                    g=255;
+                if(b>255)
+                    b=255;
                 rgb = ( r << 16) | ( g << 8 ) | b;
                 im.setRGB(px, SIZEY-1-py, rgb);
             }
@@ -161,6 +202,27 @@ public class Camera extends JFrame{
         this.pack();
         this.setVisible(true);
         
+        saveImage(im);
+    }
+    private void saveImage(BufferedImage im)
+    {
+        Calendar calendar = Calendar.getInstance();
+        String name = System.getProperty("user.dir")+"\\";
+        
+        name+="savedImage_date_"+calendar.get(Calendar.YEAR)+(calendar.get(Calendar.MONTH)+1)
+                +calendar.get(Calendar.DATE)+"_time_h"+calendar.get(Calendar.HOUR_OF_DAY)
+                +"m"+calendar.get(Calendar.MINUTE)+"s"+calendar.get(Calendar.SECOND)
+                +".png";
+        
+        
+        try {
+            if(ImageIO.write(im, "png", new File(name)))
+            {
+                System.out.println("Image saved as:\n"+name);
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(Camera.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     public Vertex getViewpoint()

@@ -280,9 +280,15 @@ public class Sphere extends Object{
         Direction normal = new Direction(VektorSubtraktion(x,center));
         ColorDbl tmpCol = new ColorDbl(color);
         ColorDbl res = new ColorDbl();
-        for(int i = 0; i<ls.length; i++)
+        if(Camera.areaLightsource)
         {
-            res.setIntensity(getLightIntensity(normal, x, ls[i], -1), tmpCol);
+            ColorDbl retint = getMCAreaLightIntensity(normal, x, -1);
+            res.setIntensity(retint, tmpCol);
+        }else{
+            for(int i = 0; i<ls.length; i++)
+            {
+                res.setIntensity(getLightIntensity(normal, x, ls[i], -1), tmpCol);
+            }
         }
             return res;
     }
@@ -348,6 +354,11 @@ public class Sphere extends Object{
     public boolean checkTriangleIndexes(int index)
     {
         return false;
+    }
+
+    @Override
+    public void setLightsource() {
+        lightsource = true;
     }
     
 }
