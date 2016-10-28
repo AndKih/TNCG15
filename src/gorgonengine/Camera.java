@@ -40,12 +40,15 @@ public class Camera extends JFrame{
     Scene scene;
     
     
-    public int raysPerPixel = 4;
+    public int raysPerPixel = 3;
     public static boolean areaLightsource = true;
     public static boolean logScale = false;
     
     private double deltax;
     private double deltay;
+    private double time;
+    private double prevtime;
+    
     
     public Camera(int sizex, int sizey, Vertex[] e1, Vertex pos, double wdth, double hght)
     {
@@ -65,10 +68,14 @@ public class Camera extends JFrame{
         
         iMax = 0; iMin = 1000000000;
         calcDelta();
+        time = 0;
+        prevtime = 0;
     }
     
     public void render()
     {
+        prevtime = System.currentTimeMillis();
+        double timeCalc;
         Ray r;
         Vertex vp = getViewpoint();
         Vertex target;
@@ -84,6 +91,14 @@ public class Camera extends JFrame{
             {
                 System.out.println("Rays are: " + percentEffictivicer +"% done");
                 percentEffictivicer++;
+                
+                time = System.currentTimeMillis()/1000;
+                timeCalc = time-prevtime;
+                timeCalc *=100-percentEffictivicer;
+                System.out.println("        Runtime: "+(time)+", predicted runtime: "+timeCalc);
+                timeCalc = time-prevtime;
+                System.out.println("        Time passed since last percent: "+(time-prevtime));
+                prevtime = time;
             }
             
             for(int py = 0; py<SIZEY; py++)
@@ -151,7 +166,7 @@ public class Camera extends JFrame{
                     iMin = cam[px][py].color.b;
                 }
 //                iMin=0;
-//                iMax=200;
+//                iMax=50;
             }
         }
         createImage();

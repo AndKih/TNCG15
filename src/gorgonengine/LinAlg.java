@@ -438,7 +438,9 @@ public class LinAlg {
                     fakePoint = new PointLightSource(endPoint, triangle.color.meanIntensity()/Scene.LIGHTCOLOR.meanIntensity());
                     returnedIntensity = getPointLightIntensity(normal, endpt,fakePoint , triangleID);
                     double area = 0.5*Math.abs(SkalärProdukt(axis1,axis2));
+//                    System.out.println("area "+area);
 //                    System.out.println("\n\nArea"+area+"\n\n");
+//                    returnedIntensity.setIntensity(1/Camera.N_AREALIGHTSOURCEPOINTS);
                     returnedIntensity.setIntensity(1/area);
                     intensity.addColor(returnedIntensity);
                 }
@@ -452,6 +454,7 @@ public class LinAlg {
         {
             System.out.println(intensity);
         }
+//                    System.out.println("Intensity " + intensity);
         return intensity;
     }
     

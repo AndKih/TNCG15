@@ -77,5 +77,12 @@ public class Triangle {
         }
         return result;
     }
+    public double getArea()
+    {
+        Vertex axis1 = VektorSubtraktion(p[1],p[0]);
+        Vertex axis2 = VektorSubtraktion(p[2],p[0]);
+        double area = 0.5*Math.abs(SkalärProdukt(axis1,axis2));
+        return area;
+    }
     
 }
