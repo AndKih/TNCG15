@@ -767,4 +767,6 @@ public class LinAlg {
         return new Vertex(newx,newy,newz);
     }
     
+//    public boolean russianRoullette()
+    
 }

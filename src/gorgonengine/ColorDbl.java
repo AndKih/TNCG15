@@ -31,11 +31,16 @@ public class ColorDbl {
         b = color.b;
     }
 
-    ColorDbl() 
+    public ColorDbl() 
     {
         r = 0;
         g = 0;
         b = 0;
+    }
+    
+    public double getTotalColorValue()
+    {
+        return r + g + b;
     }
     
     public double returnR()

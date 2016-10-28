@@ -27,6 +27,7 @@ public class Ray {
     public static final int RAY_REFLECTION = 200, RAY_REFRACTION = 201;
     public final int RAY_TYPE;
     public int RAY_REFLECTION_TYPE;
+    private boolean inside;
     
     public Ray(Vertex s, Vertex e, ColorDbl c)
     {
@@ -41,6 +42,7 @@ public class Ray {
         rayIndex = -1;
         RAY_TYPE = RAY_LIGHT;
         radiance = 1;
+        inside = false;
     }
     
     public Ray(Vertex s, Vertex e, ColorDbl c, int index)
@@ -53,6 +55,7 @@ public class Ray {
         rayIndex = index;
         RAY_TYPE = RAY_LIGHT;
         radiance = 1;
+        inside = false;
     }
     
     public Ray(ColorDbl c, Vertex s, Vertex e, int raytype)
@@ -63,6 +66,7 @@ public class Ray {
         dir = calculateVectorDirection(s, e);
         color = c;
         rayIndex = -1;
+        inside = false;
         RAY_TYPE = raytype;
         switch(raytype)
         {
@@ -92,6 +96,7 @@ public class Ray {
         dir = calculateVectorDirection(s, e);
         color = c;
         rayIndex = index;
+        inside = false;
         RAY_TYPE = raytype;
         switch(raytype)
         {
@@ -120,10 +125,13 @@ public class Ray {
         end = r.end;
         dir = r.dir;
         color = r.color;
+        objectIndex = r.getObjectIndex();
         rayIndex = r.returnIndex();
         RAY_TYPE = r.RAY_TYPE;
         radiance = r.getRadiance();
         importance = r.getImportance();
+        inside = r.isInside();
+        RAY_REFLECTION_TYPE = r.getReflectionType();
     }
     
     public void setT(double t)
@@ -174,6 +182,19 @@ public class Ray {
     public int getObjectIndex()
     {
         return objectIndex;
+    }
+    
+    public void incursion()
+    {
+        if(inside)
+            inside = false;
+        else
+            inside = true;
+    }
+    
+    public boolean isInside()
+    {
+        return inside;
     }
     
     public String toString()
