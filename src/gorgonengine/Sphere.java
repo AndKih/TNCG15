@@ -127,7 +127,7 @@ public class Sphere extends Object{
                         returnLength(VektorSubtraktion(resultRay.end, center))-radius<EPSILON && 
                         !transparent)
                 {
-                    System.out.println("resultRay start and end is on sphere");
+//                    System.out.println("resultRay start and end is on sphere");
                     return Ray.ERROR_RAY;
                 }
                 return resultRay;
@@ -158,7 +158,7 @@ public class Sphere extends Object{
                         returnLength(VektorSubtraktion(resultRay.end, center))-radius<EPSILON && 
                         !transparent)
                 {
-                    System.out.println("resultRay start and end is on sphere");
+//                    System.out.println("resultRay start and end is on sphere");
                     return Ray.ERROR_RAY;
                 }
                 return resultRay;
