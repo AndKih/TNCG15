@@ -441,7 +441,7 @@ public class LinAlg {
 //                    System.out.println("area "+area);
 //                    System.out.println("\n\nArea"+area+"\n\n");
 //                    returnedIntensity.setIntensity(1/Camera.N_AREALIGHTSOURCEPOINTS);
-                    returnedIntensity.setIntensity(1/area);
+                    returnedIntensity.setIntensity(area/Camera.N_AREALIGHTSOURCEPOINTS);
                     intensity.addColor(returnedIntensity);
                 }
             }
