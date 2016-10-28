@@ -34,14 +34,14 @@ public class Camera extends JFrame{
     public Vertex pos;
     public double width, height;
     private double iMax, iMin;
-    public static final double IMPORTANCETHRESHOLD = 0.1;
+    public static final double IMPORTANCETHRESHOLD = 0.05;
     public static final int N_REFLECTEDRAYS = 1;
-    public static final int N_AREALIGHTSOURCEPOINTS = 10;
+    public static final int N_AREALIGHTSOURCEPOINTS = 30;
     public static final int ESTIMATOR_ITERATIONS = 100;
     Scene scene;
     
     
-    public int raysPerPixel = 10;
+    public int raysPerPixel = 75;
     public static boolean areaLightsource = true;
     public static boolean logScale = false;
     
@@ -97,8 +97,8 @@ public class Camera extends JFrame{
                 
                 time = System.currentTimeMillis()/1000;
                 timeCalc = time-prevtime;
-                timeCalc *=100-percentEffictivicer;
-                System.out.println("        Runtime: "+(time)+", predicted runtime: "+timeCalc);
+                timeCalc *=(double)(((double)100)-((double)percentEffictivicer));
+                System.out.println("        Runtime: "+(time-startTime)+", predicted runtime: "+timeCalc);
                 timeCalc = time-prevtime;
                 System.out.println("        Time passed since last percent: "+(time-prevtime));
                 prevtime = time;
@@ -169,7 +169,7 @@ public class Camera extends JFrame{
                     iMin = cam[px][py].color.b;
                 }
 //                iMin=0;
-//                iMax=50;
+//                iMax=100;
             }
         }
         System.out.println("TIME TO COMPLETE PROGRAM: "+(time-startTime));

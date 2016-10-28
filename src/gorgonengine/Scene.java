@@ -237,6 +237,7 @@ public class Scene {
 //        pnew2[0] = new Vertex(10, 6, -4.999);
 //        pnew2[1] = new Vertex(0, 0, -4.999);
 //        pnew2[2] = new Vertex(13, 0, -4.999);
+
         pnew2[0] = new Vertex(10, 6, 4.999);
         pnew2[1] = new Vertex(13, 0, 4.999);
         pnew2[2] = new Vertex(0, 0, 4.999);
@@ -363,7 +364,7 @@ public class Scene {
     public Ray rayIntersection(Node<Ray> r)
     {
         
-        
+        double calcHelper=0;
         
         Ray newRay, reflectedRay = Ray.ERROR_RAY, refractedRay = Ray.ERROR_RAY, resultRay;
         
@@ -405,13 +406,33 @@ public class Scene {
 //            }
 //            return new Ray(largestRay.start,largestRay.end,
 //                    objects[largestRay.getObjectIndex()].returnTriangleByIndex(0).color);
+            calcHelper = SkalärProdukt(dirToVertex(objects[largestRay.getObjectIndex()].returnTriangleByIndex(0).normal), 
+                    VektorSubtraktion(largestRay.start,largestRay.end))/
+                            (returnLength(VektorSubtraktion(largestRay.start,largestRay.end))*
+                    returnLength(dirToVertex(objects[largestRay.getObjectIndex()].returnTriangleByIndex(0).normal)));
+
+//                    calcHelper *= SkalärProdukt(dirToVertex(triangle.normal), VektorSubtraktion(endpt,fakePoint.pos))/
+//                            (returnLength(VektorSubtraktion(endpt,fakePoint.pos))*returnLength(dirToVertex(triangle.normal)));
+
+//                                calcHelper /=Math.pow(returnLength(VektorSubtraktion(largestRay.start,largestRay.end)),2);
+            
+//            Ray retRay = new Ray(largestRay.start,largestRay.end, new ColorDbl(
+//                    objects[largestRay.getObjectIndex()].returnTriangleByIndex(0).color.r*
+//                            objects[largestRay.getObjectIndex()].returnTriangleByIndex(0).getArea(),
+//                    objects[largestRay.getObjectIndex()].returnTriangleByIndex(0).color.g*
+//                            objects[largestRay.getObjectIndex()].returnTriangleByIndex(0).getArea(),
+//                    objects[largestRay.getObjectIndex()].returnTriangleByIndex(0).color.b*
+//                            objects[largestRay.getObjectIndex()].returnTriangleByIndex(0).getArea()));
             Ray retRay = new Ray(largestRay.start,largestRay.end, new ColorDbl(
                     objects[largestRay.getObjectIndex()].returnTriangleByIndex(0).color.r*
-                            objects[largestRay.getObjectIndex()].returnTriangleByIndex(0).getArea(),
+                            objects[largestRay.getObjectIndex()].returnTriangleByIndex(0).getArea()*
+                            calcHelper,
                     objects[largestRay.getObjectIndex()].returnTriangleByIndex(0).color.g*
-                            objects[largestRay.getObjectIndex()].returnTriangleByIndex(0).getArea(),
+                            objects[largestRay.getObjectIndex()].returnTriangleByIndex(0).getArea()*
+                            calcHelper,
                     objects[largestRay.getObjectIndex()].returnTriangleByIndex(0).color.b*
-                            objects[largestRay.getObjectIndex()].returnTriangleByIndex(0).getArea()));
+                            objects[largestRay.getObjectIndex()].returnTriangleByIndex(0).getArea()*
+                            calcHelper));
 //            Ray retRay = new Ray(largestRay.start,largestRay.end, largestRay.color);
             retRay.setImportance(largestRay.getImportance());
             return retRay;

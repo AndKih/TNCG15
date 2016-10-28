@@ -403,6 +403,7 @@ public class LinAlg {
         Vertex endPoint;
         ColorDbl returnedIntensity;
         double nHits =0;
+        double G =0;
         
         for(int i =0; i< Scene.objects.length; i++)
         {
@@ -441,7 +442,13 @@ public class LinAlg {
 //                    System.out.println("area "+area);
 //                    System.out.println("\n\nArea"+area+"\n\n");
 //                    returnedIntensity.setIntensity(1/Camera.N_AREALIGHTSOURCEPOINTS);
+//                    G = SkalärProdukt(dirToVertex(normal), VektorSubtraktion(fakePoint.pos,endpt))/
+//                            (returnLength(VektorSubtraktion(fakePoint.pos,endpt))*returnLength(dirToVertex(normal)));
+                    G = SkalärProdukt(dirToVertex(triangle.normal), VektorSubtraktion(endpt,fakePoint.pos))/
+                            (returnLength(VektorSubtraktion(endpt,fakePoint.pos))*returnLength(dirToVertex(triangle.normal)));
+//                    G /=Math.pow(returnLength(VektorSubtraktion(endpt,fakePoint.pos)),2);
                     returnedIntensity.setIntensity(area/Camera.N_AREALIGHTSOURCEPOINTS);
+                    returnedIntensity.setIntensity(G);
                     intensity.addColor(returnedIntensity);
                 }
             }
