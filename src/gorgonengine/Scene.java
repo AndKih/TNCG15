@@ -197,7 +197,7 @@ public class Scene {
         {
             mesh[idm].setReflectionCoefficient(1);
         }
-        NROBJECTS = 6;
+        NROBJECTS = 7;
         objects = new Object[NROBJECTS];
         objects[0] = new Mesh(0, mesh);
         
@@ -234,6 +234,9 @@ public class Scene {
         
         Triangle[] mesh3 = new Triangle[1];
         Vertex[] pnew2 = new Vertex[TRIANGLESIZE];
+//        pnew2[0] = new Vertex(10, 6, -4.999);
+//        pnew2[1] = new Vertex(0, 0, -4.999);
+//        pnew2[2] = new Vertex(13, 0, -4.999);
         pnew2[0] = new Vertex(10, 6, 4.999);
         pnew2[1] = new Vertex(13, 0, 4.999);
         pnew2[2] = new Vertex(0, 0, 4.999);
@@ -242,6 +245,18 @@ public class Scene {
 //        pnew2[1] = new Vertex(0, 6, 4.999);
 //        pnew2[2] = new Vertex(0, 0, 4.999);
         mesh3[0] = new Triangle(pnew2, new ColorDbl(100,100,100), counter);
+        
+        ++counter;
+        
+        Triangle[] mirror = new Triangle[1];
+        Vertex[] pnew3 = new Vertex[TRIANGLESIZE];
+//        pnew3[0] = new Vertex(9.99, 6, 5);
+//        pnew3[1] = new Vertex(9.99, 6, -5);
+//        pnew3[2] = new Vertex(12.99, 0, 5);
+        pnew3[0] = new Vertex(0, 5.99, 5);
+        pnew3[1] = new Vertex(0, 5.99, -5);
+        pnew3[2] = new Vertex(10, 5.99, -5);
+        mirror[0] = new Triangle(pnew3, new ColorDbl(0,0,0),counter);
         
         
         ++counter;
@@ -255,7 +270,7 @@ public class Scene {
         objects[1].setObjectReflection(0.5);
 //        objects[1].setReflectorType(Object.REFLECTOR_DIFFUSE);
         
-        objects[2] = new Sphere(new ColorDbl(0, 0, 0), new Vertex(11, -2, 1), 1, 2);
+        objects[2] = new Sphere(ColorDbl.PURPLE, new Vertex(11, -2, 1), 1, 2);
         objects[2].setObjectReflection(0.5);
 //        objects[2].setReflectorType(Object.REFLECTOR_DIFFUSE);
         
@@ -271,6 +286,9 @@ public class Scene {
         
         objects[5] = new Sphere(ColorDbl.GREEN, new Vertex(8, -3.5, -2.5), 1, 5);
         objects[5].setObjectReflection(0.5);
+        
+        objects[6] = new Mesh(6, mirror);
+        objects[6].setObjectReflection(1);
         
 //        objects[4].setReflectorType(Object.REFLECTOR_DIFFUSE);
         
@@ -323,7 +341,7 @@ public class Scene {
         {
             objects[i].setReflectorType(Object.REFLECTOR_DIFFUSE);
         }
-        objects[2].setReflectorType(Object.REFLECTOR_SPECULAR);
+        objects[6].setReflectorType(Object.REFLECTOR_SPECULAR);
 //        objects[3].setReflectorType(Object.REFLECTOR_SPECULAR);
         
         //CALC
@@ -926,7 +944,7 @@ public class Scene {
                 predicted, normal)/Math.pow(returnLength(normal), 2)), 2));
         }
         
-        int iterations = 100;
+        int iterations = Camera.ESTIMATOR_ITERATIONS;
         double randAng=0;
         double estimate = 0;
         int nInside = 0;

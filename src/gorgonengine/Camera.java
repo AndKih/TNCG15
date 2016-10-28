@@ -34,9 +34,9 @@ public class Camera extends JFrame{
     public Vertex pos;
     public double width, height;
     private double iMax, iMin;
-    public static final double IMPORTANCETHRESHOLD = 0.01;
+    public static final double IMPORTANCETHRESHOLD = 0.1;
     public static final int N_REFLECTEDRAYS = 1;
-    public static final int N_AREALIGHTSOURCEPOINTS = 20;
+    public static final int N_AREALIGHTSOURCEPOINTS = 10;
     public static final int ESTIMATOR_ITERATIONS = 100;
     Scene scene;
     
@@ -49,6 +49,7 @@ public class Camera extends JFrame{
     private double deltay;
     private double time;
     private double prevtime;
+    private double startTime;
     
     
     public Camera(int sizex, int sizey, Vertex[] e1, Vertex pos, double wdth, double hght)
@@ -76,6 +77,7 @@ public class Camera extends JFrame{
     public void render()
     {
         prevtime = System.currentTimeMillis();
+        startTime = prevtime/1000;
         double timeCalc;
         Ray r;
         Vertex vp = getViewpoint();
@@ -170,6 +172,7 @@ public class Camera extends JFrame{
 //                iMax=50;
             }
         }
+        System.out.println("TIME TO COMPLETE PROGRAM: "+(time-startTime));
         createImage();
     }
     
