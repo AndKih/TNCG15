@@ -217,7 +217,9 @@ public class Mesh extends Object{
             System.out.println("MESH, object " + objectID + " trying to hit itself!");
             return Ray.ERROR_RAY;
         }
-        
+        boolean test = false;
+        if(objectID == 3 && r.getObjectIndex() == 3 && r.getReflectionType() == Ray.RAY_REFRACTION)
+            test = true;
         double t = -1, smallT = -10;
         //double EPSILON = 0.00000001;
         Boolean firstHit = true;
@@ -232,6 +234,8 @@ public class Mesh extends Object{
             }
                 
             t = mesh[idt].rayIntersection(r);
+//            if(t < 0 && t != -1)
+//                System.out.println("Weirdness abounds.");
             if(firstHit && t > 0)
             {
                 smallT = t;
@@ -243,20 +247,27 @@ public class Mesh extends Object{
                 smallT = t;
                 savedID = idt;
             }
+                
         }
-        if(smallT != -10 && smallT > EPSILON && mesh[savedID].triangleIndex != r.returnIndex())
+        if(smallT != -10 && smallT > 0 && mesh[savedID].triangleIndex != r.returnIndex() && !Double.isInfinite(smallT))
         {
             normal = mesh[savedID].normal;
             ColorDbl tmpCol = new ColorDbl(mesh[savedID].color);
             ColorDbl res = new ColorDbl();
             Vertex newEnd = VektorAddition(r.start, VektorMultiplikation(VektorSubtraktion(r.end, r.start), smallT));
-            for(int i = 0; i<ls.length; i++)
+            Ray resultRay;
+            if(!transparent)
             {
-                res.setIntensity(getLightIntensity(normal, newEnd, ls[i], mesh[savedID].triangleIndex), tmpCol);
-//                if(mesh[savedID].triangleIndex == 1)
-//                    System.out.println("res: " + res);
+                for(int i = 0; i<ls.length; i++)
+                {
+                    res.setIntensity(getLightIntensity(normal, newEnd, ls[i], mesh[savedID].triangleIndex), tmpCol);
+                }
+                resultRay = new Ray(r.start, newEnd, res, mesh[savedID].triangleIndex, Ray.RAY_IMPORTANCE);
             }
-            Ray resultRay = new Ray(r.start, newEnd, res, mesh[savedID].triangleIndex, Ray.RAY_IMPORTANCE);
+            else
+            {
+                resultRay = new Ray(r.start, newEnd, tmpCol, mesh[savedID].triangleIndex, Ray.RAY_IMPORTANCE);
+            }
             resultRay.setImportance(r.getImportance());
             resultRay.setObjectIndex(objectID);
             if(r.returnIndex() == resultRay.returnIndex())
@@ -264,12 +275,18 @@ public class Mesh extends Object{
                 System.out.println("Hit self.");
                 return Ray.ERROR_RAY;
             }
+            if(Double.isNaN(resultRay.end.x) || Double.isNaN(resultRay.end.x) || Double.isNaN(resultRay.end.x))
+            {
+                System.out.println("SmallT: " + smallT);
+                System.out.println("R.end: " + r.end);
+                System.out.println("R.start: " + r.start);
+            }
 //            if(returnLength(VektorSubtraktion(resultRay.start, resultRay.end)) < EPSILON)
 //            {
 //                System.out.println("Ray is too short, probably hit self.");
 //                return Ray.ERROR_RAY;
 //            }
-            resultRay.setImportance(r.getImportance()*mesh[savedID].reflectionCoefficient);
+//            resultRay.setImportance(r.getImportance()*mesh[savedID].reflectionCoefficient);
 //            if(resultRay.returnIndex() == 1)
 //            {
 //                System.out.println("tmpCol: " + tmpCol);
@@ -278,13 +295,18 @@ public class Mesh extends Object{
 //            }
             return resultRay;
         }
-        if(objectID == 0)
-        {
-            System.out.println("Hit nothing at all.");
-            System.out.println("Ray used: " + r.toString());
-            System.out.println("smallT: " + smallT);
-        }
-            
+//        if(objectID == 0)
+//        {
+//            System.out.println("Hit nothing at all.");
+//            System.out.println("Ray used: " + r.toString());
+//            System.out.println("smallT: " + smallT);
+//        }
+//        if(objectID == 3 && r.getObjectIndex() == 3 && r.getReflectionType() == Ray.RAY_REFRACTION)
+//        {
+//            System.out.println("Can't hit self.");
+//            System.out.println("Ray used: " + r.toString());
+//            System.out.println("smallT: " + smallT);
+//        }
         return Ray.ERROR_RAY;
     }
     
@@ -832,12 +854,12 @@ public class Mesh extends Object{
         Vertex[] pList = new Vertex[8];
         pList[0] = new Vertex(center.x + offset, center.y + offset, center.z + offset);
         pList[1] = new Vertex(center.x - offset, center.y + offset, center.z + offset);
-        pList[2] = new Vertex(center.x + offset, center.y - offset, center.z + offset);
+        pList[2] = new Vertex(center.x + offset, center.y - offset, center.z + offset); //
         pList[3] = new Vertex(center.x + offset, center.y + offset, center.z - offset);
-        pList[4] = new Vertex(center.x - offset, center.y - offset, center.z + offset);
+        pList[4] = new Vertex(center.x - offset, center.y - offset, center.z + offset); //
         pList[5] = new Vertex(center.x - offset, center.y + offset, center.z - offset);
-        pList[6] = new Vertex(center.x + offset, center.y - offset, center.z - offset);
-        pList[7] = new Vertex(center.x - offset, center.y - offset, center.z - offset);
+        pList[6] = new Vertex(center.x + offset, center.y - offset, center.z - offset); //
+        pList[7] = new Vertex(center.x - offset, center.y - offset, center.z - offset); //
         
         Vertex[] input = new Vertex[3];
         input[0] = new Vertex(pList[0]);

@@ -589,4 +589,6 @@ public class LinAlg {
         return h;
     }
     
+//    public boolean russianRoullette()
+    
 }

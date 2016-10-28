@@ -34,14 +34,14 @@ public class GorgonEngine
         viewPoint[1] = new Vertex(-2, 0, 0);
         viewPoint[2] = new Vertex(-0.2, 0, 0);
         
-        Camera camera = new Camera(1600, 1000, viewPoint, new Vertex(0, 0, 0), 3.2, 2.0);
+        Camera camera = new Camera(1000, 800, viewPoint, new Vertex(0, 0, 0), 3.2, 2.0);
         camera.setViewpoint(0);
 //        camera.translateCamera(new Vertex(-10,0,0));
 //        
 //        camera.rotateCameraZ(Math.PI);
 //        camera.rotateCameraX(0);
 //        camera.rotateCameraY(0);
-        System.out.println(hemisToCart(cartToHemis(new Vertex(0,1,0))));
+//        System.out.println(hemisToCart(cartToHemis(new Vertex(0,1,0))));
         
         camera.render();
         
