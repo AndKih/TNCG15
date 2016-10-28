@@ -34,13 +34,13 @@ public class Camera extends JFrame{
     public Vertex pos;
     public double width, height;
     private double iMax, iMin;
-    public static final double IMPORTANCETHRESHOLD = 0.1;
+    public static final double IMPORTANCETHRESHOLD = 0.05;
     public static final int N_REFLECTEDRAYS = 1;
     public static final int N_AREALIGHTSOURCEPOINTS = 20;
     Scene scene;
     
     
-    public int raysPerPixel = 3;
+    public int raysPerPixel = 12;
     public static boolean areaLightsource = true;
     public static boolean logScale = false;
     
