@@ -388,9 +388,12 @@ public class Scene {
 //            return new Ray(largestRay.start,largestRay.end,
 //                    objects[largestRay.getObjectIndex()].returnTriangleByIndex(0).color);
             Ray retRay = new Ray(largestRay.start,largestRay.end, new ColorDbl(
-                    objects[largestRay.getObjectIndex()].returnTriangleByIndex(0).color.r,
-                    objects[largestRay.getObjectIndex()].returnTriangleByIndex(0).color.g,
-                    objects[largestRay.getObjectIndex()].returnTriangleByIndex(0).color.b));
+                    objects[largestRay.getObjectIndex()].returnTriangleByIndex(0).color.r*
+                            objects[largestRay.getObjectIndex()].returnTriangleByIndex(0).getArea(),
+                    objects[largestRay.getObjectIndex()].returnTriangleByIndex(0).color.g*
+                            objects[largestRay.getObjectIndex()].returnTriangleByIndex(0).getArea(),
+                    objects[largestRay.getObjectIndex()].returnTriangleByIndex(0).color.b*
+                            objects[largestRay.getObjectIndex()].returnTriangleByIndex(0).getArea()));
 //            Ray retRay = new Ray(largestRay.start,largestRay.end, largestRay.color);
             retRay.setImportance(largestRay.getImportance());
             return retRay;
