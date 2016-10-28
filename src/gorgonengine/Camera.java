@@ -35,11 +35,12 @@ public class Camera extends JFrame{
     public double width, height;
     private double iMax, iMin;
     public static final double IMPORTANCETHRESHOLD = 0.1;
-    public static final int N_REFLECTEDRAYS = 5;
+    public static final int N_REFLECTEDRAYS = 1;
+    public static final int N_AREALIGHTSOURCEPOINTS = 20;
     Scene scene;
     
     
-    public int raysPerPixel = 10;
+    public int raysPerPixel = 4;
     public static boolean areaLightsource = true;
     public static boolean logScale = false;
     
@@ -113,7 +114,7 @@ public class Camera extends JFrame{
                     }
                     if(logScale)
                     {
-                        double konstant = 0.5;
+                        double konstant = 1;
                         ColorDbl toAdd = new ColorDbl(Math.log10((r.color.r)*konstant),
                                 Math.log10((r.color.g)*konstant),Math.log10((r.color.b)*konstant));
     ////                    ColorDbl toAdd = new ColorDbl(Math.log(r.color.r*konstant),
@@ -149,8 +150,8 @@ public class Camera extends JFrame{
                 {
                     iMin = cam[px][py].color.b;
                 }
-                iMin=0;
-                iMax=200;
+//                iMin=0;
+//                iMax=200;
             }
         }
         createImage();

@@ -389,6 +389,7 @@ public class Scene {
                     objects[largestRay.getObjectIndex()].returnTriangleByIndex(0).color.r,
                     objects[largestRay.getObjectIndex()].returnTriangleByIndex(0).color.g,
                     objects[largestRay.getObjectIndex()].returnTriangleByIndex(0).color.b));
+//            Ray retRay = new Ray(largestRay.start,largestRay.end, largestRay.color);
             retRay.setImportance(largestRay.getImportance());
             return retRay;
         }
@@ -472,7 +473,10 @@ public class Scene {
                     }
                     //Random angle reflection
                     if(objects[largestRay.getObjectIndex()].getReflectorType() == Object.REFLECTOR_DIFFUSE)
-                        refEnd = randomAngle(normal, objects[largestRay.getObjectIndex()].returnTriangleById(largestRay.returnIndex()));
+//                        refEnd = randomAngle(normal, objects[largestRay.getObjectIndex()].returnTriangleById(largestRay.returnIndex())
+//                                    );
+                        refEnd = randomAngleMC2(normal, objects[largestRay.getObjectIndex()].returnTriangleById(largestRay.returnIndex())
+                                    ,vertexToDir(VektorSubtraktion(largestRay.start, largestRay.end)));
                     else if(objects[largestRay.getObjectIndex()].getReflectorType() == Object.REFLECTOR_SPECULAR)
                     {
                                 //System.out.println("Specular reflection!");
@@ -583,8 +587,13 @@ public class Scene {
 //                                }
                                 Vertex refEnd = Vertex.DUMMY;
                                 if(objects[largestRay.getObjectIndex()].getReflectorType() == Object.REFLECTOR_DIFFUSE)
-                                    refEnd = randomAngle(normal, objects[largestRay.getObjectIndex()].returnTriangleById(largestRay.returnIndex()));
-                                else if(objects[largestRay.getObjectIndex()].getReflectorType() == Object.REFLECTOR_SPECULAR)
+                                {
+//                                    refEnd = randomAngle(normal, objects[largestRay.getObjectIndex()].returnTriangleById(largestRay.returnIndex())
+//                                    );
+                                refEnd = randomAngleMC2(normal, objects[largestRay.getObjectIndex()].returnTriangleById(largestRay.returnIndex())
+                                    ,vertexToDir(VektorSubtraktion(largestRay.start, largestRay.end)));
+                                }
+                                    else if(objects[largestRay.getObjectIndex()].getReflectorType() == Object.REFLECTOR_SPECULAR)
                                 {
                                     refEnd = VektorSubtraktion(dirToVertex(largestRay.dir), VektorMultiplikation( 
                                         VektorMultiplikation(dirToVertex(normal), SkalärProdukt(
@@ -812,13 +821,190 @@ public class Scene {
 //            System.out.println("Refraction ray returned!");
         return resultRay;
     }
-    
+    public Vertex randomAngleMC2(Direction limit, Triangle t, Direction incoming)
+    {
+        Vertex predicted = dirToVertex(incoming);
+        predicted = normalize(predicted);
+        Vertex light = dirToVertex(incoming);
+        Vertex normal = dirToVertex(limit);
+        Vertex result = dirToVertex(limit);
+        Direction rotateAround;
+//        System.out.println("Limit "+limit.toString());
+//        System.out.println("incom "+incoming.toString());
+                
+        if(Math.abs(normal.x-predicted.x)<EPSILON && Math.abs(normal.y-predicted.y)<EPSILON
+                && Math.abs(normal.z-predicted.z)<EPSILON)
+        {
+            
+        }else{
+            //create reflection
+            predicted = VektorSubtraktion(predicted, VektorMultiplikation( 
+                VektorMultiplikation(normal, SkalärProdukt(
+                predicted, normal)/Math.pow(returnLength(normal), 2)), 2));
+        }
+        
+        int iterations = 100;
+        double randAng=0;
+        double estimate = 0;
+        int nInside = 0;
+        for(int imc = 0; imc<iterations; imc++)
+        {
+            randAng = PDF2theta();
+            if(Math.abs(randAng)<EPSILON)
+            {
+                randAng+=Math.PI*2;
+            }
+            if(randAng>Math.PI/2 || randAng<Math.PI*1.5)
+            {
+                estimate+= Math.acos(SkalärProdukt(normal,predicted)/(returnLength(normal)*
+                        returnLength(predicted)))/randAng;
+                nInside++;
+            }
+        }
+        if(nInside>0)
+        {
+            rotateAround = vertexToDir(KryssProdukt(normal,predicted));
+            estimate/=nInside;
+//            System.out.println("Estimate: "+estimate);
+            result = rotateVertexAroundAxis(result, rotateAround, estimate);
+        }else{
+            System.out.println("ERROR ALL OUT OF BOUNDS! Theta");
+            System.out.println("RandomAngle "+randAng);
+        }
+//        System.out.println("Est Theta "+estimate);
+        estimate = 0;
+        nInside = 0;
+        for(int imc = 0; imc<iterations; imc++)
+        {
+            randAng = PDF2phi();
+            if(Math.abs(randAng)<EPSILON)
+            {
+                randAng+=Math.PI*2;
+            }
+            estimate+= Math.PI/randAng;
+            nInside++;
+        }
+        if(nInside>0)
+        {
+            rotateAround = limit;
+            estimate/=nInside;
+//            System.out.println("Estimate: "+estimate);
+            result = rotateVertexAroundAxis(result, rotateAround, estimate-Math.PI);
+        }else{
+            System.out.println("ERROR ALL OUT OF BOUNDS! Phi");
+        }
+        
+//        System.out.println("Est Theta "+estimate);
+//        System.out.println("Result:  "+result.toString());
+//        System.out.println("predcit: "+predicted.toString());
+//        System.out.println("normal:  "+normal.toString());
+        return result;
+    }
+    public Vertex randomAngleMC(Direction limit, Triangle t, Direction incomming)
+    {
+        HemisCoords resultHemis = new HemisCoords();
+        Vertex result = Vertex.DUMMY;
+        Vertex lim = dirToVertex(limit);
+        Vertex in = dirToVertex(incomming);
+        //limit so they can't be reflected INTO the plane
+        HemisCoords normal = cartToHemis(lim);
+        HemisCoords predicted = cartToHemis(in);
+        
+        predicted.phi = predicted.phi+(2*(normal.phi-predicted.phi));
+        predicted.theta = predicted.theta+(2*(normal.theta-predicted.theta));
+        resultHemis = predicted;
+        
+        HemisCoords transform = new HemisCoords(-1*predicted.theta,-1*predicted.phi,-1*predicted.r);
+        normal = HemisAddition(normal, transform);
+//        System.out.println("\n"+predicted.phi);
+        predicted = HemisAddition(predicted, transform);
+//        System.out.println(predicted.phi);
+        
+        if(Double.isNaN(normal.phi))
+        {
+            System.out.println("phi is NaN");
+            System.out.println("In: " + limit);
+        }
+        
+        int iterations = 100;
+        double randAng;
+        double estimate = 0;
+        int nInside = 0;
+        double savedang = 0;
+        for(int imc = 0; imc<iterations; imc++)
+        {
+            randAng = predicted.phi+PDF2phi();
+            //no rejection sampling since it's the azimuth, IE around
+                if(Math.abs(randAng)<EPSILON)
+                {
+                    randAng=predicted.phi/randAng;
+                }
+                estimate+=randAng;
+                nInside++;
+            
+        }
+        if(nInside > 0)
+        {
+            estimate/=nInside;
+            resultHemis.phi = estimate;
+        }
+        else
+        {
+            System.out.println("It is outside bounds");
+        }
+        //randAng = (Math.random()*pi) - (pi/2);
+        estimate = 0;
+        nInside = 0;
+        for(int imc = 0; imc<iterations; imc++)
+        {
+            randAng = PDF2theta();
+            savedang=randAng;
+            //rejection sampling, reject all values inside surface
+                
+//            if(randAng < normal.theta+(0.5*Math.PI))
+//            {
+//                System.out.println("Test"+(normal.theta+(0.5*Math.PI)));
+//                System.out.println("norm"+normal.theta);
+                if(Math.abs(randAng)<EPSILON)
+                {
+                    //not to divide by zero
+                    randAng = Math.PI*2;
+                }
+                randAng=predicted.theta/randAng;
+                estimate+=randAng;
+                nInside++;
+//            }
+            
+        }
+        if(nInside > 0)
+        {
+            estimate/=nInside;
+            resultHemis.theta = estimate;
+        }else{
+            System.out.println("It is outside bounds");
+            System.out.println("Random Angle "+(savedang)+"\nnormal.Phi "+
+                    (normal.theta)+"\nnormal.Phi "+
+                    ((normal.theta+(0.5*Math.PI)))+
+                    "\npredicted.Phi "+(predicted.phi));
+        }
+        resultHemis = HemisSubtraction(resultHemis,transform);
+        result = hemisToCart(resultHemis);
+        
+        if(Double.isNaN(result.x) || Double.isNaN(result.y) || Double.isNaN(result.z))
+        {
+            System.out.println("RandomAngle is resulting in NAN values for some reason!!!!");
+        System.out.println("normal: "+normal.phi+", "+normal.theta+", "+normal.r);
+        System.out.println("predicted: "+predicted.phi+", "+predicted.theta+", "+predicted.r);
+        }
+        return result;
+    }
     public Vertex randomAngle(Direction limit, Triangle t)
     {
         Vertex lim = dirToVertex(limit);
         
         //limit so they can't be reflected INTO the plane
         HemisCoords refEndPol = cartToHemis(lim);
+        HemisCoords predicted = cartToHemis(lim);
         if(Double.isNaN(refEndPol.phi))
         {
             System.out.println("phi is NaN");
@@ -829,12 +1015,13 @@ public class Scene {
         Vertex result = Vertex.DUMMY;
         do
         {
-        double randAng = (PDF1()-1)*(pi/2);
-        while(randAng > Math.PI)
-            randAng = (PDF1()-1)*(pi/2);
+        double randAng;
+            randAng = (PDF1())*(pi/2);
+            while(randAng > Math.PI)
+                randAng = (PDF1()-1)*(pi/2);
         refEndPol.phi +=randAng;
         //randAng = (Math.random()*pi) - (pi/2);
-        randAng = (PDF1()-1)*(pi/2);
+        randAng = (PDF1())*(pi/2);
         refEndPol.theta +=randAng;
         HemisCoords add = cartToHemis(lim);
         refEndPol.phi += add.phi;
@@ -887,6 +1074,14 @@ public class Scene {
     {
         double randVal = Math.random()*2;
         return 0.75*(1-Math.pow(randVal-1,2));
+    }
+    public double PDF2phi()
+    {
+        return 2*Math.PI*Math.random();
+    }
+    public double PDF2theta()
+    {
+        return Math.pow(Math.cos(Math.sqrt(Math.random())), -1);
     }
     
     private int getObjectByTriangleIndex(int index)

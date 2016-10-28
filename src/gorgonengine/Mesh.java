@@ -333,7 +333,7 @@ public class Mesh extends Object{
                 smallT = t;
             }
         }
-        if(smallT != -10 && smallT <= 1 && !transparent)
+        if(smallT != -10 && smallT <= 1 && !transparent && !lightsource)
         {
 //            if(triangleID == 1)
 //                System.out.println("SmallT: " + smallT);

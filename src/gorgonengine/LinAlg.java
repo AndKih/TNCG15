@@ -402,11 +402,14 @@ public class LinAlg {
         
         Vertex endPoint;
         ColorDbl returnedIntensity;
-        for(int r = 0; r<20; r++)
+        double nHits =0;
+        
+        for(int i =0; i< Scene.objects.length; i++)
         {
-            for(int i =0; i< Scene.objects.length; i++)
+            if(Scene.objects[i].isLightsource() && !Scene.objects[i].isSphere())
             {
-                if(Scene.objects[i].isLightsource() && !Scene.objects[i].isSphere())
+                nHits++;
+                for(int r = 0; r<Camera.N_AREALIGHTSOURCEPOINTS; r++)
                 {
                     triangle = Scene.objects[i].returnTriangleByIndex(0);
                     axis1 = VektorSubtraktion(triangle.p[1],triangle.p[0]);
@@ -441,6 +444,10 @@ public class LinAlg {
                 }
             }
         }
+//        System.out.println("Intensity "+intensity);
+//        intensity.setIntensity((double)1/((double)Camera.N_AREALIGHTSOURCEPOINTS*nHits));
+////        System.out.println("Intensity "+intensity+"\n-----------------\n");
+        
         if(intensity.meanIntensity()>100)
         {
             System.out.println(intensity);
@@ -716,6 +723,45 @@ public class LinAlg {
         
         Vertex h = VektorAddition(h_v1,h_v2);
         return h;
+    }
+    public static HemisCoords HemisAddition(HemisCoords a1, HemisCoords a2)
+    {
+        HemisCoords retval = new HemisCoords(a1.theta+a2.theta,a1.phi+a2.phi,a1.r+a2.r);
+        retval = negativeAngleFixer(retval);
+        return retval;
+    }
+    public static HemisCoords HemisSubtraction(HemisCoords a1, HemisCoords a2)
+    {
+        HemisCoords retval = new HemisCoords(a1.theta-a2.theta,a1.phi-a2.phi,a1.r-a2.r);
+        retval = negativeAngleFixer(retval);
+        return retval;
+    }
+    public static HemisCoords negativeAngleFixer(HemisCoords in)
+    {
+        double phi = in.phi;
+        double theta = in.theta;
+        while(phi<0)
+            phi+=Math.PI*2;
+        while(theta<0)
+            theta+=Math.PI*2;
+        return new HemisCoords(theta, phi, in.r);
+            
+    }
+    public static Vertex rotateVertexAroundAxis(Vertex point, Direction axis, double angle)
+    {
+        Vertex u = dirToVertex(axis);
+        double newx = (Math.cos(angle)+Math.pow(u.x,2)*(1-Math.cos(angle)))*point.x;
+        newx += (u.x*u.y*(1-Math.cos(angle)))*point.y;
+        newx += (u.x*u.z*(1-Math.cos(angle))+u.y*Math.sin(angle))*point.z;
+        
+        double newy = (u.y*u.x*(1-Math.cos(angle))+u.z*Math.signum(angle))*point.x;
+        newy += (Math.cos(angle)+Math.pow(u.y, 2)*(1-Math.cos(angle)))*point.y;
+        newy += (u.y*u.z*(1-Math.cos(angle))-u.x*Math.sin(angle))*point.z;
+        
+        double newz = (u.z*u.x*(1-Math.cos(angle)))*point.x;
+        newz += (u.z*u.y*(1-Math.cos(angle))+u.x*Math.sin(angle))*point.y;
+        newz += (Math.cos(angle)+Math.pow(u.z, 2)*(1-Math.cos(angle)))*point.z;
+        return new Vertex(newx,newy,newz);
     }
     
 }
