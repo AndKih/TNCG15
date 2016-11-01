@@ -940,7 +940,7 @@ public class Scene {
             }
             System.out.println("Top: " + it.returnData());
         }
-
+        ++Camera.nrRays;
         return resultRay;
     }
     public Vertex randomAngleMC2(Direction limit, Triangle t, Direction incoming)

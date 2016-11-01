@@ -34,14 +34,15 @@ public class Camera extends JFrame{
     public Vertex pos;
     public double width, height;
     private double iMax, iMin;
-    public static final double IMPORTANCETHRESHOLD = 0.1;
+
+    public static final double IMPORTANCETHRESHOLD = 0.05;
+
     public static final int N_REFLECTEDRAYS = 1;
     public static final int N_AREALIGHTSOURCEPOINTS = 15;
     public static final int ESTIMATOR_ITERATIONS = 100;
     Scene scene;
     
-    
-    public int raysPerPixel = 10;
+    public int raysPerPixel = 12;
     public static boolean areaLightsource = true;
     public static boolean logScale = false;
     
@@ -51,9 +52,11 @@ public class Camera extends JFrame{
     private double prevtime;
     private double startTime;
     
+    public static int nrRays;
     
     public Camera(int sizex, int sizey, Vertex[] e1, Vertex pos, double wdth, double hght)
     {
+        nrRays = 0;
         SIZEX = sizex;
         SIZEY = sizey;
         eye = new Vertex[e1.length];
@@ -179,6 +182,7 @@ public class Camera extends JFrame{
     private void createImage()
     {
         System.out.println("Largest color value: " + iMax);
+        System.out.println("Total number of rays used: " + nrRays);
         BufferedImage im = new BufferedImage(SIZEX, SIZEY, BufferedImage.TYPE_INT_RGB);
         for(int px = 0; px < SIZEX; ++px)
         {

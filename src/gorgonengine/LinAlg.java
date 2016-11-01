@@ -525,14 +525,13 @@ public class LinAlg {
         Vertex n = dirToVertex(normal);
         Vertex l = ls.getLightVectorFrom(endpt);
         Ray shadowRay = new Ray(endpt, ls.pos, new ColorDbl(0, 0, 0), -1, Ray.RAY_SHADOW);
-//        Vertex vr = new Vertex(VektorSubtraktion(shadowRay.end, shadowRay.start));
+        ++Camera.nrRays;
         
         for(int ids = 0; ids < Scene.objects.length; ++ids)
         {
             boolean test = Scene.objects[ids].shadowRayIntersection(shadowRay, ls, triangleID);
             if(test)
             {
-//                System.out.println("IS BLOCKED");
                 return ColorDbl.BLACK;
             }
         }
