@@ -471,7 +471,30 @@ public class LinAlg {
 //                    System.out.println("Intensity " + intensity);
         return intensity;
     }
-    
+    public static Vertex randomPointOnTriangle(Triangle triangle)
+    {
+        Vertex axis1;
+        Vertex axis2;
+        double length1;
+        double length2;
+        Vertex endPoint;
+        axis1 = VektorSubtraktion(triangle.p[1],triangle.p[0]);
+        axis2 = VektorSubtraktion(triangle.p[2],triangle.p[0]);
+        length1 = Math.random();
+        length2 = Math.random();
+        while(length1+length2>1)
+        {
+            length1 = Math.random();
+            length2 = Math.random();
+        }
+
+        //endpoint = p0 + axis1*length1 + axis2*length2
+        endPoint = triangle.p[0];
+        endPoint = VektorAddition(VektorMultiplikation(axis1,length1), endPoint);
+        endPoint = VektorAddition(VektorMultiplikation(axis2,length2), endPoint);
+        
+        return endPoint;
+    }
     public static ColorDbl OLDgetMCAreaLightIntensity(Direction normal, Vertex endpt, int triangleID)
     {
         int nrays = 5;
