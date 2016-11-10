@@ -35,14 +35,15 @@ public class Camera extends JFrame{
     public double width, height;
     private double iMax, iMin;
 
-    public static final double IMPORTANCETHRESHOLD = 0.05;
+    public static final double IMPORTANCETHRESHOLD = 0.1;
 
     public static final int N_REFLECTEDRAYS = 1;
-    public static final int N_AREALIGHTSOURCEPOINTS = 15;
-    public static final int ESTIMATOR_ITERATIONS = 100;
+    public static final int N_AREALIGHTSOURCEPOINTS = 10;
+    public static final int ESTIMATOR_ITERATIONS = 50;
+    public static final boolean AREALIGHTAFFECTOR = false;
     Scene scene;
     
-    public int raysPerPixel = 12;
+    public int raysPerPixel = 4;
     public static boolean areaLightsource = true;
     public static boolean logScale = false;
     
