@@ -20,7 +20,7 @@ public class Scene {
     public static final ColorDbl LIGHTCOLOR = new ColorDbl(100,100,100);
     public final int NROBJECTS;
     public Triangle[] mesh = new Triangle[SIZE];
-    Node<PhotonContainer> octreeRoot;
+    
     
     public static int counter = 1;
     public static Object[] objects;
@@ -401,6 +401,11 @@ public class Scene {
             
             root.addChild(it);
         }
+    }
+    
+    public void addPhoton(Vertex pos)
+    {
+        
     }
     
     public Ray rayIntersection(Node<Ray> r)

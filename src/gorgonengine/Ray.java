@@ -197,6 +197,13 @@ public class Ray {
         return inside;
     }
     
+    private void depositPhoton()
+    {
+        if(RAY_TYPE != RAY_LIGHT)
+            return;
+        
+    }
+    
     public String toString()
     {
         String result = "Start: " + start + "\n"
