@@ -444,9 +444,16 @@ public class LinAlg {
 //                    returnedIntensity.setIntensity(1/Camera.N_AREALIGHTSOURCEPOINTS);
 //                    G = SkalärProdukt(dirToVertex(normal), VektorSubtraktion(fakePoint.pos,endpt))/
 //                            (returnLength(VektorSubtraktion(fakePoint.pos,endpt))*returnLength(dirToVertex(normal)));
+                    if(Camera.AREALIGHTAFFECTOR)
+                    {
                     G = SkalärProdukt(dirToVertex(triangle.normal), VektorSubtraktion(endpt,fakePoint.pos))/
                             (returnLength(VektorSubtraktion(endpt,fakePoint.pos))*returnLength(dirToVertex(triangle.normal)));
 //                    G /=Math.pow(returnLength(VektorSubtraktion(endpt,fakePoint.pos)),2);
+                    }
+                    else
+                    {
+                        G = 1;
+                    }
                     returnedIntensity.setIntensity(area/Camera.N_AREALIGHTSOURCEPOINTS);
                     returnedIntensity.setIntensity(G);
                     intensity.addColor(returnedIntensity);
@@ -464,7 +471,30 @@ public class LinAlg {
 //                    System.out.println("Intensity " + intensity);
         return intensity;
     }
-    
+    public static Vertex randomPointOnTriangle(Triangle triangle)
+    {
+        Vertex axis1;
+        Vertex axis2;
+        double length1;
+        double length2;
+        Vertex endPoint;
+        axis1 = VektorSubtraktion(triangle.p[1],triangle.p[0]);
+        axis2 = VektorSubtraktion(triangle.p[2],triangle.p[0]);
+        length1 = Math.random();
+        length2 = Math.random();
+        while(length1+length2>1)
+        {
+            length1 = Math.random();
+            length2 = Math.random();
+        }
+
+        //endpoint = p0 + axis1*length1 + axis2*length2
+        endPoint = triangle.p[0];
+        endPoint = VektorAddition(VektorMultiplikation(axis1,length1), endPoint);
+        endPoint = VektorAddition(VektorMultiplikation(axis2,length2), endPoint);
+        
+        return endPoint;
+    }
     public static ColorDbl OLDgetMCAreaLightIntensity(Direction normal, Vertex endpt, int triangleID)
     {
         int nrays = 5;

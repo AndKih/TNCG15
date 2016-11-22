@@ -254,9 +254,9 @@ public class Scene {
 //        pnew3[0] = new Vertex(9.99, 6, 5);
 //        pnew3[1] = new Vertex(9.99, 6, -5);
 //        pnew3[2] = new Vertex(12.99, 0, 5);
-        pnew3[0] = new Vertex(0, 5.99, 5);
-        pnew3[1] = new Vertex(0, 5.99, -5);
-        pnew3[2] = new Vertex(10, 5.99, -5);
+        pnew3[0] = new Vertex(0, 6-(2*EPSILON), 5);
+        pnew3[1] = new Vertex(0, 6-(2*EPSILON), -5);
+        pnew3[2] = new Vertex(10, 6-(2*EPSILON), -5);
         mirror[0] = new Triangle(pnew3, new ColorDbl(0,0,0),counter);
         
         
@@ -397,11 +397,17 @@ public class Scene {
 //            }
 //            return new Ray(largestRay.start,largestRay.end,
 //                    objects[largestRay.getObjectIndex()].returnTriangleByIndex(0).color);
+            if(Camera.AREALIGHTAFFECTOR)
+            {
             calcHelper = SkalärProdukt(dirToVertex(objects[largestRay.getObjectIndex()].returnTriangleByIndex(0).normal), 
                     VektorSubtraktion(largestRay.start,largestRay.end))/
                             (returnLength(VektorSubtraktion(largestRay.start,largestRay.end))*
                     returnLength(dirToVertex(objects[largestRay.getObjectIndex()].returnTriangleByIndex(0).normal)));
-
+            }
+            else
+            {
+                calcHelper = 1;
+            }
 //                    calcHelper *= SkalärProdukt(dirToVertex(triangle.normal), VektorSubtraktion(endpt,fakePoint.pos))/
 //                            (returnLength(VektorSubtraktion(endpt,fakePoint.pos))*returnLength(dirToVertex(triangle.normal)));
 
