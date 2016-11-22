@@ -21,7 +21,7 @@ public class Scene {
     public final int NROBJECTS;
     public Triangle[] mesh = new Triangle[SIZE];
     Sphere sphere;
-    
+    Node<PhotonContainer> OctreeRoot;
     
     public static int counter = 1;
     public static Object[] objects;
@@ -137,7 +137,7 @@ public class Scene {
         mesh[15] = new Triangle(p, new ColorDbl(100, 100, 100), counter);
         
         ++counter;
-        //Tak Sydost (-y, +x)
+        //Tak Sydost (-y, +x) This one.
         p[0] = new Vertex(13, 0, 5);
         p[1] = new Vertex(10, -6, 5);
         p[2] = new Vertex(0, 0, 5);
@@ -264,15 +264,15 @@ public class Scene {
         
         
         
-        objects[0].setObjectReflection(0.5);
+        objects[0].setObjectReflection(0.2);
 //        objects[0].setReflectorType(Object.REFLECTOR_DIFFUSE);
         
         objects[1] = new Mesh(1, mesh2);
-        objects[1].setObjectReflection(0.5);
+        objects[1].setObjectReflection(0.2);
 //        objects[1].setReflectorType(Object.REFLECTOR_DIFFUSE);
         
         objects[2] = new Sphere(ColorDbl.PURPLE, new Vertex(11, -2, 1), 1, 2);
-        objects[2].setObjectReflection(0.5);
+        objects[2].setObjectReflection(0.2);
 //        objects[2].setReflectorType(Object.REFLECTOR_DIFFUSE);
         
 //        objects[4] = new Mesh(new Vertex(7, 2, 2), Mesh.TYPE_RECTANGLE);
@@ -286,7 +286,7 @@ public class Scene {
         objects[4].setLightsource();
         
         objects[5] = new Sphere(ColorDbl.GREEN, new Vertex(8, -3.5, -2.5), 1, 5);
-        objects[5].setObjectReflection(0.5);
+        objects[5].setObjectReflection(0.2);
         
         objects[6] = new Mesh(6, mirror);
         objects[6].setObjectReflection(1);
@@ -344,21 +344,12 @@ public class Scene {
         }
         objects[6].setReflectorType(Object.REFLECTOR_SPECULAR);
 //        objects[3].setReflectorType(Object.REFLECTOR_SPECULAR);
-        
-        //CALC
-        System.out.println("TESTING CALCULATIONS!!!");
-        Vertex startpt = new Vertex(4.5, -4, -1.78);
-        Direction testdir = new Direction(-0.2, 1, 0.2);
-        normalize(testdir);
-        Vertex endpt = VektorAddition(startpt, dirToVertex(testdir));
-        Ray testRay = new Ray(startpt, endpt, ColorDbl.BLACK, 39, Ray.RAY_IMPORTANCE);
-        testRay.setReflectionType(Ray.RAY_REFRACTION);
-        Ray result = objects[3].rayIntersection(testRay, lights);
-        System.out.println("Result:\n" + result);
-        System.out.println("TEST COMPLETE!!!");
-        
-        
-        
+    
+    Vertex sceneMax = new Vertex(13, 6, 5);
+    Vertex sceneMin = new Vertex(-3, -6, -5);
+    
+    OctreeRoot = new Node<PhotonContainer>(new PhotonContainer(sceneMax, sceneMin));
+    
     }
     
     public Ray rayIntersection(Node<Ray> r)
@@ -435,6 +426,9 @@ public class Scene {
                             calcHelper));
 //            Ray retRay = new Ray(largestRay.start,largestRay.end, largestRay.color);
             retRay.setImportance(largestRay.getImportance());
+            Node<Ray> retNode = new Node<Ray>(retRay);
+            r.addChild(retNode);
+            
             return retRay;
         }
         
@@ -727,9 +721,6 @@ public class Scene {
             int initLimit = r.returnChildrenAmount();
             for(int idn = 0; idn < initLimit; ++idn)
             {
-//                System.out.println("PRE:\nSize1: " + r.returnChildrenAmount() + "\nSize2: " + tmpRay.size());
-//                System.out.println("initLimit: " + initLimit);
-//                System.out.println("Current index: " + idn);
                 Node<Ray> it = r.returnChild(idn - offset);
                 if(it.isEmpty())
                 {
@@ -738,52 +729,18 @@ public class Scene {
                 }
                 else
                     tmpRay.add(rayIntersection(it));
-//                if(tmpRay.get(idn-offset).color.r == 0 && tmpRay.get(idn-offset).color.g == 0 && tmpRay.get(idn-offset).color.b == 0)
-//                    System.out.println("Color missing.");
-//                    
-//                if(tmpRay.get(idn-offset).getReflectionType() == Ray.RAY_REFRACTION)
-//                {
-//                    System.out.println("PRE color: " + tmpRay.get(idn-offset).color.getTotalColorValue());
-//                }
-//                System.out.println("MID:\nSize1: " + r.returnChildrenAmount() + "\nSize2: " + tmpRay.size());
                 if(tmpRay.get(idn - offset).equals(Ray.ERROR_RAY))
                 {
-//                    if(idn == initLimit - 1 && r.returnChildrenAmount() == 2)
-//                    {
-//                        System.out.println("pre r: " + r.returnChild(idn - offset).returnData());
-//                    }
                     r.removeChild(r.returnChild(idn - offset).returnData());
                     ++offset;
                     tmpRay.remove(tmpRay.lastElement());
-//                    System.out.println("POSTDELETE:\nSize1: " + r.returnChildrenAmount() + "\nSize2: " + tmpRay.size());
-//                    if(r.returnChildrenAmount() != tmpRay.size() && idn == initLimit - 1)
-//                    {
-//                        System.out.println("post r: " + r.returnChild(idn).returnData());
-//                    }
                     continue;
                 }
                 
                 ColorDbl col = new ColorDbl(largestRay.color);
                 col.setIntensity(r.returnData().getImportance());
                 tmpRay.get(idn - offset).color.addColor(col);
-//                tmpRay.get(idn - offset).setReflectionType(it.returnData().getReflectionType());
-//                if(tmpRay.get(idn-offset).getReflectionType() == Ray.RAY_REFRACTION)
-//                {
-//                    System.out.println("POST color: " + tmpRay.get(idn-offset).color.getTotalColorValue());
-//                }
             }
-//            if(r.returnChildrenAmount() != tmpRay.size())
-//            {
-//                System.out.println("Outputting both r and tmp...");
-//                for(int idr = 0; idr < r.returnChildrenAmount(); ++idr)
-//                {
-//                    System.out.println("r, index " + idr + ": " + r.returnChild(idr).returnData());
-//                }
-//                for(int idt = 0; idt < tmpRay.size(); ++idt)
-//                {
-//                    System.out.println("tmp, index " + idt + ": " + tmpRay.get(idt));
-//                }
-//            }
             if(tmpRay.isEmpty())
             {
                 ColorDbl col = new ColorDbl(r.returnData().color);
@@ -805,7 +762,6 @@ public class Scene {
                 if(objects[largestRay.getObjectIndex()].isTransparent() && r.returnChild(idn).returnData().getReflectionType() == Ray.RAY_REFLECTION)
                 {
                     tmpCol.addColor(tmpRay.get(idn).color);
-//                    tmpCol.setIntensity(0.2);
                 }
                 else
                     tmpCol.addColor(tmpRay.get(idn).color);
@@ -814,26 +770,11 @@ public class Scene {
             tmpCol.r /= r.returnChildrenAmount();
             tmpCol.g /= r.returnChildrenAmount();
             tmpCol.b /= r.returnChildrenAmount();
-//            for(int indRefl = 0; indRefl < nRefl; indRefl++)
-//            {
-//                tmpCol.addColor(tmpRay[indRefl].color);
-//                tmpCol.r /= nRefl;
-//                tmpCol.g /= nRefl;
-//                tmpCol.b /= nRefl;
-//            }
             resultRay.color = tmpCol;
             
         }
         else
         {
-//            if(r.checkHasParent())
-//                System.out.println("r parent index: " + r.returnParent().returnData().returnIndex());
-//            System.out.println("Current data for r index:" + r.returnData().returnIndex());
-//            System.out.println("Current data for r dir: " + r.returnData().dir);
-//            System.out.println("Current data for r start: " + r.returnData().start);
-//            System.out.println("Current data for r end: " + r.returnData().end);
-//            rayit = new Node<Ray>(largestRay, r);
-//            r.addChild(rayit);
             boolean refr = false;
                 if(r.returnData().getReflectionType() == Ray.RAY_REFRACTION)
                     refr = true;
@@ -848,86 +789,18 @@ public class Scene {
             resultRay = new Ray(largestRay);
             resultRay.color.setIntensity(r.returnData().getImportance());
             resultRay.setReflectionType(r.returnData().getReflectionType());
-//            System.out.println("Triangleindex end: " + rayit.returnData().returnIndex());
-//            Node <Ray> it = rayit.returnParent();
-//            do
-//            {
-//                System.out.println("Triangleindex: " + it.returnData().returnIndex());
-//                it = it.returnParent();
-//            }while(it.returnData().returnIndex() != -2);
             
                 
         }
-//        if(!r.checkHasParent() && r.returnData().getObjectIndex() == 3)
-//        {
-//            int length = 0;
-//            System.out.println("Start!\nColor values: " + r.returnData().color);
-//            System.out.println("Hit object: " + r.returnData().getObjectIndex());
-//            System.out.println("Importance values: " + r.returnData().getImportance());
-//            System.out.println("Direction: " + r.returnData().dir);
-//            System.out.println("Start: " + r.returnData().start);
-//            System.out.println("End: " + r.returnData().end);
-//            System.out.println("TriangleIndex: " + r.returnData().returnIndex());
-//            if(r.returnData().getReflectionType() == Ray.RAY_REFLECTION)
-//                System.out.println("Raytype: Reflection");    
-//            else
-//                System.out.println("Raytype: Refraction");
-//            Node<Ray> it = r;
-//            while(it.checkIfParent())
-//            {
-//                boolean hasNoRefractions = false;
-//                ++length;
-//                for(int idc = 0; idc < it.returnChildrenAmount(); ++idc)
-//                {
-//                    if(it.returnChild(idc).returnData().getReflectionType() == Ray.RAY_REFRACTION)
-//                    {
-//                        it = it.returnChild(idc);
-//                        hasNoRefractions = false;
-//                        break;
-//                    }
-//                    hasNoRefractions = true;
-//                }
-//                if(hasNoRefractions)
-//                    it = it.returnChild();
-//                System.out.println("Iteration: " + length);
-//                System.out.println("Color values: " + it.returnData().color);
-//                System.out.println("Hit object: " + it.returnData().getObjectIndex());
-//                System.out.println("Importance values: " + it.returnData().getImportance());
-//                System.out.println("Direction: " + it.returnData().dir);
-//                System.out.println("Start: " + it.returnData().start);
-//                System.out.println("End: " + it.returnData().end);
-//                System.out.println("TriangleIndex: " + it.returnData().returnIndex());
-//                if(it.returnData().getReflectionType() == Ray.RAY_REFLECTION)
-//                    System.out.println("Raytype: Reflection");    
-//                else
-//                    System.out.println("Raytype: Refraction");
-//            }
-//            System.out.println("Tree length: " + length);
-//        }
-//        if(!r.checkHasParent() && r.returnData().getObjectIndex() != 0)
-//        {
-//            System.out.println("Final color for non wall ray: " + r.returnData().color);
-//        }
-//        if(r.returnData().returnIndex() == 1)
-//            System.out.println("Triangle 1: " + r.returnData().color);
-//        if(!r.checkHasParent() && r.returnData().returnIndex() != 2)
-//        {
-////            int length = 1;
-//            System.out.println("Final color: " + r.returnData().color + " for index: " + r.returnData().returnIndex());
-////            Node<Ray> it = r;
-////            
-////            while(it.checkIfParent())
-////            {
-////                ++length;
-////                it = it.returnChild();
-////            }
-//        }
-//        if(r.returnData().getObjectIndex() == 2)
-//        {
-//            System.out.println("r is a sphere!");
-//            System.out.println(r.returnData());
-//            System.out.println(resultRay);
-//        }
+        if(!r.checkHasParent())
+            r.setData(resultRay);
+        if(!r.checkHasParent() && r.returnData().returnIndex() > 12 && r.returnData().returnIndex() < 19
+                && (r.returnData().color.r > 120 && r.returnData().color.g > 120 && r.returnData().color.b > 120))
+        {
+            int length = 0;
+            length = r.traverse(r, length);
+            System.out.println("Tree length: " + length);
+        }
         if(Double.isNaN(resultRay.color.r) || Double.isNaN(resultRay.color.g) || Double.isNaN(resultRay.color.b))
         {
             System.out.println("Returning NaN in color.");

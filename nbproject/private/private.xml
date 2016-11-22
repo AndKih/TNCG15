@@ -3,7 +3,6 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-<<<<<<< HEAD
             <file>file:/C:/Users/Andreas/Documents/NetBeansProjects/GorgonEngine/src/gorgonengine/GorgonEngine.java</file>
             <file>file:/C:/Users/Andreas/Documents/NetBeansProjects/GorgonEngine/src/gorgonengine/Object.java</file>
             <file>file:/C:/Users/Andreas/Documents/NetBeansProjects/GorgonEngine/src/gorgonengine/Scene.java</file>
@@ -16,25 +15,6 @@
             <file>file:/C:/Users/Andreas/Documents/NetBeansProjects/GorgonEngine/src/gorgonengine/Camera.java</file>
             <file>file:/C:/Users/Andreas/Documents/NetBeansProjects/GorgonEngine/src/gorgonengine/Ray.java</file>
             <file>file:/C:/Users/Andreas/Documents/NetBeansProjects/GorgonEngine/src/gorgonengine/Sphere.java</file>
-=======
-            <file>file:/C:/Users/Valdemar/Documents/GitHub/TNCG15/src/gorgonengine/PointLightSource.java</file>
-            <file>file:/C:/Users/Valdemar/Documents/GitHub/TNCG15/src/gorgonengine/Object.java</file>
-            <file>file:/C:/Users/Valdemar/Documents/GitHub/TNCG15/src/gorgonengine/Sphere.java</file>
-            <file>file:/C:/Users/Valdemar/Documents/GitHub/TNCG15/src/gorgonengine/Ray.java</file>
-            <file>file:/C:/Users/Valdemar/Documents/GitHub/TNCG15/src/gorgonengine/ColorDbl.java</file>
-            <file>file:/C:/Users/Valdemar/Documents/GitHub/TNCG15/src/gorgonengine/Triangle.java</file>
-            <file>file:/C:/Users/Valdemar/Documents/GitHub/TNCG15/src/gorgonengine/Scene.java</file>
-            <file>file:/C:/Users/Valdemar/Documents/GitHub/TNCG15/src/gorgonengine/Camera.java</file>
-            <file>file:/C:/Users/Valdemar/Documents/GitHub/TNCG15/src/gorgonengine/Direction.java</file>
-            <file>file:/C:/Users/Valdemar/Documents/GitHub/TNCG15/src/gorgonengine/Pixel.java</file>
-            <file>file:/C:/Users/Valdemar/Documents/GitHub/TNCG15/src/gorgonengine/Matrix.java</file>
-            <file>file:/C:/Users/Valdemar/Documents/GitHub/TNCG15/src/gorgonengine/Node.java</file>
-            <file>file:/C:/Users/Valdemar/Documents/GitHub/TNCG15/src/gorgonengine/Mesh.java</file>
-            <file>file:/C:/Users/Valdemar/Documents/GitHub/TNCG15/src/gorgonengine/GorgonEngine.java</file>
-            <file>file:/C:/Users/Valdemar/Documents/GitHub/TNCG15/src/gorgonengine/LinAlg.java</file>
-            <file>file:/C:/Users/Valdemar/Documents/GitHub/TNCG15/src/gorgonengine/HemisCoords.java</file>
-            <file>file:/C:/Users/Valdemar/Documents/GitHub/TNCG15/src/gorgonengine/Vertex.java</file>
->>>>>>> 1887d0892ea2bf2574249ce329e3ad7adec66e97
         </group>
     </open-files>
 </project-private>

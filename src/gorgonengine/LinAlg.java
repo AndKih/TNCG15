@@ -773,6 +773,16 @@ public class LinAlg {
         return new Vertex(newx,newy,newz);
     }
     
+    //Jag tänker mig nåt i stil med att octree skapas genom root.addChild(createContainer(min, max); 8 ggr.
+    //Eventuellt i en for loop med 8 iterationer. Denna metod kallas för varje individuell container som skapas.
+    public static Node<PhotonContainer> createContainer(Vertex min, Vertex max)
+    {
+        PhotonContainer container = new PhotonContainer(max, min);
+        Node<PhotonContainer> result = new Node<PhotonContainer>(container);
+        
+        return result;
+    }
+    
 //    public boolean russianRoullette()
     
 }

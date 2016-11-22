@@ -35,7 +35,7 @@ public class Camera extends JFrame{
     public double width, height;
     private double iMax, iMin;
 
-    public static final double IMPORTANCETHRESHOLD = 0.1;
+    public static final double IMPORTANCETHRESHOLD = 0.05;
 
     public static final int N_REFLECTEDRAYS = 1;
 
@@ -44,7 +44,7 @@ public class Camera extends JFrame{
     public static final int ESTIMATOR_ITERATIONS = 100;
     Scene scene;
     
-    public int raysPerPixel = 16;
+    public int raysPerPixel = 4;
     public static boolean areaLightsource = true;
     public static boolean logScale = false;
     
@@ -89,9 +89,13 @@ public class Camera extends JFrame{
         Vertex target;
         double newY;
         double newZ;
-                
+        double maxMeanIntensity = 0;
         int percentEffictivicer = 0;
         int percentEffictivicer2 = 0;
+        int strongestIndex = 0;
+        ColorDbl strongestColor = ColorDbl.BLACK;
+        int currentIndex = 0;
+        ColorDbl currentColor = ColorDbl.BLACK;
         for(int px = 0; px<SIZEX; px++)
         {
             //if statement just here to simplify waiting by displaying a number
@@ -107,6 +111,7 @@ public class Camera extends JFrame{
                 timeCalc = time-prevtime;
                 System.out.println("        Time passed since last percent: "+(time-prevtime));
                 prevtime = time;
+                
             }
             
             for(int py = 0; py<SIZEY; py++)
@@ -131,6 +136,18 @@ public class Camera extends JFrame{
                     r.setObjectIndex(-1);
                     Node<Ray> raystart = new Node<Ray>(r);
                     r = scene.rayIntersection(raystart);
+//                    currentIndex = r.returnIndex();
+//                    currentColor = r.color;
+                    if(r.returnIndex() > 12 && r.returnIndex() < 19 && r.color.meanIntensity() > maxMeanIntensity)
+                        maxMeanIntensity = r.color.meanIntensity();
+                    if(r.returnIndex() > 12 && r.returnIndex() < 19 && r.color.r > strongestColor.r
+                            && r.color.g > strongestColor.g && r.color.b > strongestColor.b)
+                    {
+                        currentColor = r.color;
+                        currentIndex = r.returnIndex();
+                    }
+                    
+                        
                     if(r.equals(Ray.ERROR_RAY))
                     {
                         System.out.println("SOMETHING HAS GONE HORRIBLY WRONG");
@@ -151,14 +168,20 @@ public class Camera extends JFrame{
 //                System.out.println(r.color.toString());
                 if(iMax < cam[px][py].color.r)
                 {
+                    strongestIndex = currentIndex;
+                    strongestColor = currentColor;
                     iMax = cam[px][py].color.r;
                 }
                 if(iMax < cam[px][py].color.g)
                 {
+                    strongestIndex = currentIndex;
+                    strongestColor = currentColor;
                     iMax = cam[px][py].color.g;
                 }
                 if(iMax < cam[px][py].color.b)
                 {
+                    strongestIndex = currentIndex;
+                    strongestColor = currentColor;
                     iMax = cam[px][py].color.b;
                 }
                 if(iMin > cam[px][py].color.r)
@@ -177,12 +200,16 @@ public class Camera extends JFrame{
 //                iMax=100;
             }
         }
+        System.out.println("Ceiling power: " + maxMeanIntensity);
+        System.out.println("Strongest index: " + strongestIndex);
+        System.out.println("strongest color: " + strongestColor.toString());
         System.out.println("TIME TO COMPLETE PROGRAM: "+(time-startTime));
         createImage();
     }
     
     private void createImage()
     {
+        
         System.out.println("Largest color value: " + iMax);
         System.out.println("Total number of rays used: " + nrRays);
         BufferedImage im = new BufferedImage(SIZEX, SIZEY, BufferedImage.TYPE_INT_RGB);

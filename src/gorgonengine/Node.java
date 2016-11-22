@@ -162,6 +162,25 @@ public class Node<T> //implements Iterable<Node<T>>, Iterator<Node<T>>
         return numChildren;
     }
     
+    public int traverse(Node<T> n, int l)
+    {
+        int length = l;
+        ++length;
+        System.out.println("Current level: " + length);
+        System.out.println(n.returnData().toString());
+        List<Node<T>> storage = new ArrayList<Node<T>>();
+        for(int i = 0; i < n.returnChildrenAmount(); ++i)
+        {
+            storage.add(n.returnChild(i));
+        }
+        for(int j = 0; j < storage.size(); ++j)
+        {
+            Node<T> it = storage.get(j);
+            length = traverse(it, length);
+        }
+        return length;
+    }
+    
 //    public Iterator<Node<T>> iterator()
 //    {
 //        return this;
