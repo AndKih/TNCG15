@@ -30,6 +30,16 @@ public class PhotonContainer {
         photonList.add(p);
     }
     
+    public Vertex getMaxPos()
+    {
+        return maxPos;
+    }
+    
+    public Vertex getMinPos()
+    {
+        return minPos;
+    }
+    
     public String toString()
     {
         return "MAX: " + maxPos + "\nMIN: " + minPos;
