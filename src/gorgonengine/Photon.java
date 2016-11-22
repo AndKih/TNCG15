@@ -11,6 +11,8 @@ package gorgonengine;
  */
 public class Photon {
     
+    public static final int PHOTON_DIRECT = 100, PHOTON_SHADOW = 101;
+    
     public Vertex position;
     public double flux;
     public Direction dir;

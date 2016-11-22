@@ -16,7 +16,105 @@ public class LinAlg {
     
     public final static double EPSILON = 0.00000001;
     public static final double ORENNAYAR_STANDARD_DEVIATION = Math.PI/4;
+    public static final double PHOTON_SEARCH_RADIUS = 0.5;
+    public static final double STANDARD_FLUX = 1;
     public static Node<PhotonContainer> octreeRoot;
+    
+    public static void createOctree(Node<PhotonContainer> root)
+    {
+        Vertex max = root.returnData().getMaxPos(), min = root.returnData().getMinPos();
+        Vertex mid = new Vertex((min.x + max.x)/2, (min.y + max.y)/2, (min.z + max.z)/2);
+        double xMod = max.x - mid.x, yMod = max.y - mid.y, zMod = max.z - mid.z;
+        
+        for(int idnr = 0; idnr < 8; ++idnr)
+        {
+            Vertex newMax = Vertex.DUMMY, newMin = Vertex.DUMMY;
+            switch(idnr)
+            {
+                case 0:
+                    newMax = new Vertex(mid.x + xMod, mid.y + yMod, mid.z + zMod);
+                    newMin = mid;
+                    break;
+                case 1:
+                    newMax = new Vertex(mid.x + xMod, mid.y, mid.z + zMod);
+                    newMin = new Vertex(mid.x, mid.y - yMod, mid.z);
+                    break;
+                case 2:
+                    newMax = new Vertex(mid.x + xMod, mid.y + yMod, mid.z);
+                    newMin = new Vertex(mid.x, mid.y, mid.z - zMod);
+                    break;
+                case 3:
+                    newMax = new Vertex(mid.x + xMod, mid.y, mid.z);
+                    newMin = new Vertex(mid.z, mid.y - yMod, mid.z - zMod);
+                    break;
+                case 4:
+                    newMax = new Vertex(mid.x, mid.y + yMod, mid.z + zMod);
+                    newMin = new Vertex(mid.x -xMod, mid.y, mid.z);
+                    break;
+                case 5:
+                    newMax = new Vertex(mid.x, mid.y, mid.z + zMod);
+                    newMin = new Vertex(mid.x - xMod, mid.y - yMod, mid.z);
+                    break;
+                case 6:
+                    newMax = new Vertex(mid.x, mid.y + yMod, mid.z);
+                    newMin = new Vertex(mid.x - xMod, mid.y, mid.z - zMod);
+                    break;
+                case 7:
+                    newMax = mid;
+                    newMin = new Vertex(mid.x - xMod, mid.y - yMod, mid.z - zMod);
+                    break;
+            }
+            double[] newDiameters = new double[]{returnLength(new Vertex(newMax.x - newMin.x, 0, 0)), 
+                                                 returnLength(new Vertex(0, newMax.y - newMin.y, 0)), 
+                                                 returnLength(new Vertex(0, 0, newMax.z - newMin.z))};
+            Node<PhotonContainer> it = new Node<PhotonContainer>(new PhotonContainer(newMax, newMin, newDiameters));
+            
+            root.addChild(it);
+        }
+    }
+    
+    public static void addPhotonToTree(Vertex pos, double flux, Direction dir, int type, Node<PhotonContainer> cur)
+    {
+        for(int idb = 0; idb < octreeRoot.returnChildrenAmount(); ++idb)
+        {
+            boolean in = true;
+            if(pos.x < cur.returnChild(idb).returnData().getMaxPos().x && 
+                    pos.y < cur.returnChild(idb).returnData().getMaxPos().y && 
+                    pos.z < cur.returnChild(idb).returnData().getMaxPos().z)
+                in = true;
+            else
+                in = false;
+            if(pos.x > cur.returnChild(idb).returnData().getMinPos().x && 
+                    pos.y > cur.returnChild(idb).returnData().getMinPos().y && 
+                    pos.z > cur.returnChild(idb).returnData().getMinPos().z)
+                in = true;
+            else
+                in = false;
+            if(in)
+            {
+                boolean checkDiameters = true;
+                double[] curDiameters = cur.returnChild(idb).returnData().getDiameters();
+                for(int idd = 0; idd < 3; ++idd)
+                {
+                    if(curDiameters[idd] > PHOTON_SEARCH_RADIUS)
+                    {
+                        checkDiameters = false;
+                        break;
+                    }
+                }
+                if(!checkDiameters)
+                {
+                    createOctree(cur.returnChild(idb));
+                    addPhotonToTree(pos, flux, dir, type, cur.returnChild(idb));
+                }
+                else
+                {
+                    cur.returnChild(idb).returnData().addPhoton(new Photon(pos, flux, dir, type));
+                }
+                break;
+            }
+        }
+    }
     
     public static Vertex VektorProdukt(Vertex p0, Vertex p1, Vertex p2)
     {
@@ -803,16 +901,7 @@ public class LinAlg {
         newz += (Math.cos(angle)+Math.pow(u.z, 2)*(1-Math.cos(angle)))*point.z;
         return new Vertex(newx,newy,newz);
     }
-    
-    //Jag tänker mig nåt i stil med att octree skapas genom root.addChild(createContainer(min, max); 8 ggr.
-    //Eventuellt i en for loop med 8 iterationer. Denna metod kallas för varje individuell container som skapas.
-    public static Node<PhotonContainer> createContainer(Vertex min, Vertex max)
-    {
-        PhotonContainer container = new PhotonContainer(max, min);
-        Node<PhotonContainer> result = new Node<PhotonContainer>(container);
-        
-        return result;
-    }
+
     
 //    public boolean russianRoullette()
     

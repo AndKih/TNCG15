@@ -346,61 +346,12 @@ public class Scene {
     
     Vertex sceneMax = new Vertex(13, 6, 5);
     Vertex sceneMin = new Vertex(-3, -6, -5);
+    double[] rootDiameter = new double[]{16, 12, 10};
     
-    octreeRoot = new Node<PhotonContainer>(new PhotonContainer(sceneMax, sceneMin));
+    octreeRoot = new Node<PhotonContainer>(new PhotonContainer(sceneMax, sceneMin, rootDiameter));
     
     createOctree(octreeRoot);
     
-    }
-    
-    public void createOctree(Node<PhotonContainer> root)
-    {
-        Vertex max = root.returnData().getMaxPos(), min = root.returnData().getMinPos();
-        Vertex mid = new Vertex((min.x + max.x)/2, (min.y + max.y)/2, (min.z + max.z)/2);
-        double xMod = max.x - mid.x, yMod = max.y - mid.y, zMod = max.z - mid.z;
-        
-        for(int idnr = 0; idnr < 8; ++idnr)
-        {
-            Vertex newMax = Vertex.DUMMY, newMin = Vertex.DUMMY;
-            switch(idnr)
-            {
-                case 0:
-                    newMax = new Vertex(mid.x + xMod, mid.y + yMod, mid.z + zMod);
-                    newMin = mid;
-                    break;
-                case 1:
-                    newMax = new Vertex(mid.x + xMod, mid.y, mid.z + zMod);
-                    newMin = new Vertex(mid.x, mid.y - yMod, mid.z);
-                    break;
-                case 2:
-                    newMax = new Vertex(mid.x + xMod, mid.y + yMod, mid.z);
-                    newMin = new Vertex(mid.x, mid.y, mid.z - zMod);
-                    break;
-                case 3:
-                    newMax = new Vertex(mid.x + xMod, mid.y, mid.z);
-                    newMin = new Vertex(mid.z, mid.y - yMod, mid.z - zMod);
-                    break;
-                case 4:
-                    newMax = new Vertex(mid.x, mid.y + yMod, mid.z + zMod);
-                    newMin = new Vertex(mid.x -xMod, mid.y, mid.z);
-                    break;
-                case 5:
-                    newMax = new Vertex(mid.x, mid.y, mid.z + zMod);
-                    newMin = new Vertex(mid.x - xMod, mid.y - yMod, mid.z);
-                    break;
-                case 6:
-                    newMax = new Vertex(mid.x, mid.y + yMod, mid.z);
-                    newMin = new Vertex(mid.x - xMod, mid.y, mid.z - zMod);
-                    break;
-                case 7:
-                    newMax = mid;
-                    newMin = new Vertex(mid.x - xMod, mid.y - yMod, mid.z - zMod);
-                    break;
-            }
-            Node<PhotonContainer> it = new Node<PhotonContainer>(new PhotonContainer(newMax, newMin));
-            
-            root.addChild(it);
-        }
     }
     
     public void addPhoton(Vertex pos)

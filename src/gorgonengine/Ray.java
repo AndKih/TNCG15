@@ -197,11 +197,14 @@ public class Ray {
         return inside;
     }
     
-    private void depositPhoton()
+    private void depositPhoton(boolean shadow)
     {
         if(RAY_TYPE != RAY_LIGHT)
             return;
-        
+        if(!shadow)
+            addPhotonToTree(end, STANDARD_FLUX, dir, Photon.PHOTON_DIRECT, octreeRoot);
+        else
+            addPhotonToTree(end, STANDARD_FLUX, dir, Photon.PHOTON_SHADOW, octreeRoot);
     }
     
     public String toString()
