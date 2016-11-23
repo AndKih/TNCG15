@@ -40,7 +40,7 @@ public class Camera extends JFrame{
     public static final int N_REFLECTEDRAYS = 1;
     public static final int N_AREALIGHTSOURCEPOINTS = 10;
     public static final int ESTIMATOR_ITERATIONS = 50;
-    public static final boolean AREALIGHTAFFECTOR = false;
+    public static final boolean AREALIGHTAFFECTOR = true;
     Scene scene;
     
     public int raysPerPixel = 4;

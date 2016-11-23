@@ -11,6 +11,7 @@ package gorgonengine;
  */
 
 import java.lang.Math.*;
+import java.util.Vector;
 
 public class LinAlg {
     
@@ -104,7 +105,8 @@ public class LinAlg {
                 }
                 if(!checkDiameters)
                 {
-                    createOctree(cur.returnChild(idb));
+                    if(!cur.returnChild(idb).checkIfParent())
+                        createOctree(cur.returnChild(idb));
                     addPhotonToTree(pos, flux, dir, type, cur.returnChild(idb));
                 }
                 else
@@ -114,6 +116,10 @@ public class LinAlg {
                 break;
             }
         }
+    }
+    public static Vector<Photon> getPhotons(Vertex point)
+    {
+        return new Vector<Photon>();
     }
     
     public static Vertex VektorProdukt(Vertex p0, Vertex p1, Vertex p2)
@@ -543,15 +549,27 @@ public class LinAlg {
 //                    returnedIntensity.setIntensity(1/Camera.N_AREALIGHTSOURCEPOINTS);
 //                    G = SkalärProdukt(dirToVertex(normal), VektorSubtraktion(fakePoint.pos,endpt))/
 //                            (returnLength(VektorSubtraktion(fakePoint.pos,endpt))*returnLength(dirToVertex(normal)));
-                    if(Camera.AREALIGHTAFFECTOR)
-                    {
                     G = SkalärProdukt(dirToVertex(triangle.normal), VektorSubtraktion(endpt,fakePoint.pos))/
                             (returnLength(VektorSubtraktion(endpt,fakePoint.pos))*returnLength(dirToVertex(triangle.normal)));
+                    if(Camera.AREALIGHTAFFECTOR)
+                    {
+                        if(G<0)
+                        {
+                            G=0;
+                        }
 //                    G /=Math.pow(returnLength(VektorSubtraktion(endpt,fakePoint.pos)),2);
                     }
                     else
                     {
-                        G = 1;
+                        
+                        if(G<0)
+                        {
+                            G=0;
+                        }
+                        else
+                        {
+                            G = 1;
+                        }
                     }
                     returnedIntensity.setIntensity(area/Camera.N_AREALIGHTSOURCEPOINTS);
                     returnedIntensity.setIntensity(G);
