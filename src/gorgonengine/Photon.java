@@ -25,5 +25,12 @@ public class Photon {
         dir = d;
         photonType = pType;
     }
+
+    public Photon() {
+        position = new Vertex(0,0,0);
+        flux = 0;
+        dir = new Direction();
+        photonType = PHOTON_DIRECT;
+    }
     
 }

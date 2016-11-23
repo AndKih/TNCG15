@@ -11,6 +11,7 @@ package gorgonengine;
  */
 
 import java.lang.Math.*;
+import java.util.Vector;
 
 public class LinAlg {
     
@@ -114,6 +115,10 @@ public class LinAlg {
                 break;
             }
         }
+    }
+    public static Vector<Photon> getPhotons(Vertex point)
+    {
+        return new Vector<Photon>();
     }
     
     public static Vertex VektorProdukt(Vertex p0, Vertex p1, Vertex p2)
