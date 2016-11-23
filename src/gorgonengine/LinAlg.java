@@ -444,15 +444,27 @@ public class LinAlg {
 //                    returnedIntensity.setIntensity(1/Camera.N_AREALIGHTSOURCEPOINTS);
 //                    G = SkalärProdukt(dirToVertex(normal), VektorSubtraktion(fakePoint.pos,endpt))/
 //                            (returnLength(VektorSubtraktion(fakePoint.pos,endpt))*returnLength(dirToVertex(normal)));
-                    if(Camera.AREALIGHTAFFECTOR)
-                    {
                     G = SkalärProdukt(dirToVertex(triangle.normal), VektorSubtraktion(endpt,fakePoint.pos))/
                             (returnLength(VektorSubtraktion(endpt,fakePoint.pos))*returnLength(dirToVertex(triangle.normal)));
+                    if(Camera.AREALIGHTAFFECTOR)
+                    {
+                        if(G<0)
+                        {
+                            G=0;
+                        }
 //                    G /=Math.pow(returnLength(VektorSubtraktion(endpt,fakePoint.pos)),2);
                     }
                     else
                     {
-                        G = 1;
+                        
+                        if(G<0)
+                        {
+                            G=0;
+                        }
+                        else
+                        {
+                            G = 1;
+                        }
                     }
                     returnedIntensity.setIntensity(area/Camera.N_AREALIGHTSOURCEPOINTS);
                     returnedIntensity.setIntensity(G);
