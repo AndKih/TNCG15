@@ -19,7 +19,56 @@ public class LinAlg {
     public static final double ORENNAYAR_STANDARD_DEVIATION = Math.PI/4;
     public static final double PHOTON_SEARCH_RADIUS = 0.5;
     public static final double STANDARD_FLUX = 1;
+    public static final int STANDARD_PHOTON_EMITTANCE = 100000000;
     public static Node<PhotonContainer> octreeRoot;
+    
+    public static void emitPhotons()
+    {
+        Vector<Object> lightsources = new Vector<Object>();
+        for(int ido = 0; ido < Scene.objects.length; ++ido)
+        {
+            if(Scene.objects[ido].isLightsource())
+                lightsources.add(Scene.objects[ido]);
+        }
+        for(int idl = 0; idl < lightsources.size(); ++idl)
+        {
+            if(!lightsources.get(idl).isSphere())
+            {
+                for(int idt = 0; idt < lightsources.get(idl).getSize(); ++idt)
+                {
+                    Triangle curTriangle = lightsources.get(idl).returnTriangleByIndex(idt);
+                    for(int ide = 0; ide < STANDARD_PHOTON_EMITTANCE; ++ide)
+                    {
+                        Vertex emittancePoint = curTriangle.getRandomPointOnTriangle();
+                        Direction randomDir = getRandomDirection(false, curTriangle.normal);
+                        Vertex setEnd = VektorAddition(emittancePoint, VektorMultiplikation(dirToVertex(randomDir), 100));
+                        Ray lightRay = new Ray(emittancePoint, setEnd, ColorDbl.BLACK, -5, Ray.RAY_LIGHT);
+                    }
+
+                }
+            }
+            else
+            {
+                Sphere lightSphere = (Sphere)lightsources.get(idl);
+                for(int ide = 0; ide < STANDARD_PHOTON_EMITTANCE; ++ide)
+                {
+                    Vertex emittancePoint = lightSphere.getRandomPointOnSphere();
+                    Direction normal = new Direction(VektorSubtraktion(emittancePoint, lightSphere.center));
+                    normal = normalize(normal);
+                    Direction randomDir = getRandomDirection(true, normal);
+                }
+                
+                
+            }
+        }
+    }
+    
+    public static Direction getRandomDirection(boolean isSphere, Direction normal)
+    {
+        Direction result = new Direction();
+        
+        return result;
+    }
     
     public static void createOctree(Node<PhotonContainer> root)
     {
@@ -117,6 +166,7 @@ public class LinAlg {
             }
         }
     }
+    
     public static Vector<Photon> getPhotons(Vertex pos, Node<PhotonContainer> cur)
     {
         Vector<Photon> result = new Vector<Photon>();

@@ -428,6 +428,11 @@ public class Mesh extends Object{
         return lightsource;
     }
     
+    public int getSize()
+    {
+        return SIZE;
+    }
+    
     public Direction returnNormal(Vertex vr)
     {
         return Direction.DUMMY;

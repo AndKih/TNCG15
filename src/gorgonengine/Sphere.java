@@ -54,6 +54,11 @@ public class Sphere extends Object{
         reflectionCoefficient = p;
     }
     
+    public int getSize()
+    {
+        return -1;
+    }
+    
     public Ray rayIntersection(Ray r, PointLightSource[] ls)
     {
         if(!transparent && r.getObjectIndex() == objectID)
@@ -359,6 +364,13 @@ public class Sphere extends Object{
     @Override
     public void setLightsource() {
         lightsource = true;
+    }
+    
+    public Vertex getRandomPointOnSphere()
+    {
+        Vertex result = Vertex.DUMMY;
+        
+        return result;
     }
     
 }

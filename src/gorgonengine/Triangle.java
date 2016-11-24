@@ -85,4 +85,11 @@ public class Triangle {
         return area;
     }
     
+    public Vertex getRandomPointOnTriangle()
+    {
+        Vertex result = Vertex.DUMMY;
+        
+        return result;
+    }
+    
 }

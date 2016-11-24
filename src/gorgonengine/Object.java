@@ -43,6 +43,7 @@ public abstract class Object {
     public abstract int getReflectorType();
     public abstract void setReflectorType(int newType);
     public abstract double returnProperty();
+    public abstract int getSize();
 
     public abstract void rotateX(double angle);
     public abstract void rotateY(double angle);
