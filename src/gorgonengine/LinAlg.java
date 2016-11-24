@@ -37,14 +37,14 @@ public class LinAlg {
                 for(int idt = 0; idt < lightsources.get(idl).getSize(); ++idt)
                 {
                     Triangle curTriangle = lightsources.get(idl).returnTriangleByIndex(idt);
-                    for(int ide = 0; ide < STANDARD_PHOTON_EMITTANCE; ++ide)
+                    for(int ide = 0; ide < STANDARD_PHOTON_EMITTANCE/lightsources.get(idl).getSize(); ++ide)
                     {
                         Vertex emittancePoint = curTriangle.getRandomPointOnTriangle();
                         Direction randomDir = getRandomDirection(false, curTriangle.normal);
                         Vertex setEnd = VektorAddition(emittancePoint, VektorMultiplikation(dirToVertex(randomDir), 100));
                         Ray lightRay = new Ray(emittancePoint, setEnd, ColorDbl.BLACK, -5, Ray.RAY_LIGHT);
+                        Scene.lightRayIntersection(lightRay);
                     }
-
                 }
             }
             else
@@ -56,9 +56,10 @@ public class LinAlg {
                     Direction normal = new Direction(VektorSubtraktion(emittancePoint, lightSphere.center));
                     normal = normalize(normal);
                     Direction randomDir = getRandomDirection(true, normal);
+                    Vertex setEnd = VektorAddition(emittancePoint, VektorMultiplikation(dirToVertex(randomDir), 100));
+                    Ray lightRay = new Ray(emittancePoint, setEnd, ColorDbl.BLACK, -5, Ray.RAY_LIGHT);
+                    Scene.lightRayIntersection(lightRay);
                 }
-                
-                
             }
         }
     }
@@ -66,7 +67,14 @@ public class LinAlg {
     public static Direction getRandomDirection(boolean isSphere, Direction normal)
     {
         Direction result = new Direction();
-        
+        if(!isSphere)
+        {
+            
+        }
+        else
+        {
+            
+        }
         return result;
     }
     
