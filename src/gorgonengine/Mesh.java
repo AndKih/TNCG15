@@ -332,6 +332,38 @@ public class Mesh extends Object{
         return Ray.ERROR_RAY;
     }
     
+    public Ray lightRayIntersection(Ray r)
+    {
+        Ray result = Ray.ERROR_RAY;
+        double t = -1, smallT = -10;
+        Boolean firstHit = true;
+        int savedIndex = 0;
+        for(int idt = 0; idt < SIZE; ++idt)
+        {
+            if(mesh[idt].triangleIndex == r.returnIndex())
+                continue;
+            t = mesh[idt].rayIntersection(r);
+            if(firstHit && t>0)
+            {
+                smallT = t;
+                firstHit = false;
+                savedIndex = idt;
+            }
+            else if(!firstHit && t>0 && t < smallT)
+            {
+                smallT = t;
+                savedIndex = idt;
+            }
+        }
+        if(smallT != -10 && smallT <= 1)
+        {
+            Vertex newEnd = VektorAddition(r.start, VektorMultiplikation(VektorSubtraktion(r.end, r.start), smallT));
+            result = new Ray(r.start, newEnd, r.color, savedIndex, r.RAY_TYPE);
+            result.setObjectIndex(r.getObjectIndex());
+        }
+        return result;
+    }
+    
     public boolean shadowRayIntersection(Ray r, PointLightSource ls, int triangleID)
     {
         double t = -1, smallT = -10;
@@ -469,6 +501,11 @@ public class Mesh extends Object{
     public double returnProperty()
     {
         return MATERIAL_PROPERTY;
+    }
+    
+    public int getObjectID()
+    {
+        return objectID;
     }
     
     public boolean checkTriangleIndexes(int index)

@@ -42,7 +42,8 @@ public class LinAlg {
                         Vertex emittancePoint = curTriangle.getRandomPointOnTriangle();
                         Direction randomDir = getRandomDirection(false, curTriangle.normal);
                         Vertex setEnd = VektorAddition(emittancePoint, VektorMultiplikation(dirToVertex(randomDir), 100));
-                        Ray lightRay = new Ray(emittancePoint, setEnd, ColorDbl.BLACK, -5, Ray.RAY_LIGHT);
+                        Ray lightRay = new Ray(emittancePoint, setEnd, ColorDbl.BLACK, curTriangle.triangleIndex, Ray.RAY_LIGHT);
+                        lightRay.setObjectIndex(lightsources.get(idl).getObjectID());
                         Scene.lightRayIntersection(lightRay);
                     }
                 }
@@ -58,6 +59,7 @@ public class LinAlg {
                     Direction randomDir = getRandomDirection(true, normal);
                     Vertex setEnd = VektorAddition(emittancePoint, VektorMultiplikation(dirToVertex(randomDir), 100));
                     Ray lightRay = new Ray(emittancePoint, setEnd, ColorDbl.BLACK, -5, Ray.RAY_LIGHT);
+                    lightRay.setObjectIndex(lightsources.get(idl).getObjectID());
                     Scene.lightRayIntersection(lightRay);
                 }
             }
