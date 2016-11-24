@@ -34,6 +34,16 @@ public class PhotonContainer {
         photonList.add(p);
     }
     
+    public Photon getPhoton(int index)
+    {
+        return photonList.get(index);
+    }
+    
+    public int getContainerSize()
+    {
+        return photonList.size();
+    }
+    
     public Vertex getMaxPos()
     {
         return maxPos;

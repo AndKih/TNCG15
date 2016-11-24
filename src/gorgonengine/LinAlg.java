@@ -117,9 +117,146 @@ public class LinAlg {
             }
         }
     }
-    public static Vector<Photon> getPhotons(Vertex point)
+    public static Vector<Photon> getPhotons(Vertex pos, Node<PhotonContainer> cur)
     {
-        return new Vector<Photon>();
+        Vector<Photon> result = new Vector<Photon>();
+        Vector<Node<PhotonContainer>> reachNodes = new Vector<Node<PhotonContainer>>();
+        for(int idb = 0; idb < 8; ++idb)
+        {
+            
+            Vertex superMax = cur.returnData().getMaxPos();
+            Vertex superMin = cur.returnData().getMinPos();
+            Vertex superMid = new Vertex((superMin.x + superMax.x)/2, (superMin.y + superMax.y)/2, (superMin.z + superMax.z)/2);
+
+            double xmod = pos.x - superMid.x, ymod = pos.y - superMid.y, zmod = pos.z - superMid.z;
+            
+            Vertex[] closestPoints = new Vertex[7];
+            switch(idb)
+            {
+                case 1:
+                    closestPoints[0] = new Vertex(superMid.x + xmod, superMid.y, superMid.z + zmod);
+                    closestPoints[1] = new Vertex(superMid.x + xmod, superMid.y + ymod, superMid.z);
+                    closestPoints[2] = new Vertex(superMid.x + xmod, superMid.y, superMid.z);
+                    closestPoints[3] = new Vertex(superMid.x, superMid.y + ymod, superMid.z + zmod);
+                    closestPoints[4] = new Vertex(superMid.x, superMid.y, superMid.z + zmod);
+                    closestPoints[5] = new Vertex(superMid.x, superMid.y + ymod, superMid.z);
+                    closestPoints[6] = superMid;
+                    break;
+                case 2:
+                    closestPoints[0] = new Vertex(superMid.x + xmod, superMid.y, superMid.z + zmod);
+                    closestPoints[1] = new Vertex(superMid.x + xmod, superMid.y, superMid.z);
+                    closestPoints[2] = new Vertex(superMid.x + xmod, superMid.y - ymod, superMid.z);
+                    closestPoints[3] = new Vertex(superMid.x, superMid.y, superMid.z + zmod);
+                    closestPoints[4] = new Vertex(superMid.x, superMid.y - ymod, superMid.z + zmod);
+                    closestPoints[5] = superMid;
+                    closestPoints[6] = new Vertex(superMid.x, superMid.y - ymod, superMid.z);
+                    break;
+                case 3:
+                    closestPoints[0] = new Vertex(superMid.x + xmod, superMid.y + ymod, superMid.z);
+                    closestPoints[1] = new Vertex(superMid.x + xmod, superMid.y, superMid.z);
+                    closestPoints[2] = new Vertex(superMid.x + xmod, superMid.y, superMid.z - zmod);
+                    closestPoints[3] = new Vertex(superMid.x, superMid.y + ymod, superMid.z);
+                    closestPoints[4] = superMid;
+                    closestPoints[5] = new Vertex(superMid.x, superMid.y + ymod, superMid.z - zmod);
+                    closestPoints[6] = new Vertex(superMid.x, superMid.y, superMid.z - zmod);
+                    break;
+                case 4:
+                    closestPoints[0] = new Vertex(superMid.x + xmod, superMid.y, superMid.z);
+                    closestPoints[1] = new Vertex(superMid.x + xmod, superMid.y - ymod, superMid.z);
+                    closestPoints[2] = new Vertex(superMid.x + xmod, superMid.y, superMid.z - zmod);
+                    closestPoints[3] = superMid;
+                    closestPoints[4] = new Vertex(superMid.x, superMid.y - ymod, superMid.z);
+                    closestPoints[5] = new Vertex(superMid.x, superMid.y, superMid.z - zmod);
+                    closestPoints[6] = new Vertex(superMid.x, superMid.y - ymod, superMid.z - zmod);
+                    break;
+                case 5:
+                    closestPoints[0] = new Vertex(superMid.x, superMid.y + ymod, superMid.z + zmod);
+                    closestPoints[1] = new Vertex(superMid.x, superMid.y, superMid.z);
+                    closestPoints[2] = new Vertex(superMid.x, superMid.y + ymod, superMid.z);
+                    closestPoints[3] = superMid;
+                    closestPoints[4] = new Vertex(superMid.x - xmod, superMid.y, superMid.z + zmod);
+                    closestPoints[5] = new Vertex(superMid.x - xmod, superMid.y + ymod, superMid.z);
+                    closestPoints[6] = new Vertex(superMid.x - xmod, superMid.y + ymod, superMid.z + zmod);
+                    break;
+                case 6:
+                    closestPoints[0] = new Vertex(superMid.x, superMid.y, superMid.z + zmod);
+                    closestPoints[1] = new Vertex(superMid.x, superMid.y - ymod, superMid.z + zmod);
+                    closestPoints[2] = superMid;
+                    closestPoints[3] = new Vertex(superMid.x, superMid.y - ymod, superMid.z);
+                    closestPoints[4] = new Vertex(superMid.x - xmod, superMid.y, superMid.z + zmod);
+                    closestPoints[5] = new Vertex(superMid.x - xmod, superMid.y, superMid.z);
+                    closestPoints[6] = new Vertex(superMid.x - xmod, superMid.y - ymod, superMid.z);
+                    break;
+                case 7:
+                    closestPoints[0] = new Vertex(superMid.x, superMid.y + ymod, superMid.z);
+                    closestPoints[1] = superMid;
+                    closestPoints[2] = new Vertex(superMid.x, superMid.y + ymod, superMid.z - zmod);
+                    closestPoints[3] = new Vertex(superMid.x, superMid.y, superMid.z - zmod);
+                    closestPoints[4] = new Vertex(superMid.x - xmod, superMid.y + ymod, superMid.z);
+                    closestPoints[5] = new Vertex(superMid.x - xmod, superMid.y, superMid.z);
+                    closestPoints[6] = new Vertex(superMid.x - xmod, superMid.y + ymod, superMid.z - zmod);
+                    break;
+                case 8:
+                    closestPoints[0] = superMid;
+                    closestPoints[1] = new Vertex(superMid.x, superMid.y - ymod, superMid.z);
+                    closestPoints[2] = new Vertex(superMid.x, superMid.y, superMid.z - zmod);
+                    closestPoints[3] = new Vertex(superMid.x, superMid.y - ymod, superMid.z - zmod);
+                    closestPoints[4] = new Vertex(superMid.x - xmod, superMid.y, superMid.z);
+                    closestPoints[5] = new Vertex(superMid.x - xmod, superMid.y - ymod, superMid.z);
+                    closestPoints[6] = new Vertex(superMid.x - xmod, superMid.y, superMid.z - zmod);
+                    break;
+            }
+            int offset = 0;
+            boolean offsetplus = true;
+            for(int idp = 0; idp < 7; ++idp)
+            {
+                double curDist = returnLength(VektorSubtraktion(closestPoints[idp], pos));
+                if(curDist < PHOTON_SEARCH_RADIUS)
+                {
+                    if(offsetplus && idp >= idb)
+                    {
+                        ++offset;
+                        offsetplus = false;
+                    }
+                    reachNodes.add(cur.returnChild(idp + offset));
+                }
+            }
+        }
+        
+        for(int idn = 0; idn < reachNodes.size(); ++idn)
+        {
+            boolean checkDiameters = true;
+            double[] curDiameters = reachNodes.get(idn).returnData().getDiameters();
+            for(int idd = 0; idd < 3; ++idd)
+            {
+                if(curDiameters[idd] > PHOTON_SEARCH_RADIUS)
+                {
+                    checkDiameters = false;
+                    break;
+                }
+            }
+            if(!reachNodes.get(idn).returnChild(idn).checkIfParent())
+                checkDiameters = true;
+            if(!checkDiameters)
+            {
+                result.addAll(0, getPhotons(pos, reachNodes.get(idn)));
+            }
+            else
+            {
+                PhotonContainer curContainer = reachNodes.get(idn).returnData();
+                for(int idp = 0; idp < curContainer.getContainerSize(); ++idp)
+                {
+                    Photon curPhoton = curContainer.getPhoton(idp);
+                    double curDist = returnLength(VektorSubtraktion(pos, curPhoton.position));
+                    if(curDist < PHOTON_SEARCH_RADIUS)
+                    {
+                        result.add(curPhoton);
+                    }
+                }
+            }
+        }
+
+        return result;
     }
     
     public static Vertex VektorProdukt(Vertex p0, Vertex p1, Vertex p2)
