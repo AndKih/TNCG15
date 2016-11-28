@@ -31,8 +31,6 @@ public abstract class Object {
     
     public abstract boolean shadowRayIntersection(Ray r, PointLightSource ls, int triangleID);
     
-    public abstract Ray lightRayIntersection(Ray r);
-    
     public abstract double returnSize();
     public abstract Triangle returnTriangleByIndex(int index);
     public abstract boolean checkTriangleIndexes(int index);
@@ -46,7 +44,6 @@ public abstract class Object {
     public abstract void setReflectorType(int newType);
     public abstract double returnProperty();
     public abstract int getSize();
-    public abstract int getObjectID();
 
     public abstract void rotateX(double angle);
     public abstract void rotateY(double angle);

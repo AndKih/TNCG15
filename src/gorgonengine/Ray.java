@@ -197,7 +197,7 @@ public class Ray {
         return inside;
     }
     
-    public void depositPhoton(boolean shadow)
+    private void depositPhoton(boolean shadow)
     {
         if(RAY_TYPE != RAY_LIGHT)
             return;

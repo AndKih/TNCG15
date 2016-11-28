@@ -175,36 +175,6 @@ public class Sphere extends Object{
         }
     }
     
-    public Ray lightRayIntersection(Ray r)
-    {
-        Ray result = Ray.ERROR_RAY;
-        if(!transparent && r.getObjectIndex() == objectID)
-        {
-            System.out.println("Non transparent objects cant hit self.");
-            return Ray.ERROR_RAY;
-        }
-        //final double EPSILON = 0.000001;
-        //||x - C||^2 = r^2
-        //x = o + dI
-        //a = (I*I) = 1
-        //b = 2I*(o - C)
-        //c = (o - C)*(o - C) - r^2
-        //d = (-b/2)+- sqrt((b/2)^2 - a*c)
-        double dup, ddown;
-        Vertex i = new Vertex((r.end.x - r.start.x), (r.end.y - r.start.y), (r.end.z - r.start.z));
-        i = normalize(i);
-//        System.out.println("i: " + i);
-        double a = SkalärProdukt(i, i);
-        double b = SkalärProdukt(VektorMultiplikation(i, 2), VektorSubtraktion(r.start, center));
-        double c = SkalärProdukt(VektorSubtraktion(r.start, center), VektorSubtraktion(r.start, center)) - Math.pow(radius, 2);
-        dup = (-b/2) + Math.sqrt(Math.pow(b/2, 2) - a*c);
-        ddown = (-b/2) - Math.sqrt(Math.pow(b/2, 2) - a*c);
-        Vertex x1 = VektorAddition(r.start, VektorMultiplikation(i, dup));
-        Vertex x2 = VektorAddition(r.start, VektorMultiplikation(i, ddown));
-        
-        return result;
-    }
-    
     public boolean shadowRayIntersection(Ray r, PointLightSource ls, int sphereid)
     {
         double smallT = -10, t = -1;
@@ -296,11 +266,6 @@ public class Sphere extends Object{
     public double returnSize()
     {
         return radius;
-    }
-    
-    public int getObjectID()
-    {
-        return objectID;
     }
     
     public Direction returnNormal(Vertex vr)
