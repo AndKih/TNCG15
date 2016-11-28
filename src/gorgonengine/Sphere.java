@@ -323,6 +323,10 @@ public class Sphere extends Object{
         if(Camera.areaLightsource)
         {
             ColorDbl retint = getMCAreaLightIntensity(normal, x, -1);
+            if(!Camera.usePhotonmapping)
+                retint = getMCAreaLightIntensity(normal, x, -1);
+            else
+                retint = PhotonLightCalculationsSphere(objectID, x);
             res.setIntensity(retint, tmpCol);
         }else{
             for(int i = 0; i<ls.length; i++)
@@ -330,7 +334,7 @@ public class Sphere extends Object{
                 res.setIntensity(getLightIntensity(normal, x, ls[i], -1), tmpCol);
             }
         }
-            return res;
+        return res;
     }
     
     public Triangle returnTriangleByIndex(int index)
@@ -404,6 +408,8 @@ public class Sphere extends Object{
     public Vertex getRandomPointOnSphere()
     {
         Vertex result = Vertex.DUMMY;
+        HemisCoords setter = new HemisCoords(0, 0, radius);
+        
         
         return result;
     }

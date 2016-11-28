@@ -277,12 +277,17 @@ public class Mesh extends Object{
             {
                 if(!transparent)
                 {
-                    retint = getMCAreaLightIntensity(normal, newEnd, mesh[savedID].triangleIndex);
+                    if(!Camera.usePhotonmapping)
+                        retint = getMCAreaLightIntensity(normal, newEnd, mesh[savedID].triangleIndex);
+                    else
+                        retint = PhotonLightCalculationsMesh(newEnd, mesh[savedID].triangleIndex);
                     res.setIntensity(retint, tmpCol);
                     resultRay = new Ray(r.start, newEnd, res, mesh[savedID].triangleIndex, Ray.RAY_IMPORTANCE);
                 }    
                 else
                 {
+                    if(Camera.usePhotonmapping)
+                        tmpCol = PhotonLightCalculationsMesh(newEnd, mesh[savedID].triangleIndex);
                     resultRay = new Ray(r.start, newEnd, tmpCol, mesh[savedID].triangleIndex, Ray.RAY_IMPORTANCE);
                 }
             }

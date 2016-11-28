@@ -18,7 +18,7 @@ public class Scene {
     
     public final static int SIZE = 24;
     public static final ColorDbl LIGHTCOLOR = new ColorDbl(100,100,100);
-    public final int NROBJECTS;
+    public static final int NROBJECTS = 7;
     public Triangle[] mesh = new Triangle[SIZE];
     
     
@@ -196,7 +196,6 @@ public class Scene {
         {
             mesh[idm].setReflectionCoefficient(1);
         }
-        NROBJECTS = 7;
         objects = new Object[NROBJECTS];
         objects[0] = new Mesh(0, mesh);
         
@@ -344,19 +343,15 @@ public class Scene {
         objects[6].setReflectorType(Object.REFLECTOR_SPECULAR);
 //        objects[3].setReflectorType(Object.REFLECTOR_SPECULAR);
     
-    Vertex sceneMax = new Vertex(13, 6, 5);
-    Vertex sceneMin = new Vertex(-3, -6, -5);
-    double[] rootDiameter = new double[]{16, 12, 10};
-    
-    octreeRoot = new Node<PhotonContainer>(new PhotonContainer(sceneMax, sceneMin, rootDiameter));
-    
-    createOctree(octreeRoot);
-    
-    }
-    
-    public void addPhoton(Vertex pos)
-    {
-        
+        if(Camera.usePhotonmapping)
+        {
+            Vertex sceneMax = new Vertex(13, 6, 5);
+            Vertex sceneMin = new Vertex(-3, -6, -5);
+            double[] rootDiameter = new double[]{16, 12, 10};
+            octreeRoot = new Node<PhotonContainer>(new PhotonContainer(sceneMax, sceneMin, rootDiameter));
+            createOctree(octreeRoot);
+            emitPhotons();
+        }
     }
     
     public static void lightRayIntersection(Ray r)
@@ -1075,9 +1070,9 @@ public class Scene {
         do
         {
         double randAng;
-            randAng = (PDF1())*(pi/2);
-            while(randAng > Math.PI)
-                randAng = (PDF1()-1)*(pi/2);
+        randAng = (PDF1())*(pi/2);
+        while(randAng > Math.PI)
+            randAng = (PDF1()-1)*(pi/2);
         refEndPol.phi +=randAng;
         //randAng = (Math.random()*pi) - (pi/2);
         randAng = (PDF1())*(pi/2);
@@ -1090,41 +1085,6 @@ public class Scene {
         test = vertexToDir(result);
         }while(VektorVinkel(test, t.normal) > Math.PI/2 - 2*Math.asin(EPSILON*10));
         
-        
-//        if(Math.abs(result.x) < EPSILON || Math.abs(result.y) < EPSILON)
-//        {
-//            System.out.println("In: " + limit);
-//            HemisCoords test1 = cartToHemis(lim);
-//            Vertex test2 = hemisToCart(test1);
-//            System.out.println("TEST1PHI: " + test1.phi);
-//            System.out.println("TEST1THETA: " + test1.theta);
-//            System.out.println("TEST2" + test2);
-//            System.out.println("randAng: " + randAng);
-//            System.out.println("Phi: " + refEndPol.phi);
-//            System.out.println("Theta: " + refEndPol.theta);
-//            System.out.println("Out: " + result);
-//        }
-//        Direction test = vertexToDir(result);
-//        if(!limit.equals(t.normal))
-//        {
-//            System.out.println("Limit does not equal normal. WTF");
-//            System.out.println("limit: " + limit);
-//            System.out.println("t.normal: " + t.normal);
-//        }
-            
-//        if(VektorVinkel(test, t.normal) > Math.PI/2)
-//        {
-//            System.out.println("Felaktig random angle!!!");
-//            System.out.println("Vinkel: " + VektorVinkel(test, t.normal));
-//            System.out.println("In: " + limit);
-//            System.out.println("Out: " + result);
-//            HemisCoords test1 = cartToHemis(lim);
-////            Vertex test2 = hemisToCart(test1);
-//            System.out.println("TEST1PHI: " + test1.phi);
-//            System.out.println("TEST1THETA: " + test1.theta);
-//            System.out.println("Phi: " + refEndPol.phi);
-//            System.out.println("Theta: " + refEndPol.theta);
-//        }
         if(Double.isNaN(result.x) || Double.isNaN(result.y) || Double.isNaN(result.z))
             System.out.println("RandomAngle is resulting in NAN values for some reason!!!!");
         return result;
@@ -1143,7 +1103,7 @@ public class Scene {
         return Math.pow(Math.cos(Math.sqrt(Math.random())), -1);
     }
     
-    private int getObjectByTriangleIndex(int index)
+    public static int getObjectByTriangleIndex(int index)
     {
         int result = 0;
         if(index != -1)
