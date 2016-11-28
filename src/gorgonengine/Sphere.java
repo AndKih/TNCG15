@@ -382,5 +382,15 @@ public class Sphere extends Object{
         
         return result;
     }
-    
+    public Vertex randomSurfacePoint()
+    {
+        double phi = Math.random()*Math.PI*2;
+        double theta = Math.random()*Math.PI;
+        double x = radius*Math.sin(theta)*Math.cos(phi);
+        double y = radius*Math.sin(theta)*Math.sin(phi);
+        double z = radius*Math.cos(theta);
+        Vertex localPoint = new Vertex(x,y,z);
+        Vertex globalPoint = VektorAddition(localPoint, center);
+        return globalPoint;
+    }
 }

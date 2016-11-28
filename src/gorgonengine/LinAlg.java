@@ -784,7 +784,32 @@ public class LinAlg {
     }
     public static ColorDbl getPhotonLight(Direction normal, Vertex endpt, int triangleID)
     {
-        return new ColorDbl();
+        Vector<Photon> photons = getPhotons(endpt, octreeRoot);
+        double flux = 0;
+        double r;
+        for (Photon photon : photons) 
+        {
+            if(photon.photonType ==Photon.PHOTON_DIRECT)
+            {
+                r = returnLength(VektorSubtraktion(photon.position,endpt));
+                flux += dummyPhotonWeight(photon.flux, r);
+            }
+        }
+        flux /= photons.size();
+        
+        ColorDbl retval = new ColorDbl(flux);
+        
+        return retval;
+    }
+    public static double lecturePhotonWeight(double flux, double dist)
+    {
+        double Q = 1;
+        double w = Q/(Math.PI*Math.pow(dist, 2));
+        return w;
+    }
+    public static double dummyPhotonWeight(double flux, double dist)
+    {
+        return 1;
     }
     public static ColorDbl getMCAreaLightIntensity(Direction normal, Vertex endpt, int triangleID)
     {
