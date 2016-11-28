@@ -359,6 +359,57 @@ public class Scene {
         
     }
     
+    public static void lightRayIntersection(Ray r)
+    {
+        Ray newRay, reflectedRay = Ray.ERROR_RAY, refractedRay = Ray.ERROR_RAY;
+        
+        Ray largestRay = objects[0].lightRayIntersection(r);
+        largestRay.setReflectionType(Ray.RAY_REFLECTION);
+        for(int idt = 1; idt < objects.length; ++idt)
+        {
+            if(r.getObjectIndex() == idt)
+                continue;
+            newRay = objects[idt].lightRayIntersection(r);
+            if(newRay.equals(Ray.ERROR_RAY))
+            {
+                if(VektorDistansJämförelse(newRay.end, largestRay.end, r.start))
+                {
+                    
+                    largestRay = new Ray(newRay.start, newRay.end, newRay.color, newRay.returnIndex(), Ray.RAY_LIGHT);
+                    largestRay.setReflectionType(Ray.RAY_REFLECTION);
+                }
+            }
+        }
+        if(!largestRay.equals(Ray.ERROR_RAY))
+        {
+            largestRay.depositPhoton(false);
+            if(largestRay.returnIndex() > 24 || largestRay.returnIndex() < 1)
+            {
+                Ray shadowPhotonRay = new Ray(largestRay.end, VektorAddition(largestRay.end, VektorMultiplikation(dirToVertex(largestRay.dir), 100)), 
+                                              ColorDbl.BLACK, largestRay.getObjectIndex(), Ray.RAY_LIGHT);
+                Ray newLargestRay = objects[0].lightRayIntersection(shadowPhotonRay);
+                for(int idt = 1; idt < objects.length; ++idt)
+                {
+                    if(r.getObjectIndex() == idt)
+                        continue;
+                    newRay = objects[idt].lightRayIntersection(shadowPhotonRay);
+                    if(newRay.equals(Ray.ERROR_RAY))
+                    {
+                        if(VektorDistansJämförelse(newRay.end, newLargestRay.end, shadowPhotonRay.start))
+                        {
+
+                            newLargestRay = new Ray(newRay.start, newRay.end, newRay.color, newRay.returnIndex(), Ray.RAY_LIGHT);
+                            newLargestRay.setReflectionType(Ray.RAY_REFLECTION);
+                        }
+                    }
+                }
+                newLargestRay.depositPhoton(true);
+            }
+            
+        }
+        
+    }
+    
     public Ray rayIntersection(Node<Ray> r)
     {
         

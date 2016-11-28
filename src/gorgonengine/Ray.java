@@ -101,7 +101,7 @@ public class Ray {
         switch(raytype)
         {
             case RAY_LIGHT:
-                radiance = 1;
+                radiance = STANDARD_FLUX;
                 importance = -1;
                 break;
             case RAY_IMPORTANCE:
@@ -197,14 +197,14 @@ public class Ray {
         return inside;
     }
     
-    private void depositPhoton(boolean shadow)
+    public void depositPhoton(boolean shadow)
     {
         if(RAY_TYPE != RAY_LIGHT)
             return;
         if(!shadow)
-            addPhotonToTree(end, STANDARD_FLUX, dir, Photon.PHOTON_DIRECT, octreeRoot);
+            addPhotonToTree(end, radiance, dir, Photon.PHOTON_DIRECT, octreeRoot);
         else
-            addPhotonToTree(end, STANDARD_FLUX, dir, Photon.PHOTON_SHADOW, octreeRoot);
+            addPhotonToTree(end, 0, dir, Photon.PHOTON_SHADOW, octreeRoot);
     }
     
     public String toString()
