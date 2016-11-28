@@ -24,6 +24,13 @@ public class ColorDbl {
         this.b = b;
     }
     
+    public ColorDbl(double c)
+    {
+        this.r = c;
+        this.g = c;
+        this.b = c;
+    }
+    
     public ColorDbl(ColorDbl color)
     {
         r = color.r;

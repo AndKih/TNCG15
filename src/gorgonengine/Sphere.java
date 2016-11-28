@@ -280,7 +280,11 @@ public class Sphere extends Object{
         Direction normal = new Direction(VektorSubtraktion(x,center));
         ColorDbl tmpCol = new ColorDbl(color);
         ColorDbl res = new ColorDbl();
-        if(Camera.areaLightsource)
+        if(Camera.photonLight)
+        {
+            ColorDbl retint = getPhotonLight(normal, x, -1);
+            res.setIntensity(retint, tmpCol);
+        }else if(Camera.areaLightsource)
         {
             ColorDbl retint = getMCAreaLightIntensity(normal, x, -1);
             res.setIntensity(retint, tmpCol);

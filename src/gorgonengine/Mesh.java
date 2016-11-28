@@ -258,7 +258,20 @@ public class Mesh extends Object{
             Vertex newEnd = VektorAddition(r.start, VektorMultiplikation(VektorSubtraktion(r.end, r.start), smallT));
             ColorDbl retint;
             Ray resultRay;
-            if(!Camera.areaLightsource)
+            if(Camera.photonLight)
+            {
+                if(!transparent)
+                {
+                    retint = getPhotonLight(normal, newEnd, mesh[savedID].triangleIndex);
+                    res.setIntensity(retint, tmpCol);
+                    resultRay = new Ray(r.start, newEnd, res, mesh[savedID].triangleIndex, Ray.RAY_IMPORTANCE);
+                }    
+                else
+                {
+                    resultRay = new Ray(r.start, newEnd, tmpCol, mesh[savedID].triangleIndex, Ray.RAY_IMPORTANCE);
+                }
+            }
+            else if(!Camera.areaLightsource)
             {
                 if(!transparent)
                 {

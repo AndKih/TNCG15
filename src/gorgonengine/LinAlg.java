@@ -10,6 +10,7 @@ package gorgonengine;
  * @author Andreas
  */
 
+import static gorgonengine.Camera.photonRadie;
 import java.lang.Math.*;
 import java.util.Vector;
 
@@ -105,8 +106,11 @@ public class LinAlg {
                 }
                 if(!checkDiameters)
                 {
-                    createOctree(cur.returnChild(idb));
-                    addPhotonToTree(pos, flux, dir, type, cur.returnChild(idb));
+                    if(!cur.returnChild(idb).checkIfParent())
+                    {
+                        createOctree(cur.returnChild(idb));
+                        addPhotonToTree(pos, flux, dir, type, cur.returnChild(idb));
+                    }
                 }
                 else
                 {
@@ -493,6 +497,46 @@ public class LinAlg {
     {
 //        getMCAreaLightIntensity(normal, endpt, ls, triangleID);
         return getPointLightIntensity(normal, endpt, ls, triangleID);
+    }
+    public static ColorDbl getPhotonLight(Direction normal, Vertex endpt, int triangleID)
+    {
+        ColorDbl intensity;
+        
+        Vector<Photon> photons = getPhotons(endpt);
+        
+        double flux = 0;
+        
+        //right now intensity only set by amount of photons, not angle
+        for (Photon photon : photons) 
+        {
+            if(photon.photonType != Photon.PHOTON_SHADOW)
+            {
+                flux += photonTestWeight(flux, returnLength(VektorSubtraktion(endpt, photon.position)));
+            }
+        }
+        flux /= photons.size();
+        
+        intensity = new ColorDbl(flux);
+        
+        return intensity;
+    }
+    //weight function, less flux further from intersection point
+    public static double photonWeight(double flux ,double dist)
+    {
+        double intensity = 1-(dist/photonRadie);
+        return intensity*flux;
+    }
+    //weight function, based on equation slide 8, p. 9
+    public static double photonWeightLecture(double flux ,double dist)
+    {
+        double Q = 1;//don't know what Φ is
+        double intensity = Q/(Math.PI*Math.pow(dist, 2));
+        return intensity*flux;
+    }
+    //weight function, used for testing, lets 100% flux through
+    public static double photonTestWeight(double flux ,double dist)
+    {
+        return flux;
     }
     public static ColorDbl getMCAreaLightIntensity(Direction normal, Vertex endpt, int triangleID)
     {
