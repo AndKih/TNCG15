@@ -24,6 +24,7 @@ public class LinAlg {
     
     public static void emitPhotons()
     {
+        int percentage1 = 0, percentage2 = 1;
         Vector<Object> lightsources = new Vector<Object>();
         for(int ido = 0; ido < Scene.objects.length; ++ido)
         {
@@ -39,6 +40,12 @@ public class LinAlg {
                     Triangle curTriangle = lightsources.get(idl).returnTriangleByIndex(idt);
                     for(int ide = 0; ide < STANDARD_PHOTON_EMITTANCE/lightsources.get(idl).getSize(); ++ide)
                     {
+                        if(ide > (double)percentage2*STANDARD_PHOTON_EMITTANCE/lightsources.get(idl).getSize()/100)
+                        {
+                            ++percentage1;
+                            System.out.println("Photon emittance at " + percentage1 + "%!");
+                            ++percentage2;
+                        }
                         Vertex emittancePoint = curTriangle.getRandomPointOnTriangle();
                         Direction randomDir = getRandomDirection(false, curTriangle.normal);
                         Vertex setEnd = VektorAddition(emittancePoint, VektorMultiplikation(dirToVertex(randomDir), 100));
@@ -67,15 +74,48 @@ public class LinAlg {
     public static Direction getRandomDirection(boolean isSphere, Direction normal)
     {
         Direction result = new Direction();
+        HemisCoords newDir = new HemisCoords();
+        double maxThetaAngle = 0;
         if(!isSphere)
         {
-            
+            maxThetaAngle = Math.PI/2;
         }
         else
         {
-            
+            maxThetaAngle = Math.PI/2;
         }
+        newDir = cartToHemis(normal);
+        double newTheta = UNIPDF2theta();
+        do
+        {
+            newTheta = UNIPDF2theta();
+        }while(newTheta > maxThetaAngle && newTheta < 0);
+        double newPhi = UNIPDF2phi();
+        do
+        {
+            newPhi = UNIPDF2phi();
+        }while(newPhi < 0 && newPhi >= 2*Math.PI);
+        newDir.r = 1;
+        newDir.theta = newTheta;
+        newDir.phi = newPhi;
+        result = vertexToDir(hemisToCart(newDir));
         return result;
+    }
+    
+    public static double UNIPDF()
+    {
+        double randVal = Math.random()*2;
+        return 0.75*(1-Math.pow(randVal-1,2));
+    }
+    
+    public static double UNIPDF2phi()
+    {
+        return 2*Math.PI*Math.random();
+    }
+    
+    public static double UNIPDF2theta()
+    {
+        return Math.pow(Math.cos(Math.sqrt(Math.random())), -1);
     }
     
     public static void createOctree(Node<PhotonContainer> root)
@@ -191,7 +231,7 @@ public class LinAlg {
             Vertex[] closestPoints = new Vertex[7];
             switch(idb)
             {
-                case 1:
+                case 0:
                     closestPoints[0] = new Vertex(superMid.x + xmod, superMid.y, superMid.z + zmod);
                     closestPoints[1] = new Vertex(superMid.x + xmod, superMid.y + ymod, superMid.z);
                     closestPoints[2] = new Vertex(superMid.x + xmod, superMid.y, superMid.z);
@@ -200,7 +240,7 @@ public class LinAlg {
                     closestPoints[5] = new Vertex(superMid.x, superMid.y + ymod, superMid.z);
                     closestPoints[6] = superMid;
                     break;
-                case 2:
+                case 1:
                     closestPoints[0] = new Vertex(superMid.x + xmod, superMid.y, superMid.z + zmod);
                     closestPoints[1] = new Vertex(superMid.x + xmod, superMid.y, superMid.z);
                     closestPoints[2] = new Vertex(superMid.x + xmod, superMid.y - ymod, superMid.z);
@@ -209,7 +249,7 @@ public class LinAlg {
                     closestPoints[5] = superMid;
                     closestPoints[6] = new Vertex(superMid.x, superMid.y - ymod, superMid.z);
                     break;
-                case 3:
+                case 2:
                     closestPoints[0] = new Vertex(superMid.x + xmod, superMid.y + ymod, superMid.z);
                     closestPoints[1] = new Vertex(superMid.x + xmod, superMid.y, superMid.z);
                     closestPoints[2] = new Vertex(superMid.x + xmod, superMid.y, superMid.z - zmod);
@@ -218,7 +258,7 @@ public class LinAlg {
                     closestPoints[5] = new Vertex(superMid.x, superMid.y + ymod, superMid.z - zmod);
                     closestPoints[6] = new Vertex(superMid.x, superMid.y, superMid.z - zmod);
                     break;
-                case 4:
+                case 3:
                     closestPoints[0] = new Vertex(superMid.x + xmod, superMid.y, superMid.z);
                     closestPoints[1] = new Vertex(superMid.x + xmod, superMid.y - ymod, superMid.z);
                     closestPoints[2] = new Vertex(superMid.x + xmod, superMid.y, superMid.z - zmod);
@@ -227,7 +267,7 @@ public class LinAlg {
                     closestPoints[5] = new Vertex(superMid.x, superMid.y, superMid.z - zmod);
                     closestPoints[6] = new Vertex(superMid.x, superMid.y - ymod, superMid.z - zmod);
                     break;
-                case 5:
+                case 4:
                     closestPoints[0] = new Vertex(superMid.x, superMid.y + ymod, superMid.z + zmod);
                     closestPoints[1] = new Vertex(superMid.x, superMid.y, superMid.z);
                     closestPoints[2] = new Vertex(superMid.x, superMid.y + ymod, superMid.z);
@@ -236,7 +276,7 @@ public class LinAlg {
                     closestPoints[5] = new Vertex(superMid.x - xmod, superMid.y + ymod, superMid.z);
                     closestPoints[6] = new Vertex(superMid.x - xmod, superMid.y + ymod, superMid.z + zmod);
                     break;
-                case 6:
+                case 5:
                     closestPoints[0] = new Vertex(superMid.x, superMid.y, superMid.z + zmod);
                     closestPoints[1] = new Vertex(superMid.x, superMid.y - ymod, superMid.z + zmod);
                     closestPoints[2] = superMid;
@@ -245,7 +285,7 @@ public class LinAlg {
                     closestPoints[5] = new Vertex(superMid.x - xmod, superMid.y, superMid.z);
                     closestPoints[6] = new Vertex(superMid.x - xmod, superMid.y - ymod, superMid.z);
                     break;
-                case 7:
+                case 6:
                     closestPoints[0] = new Vertex(superMid.x, superMid.y + ymod, superMid.z);
                     closestPoints[1] = superMid;
                     closestPoints[2] = new Vertex(superMid.x, superMid.y + ymod, superMid.z - zmod);
@@ -254,7 +294,7 @@ public class LinAlg {
                     closestPoints[5] = new Vertex(superMid.x - xmod, superMid.y, superMid.z);
                     closestPoints[6] = new Vertex(superMid.x - xmod, superMid.y + ymod, superMid.z - zmod);
                     break;
-                case 8:
+                case 7:
                     closestPoints[0] = superMid;
                     closestPoints[1] = new Vertex(superMid.x, superMid.y - ymod, superMid.z);
                     closestPoints[2] = new Vertex(superMid.x, superMid.y, superMid.z - zmod);
@@ -262,6 +302,9 @@ public class LinAlg {
                     closestPoints[4] = new Vertex(superMid.x - xmod, superMid.y, superMid.z);
                     closestPoints[5] = new Vertex(superMid.x - xmod, superMid.y - ymod, superMid.z);
                     closestPoints[6] = new Vertex(superMid.x - xmod, superMid.y, superMid.z - zmod);
+                    break;
+                default:
+                    System.out.println("Something went wrong with closestPoints!: " + idb);
                     break;
             }
             int offset = 0;
@@ -293,7 +336,7 @@ public class LinAlg {
                     break;
                 }
             }
-            if(!reachNodes.get(idn).returnChild(idn).checkIfParent())
+            if(!reachNodes.get(idn).checkIfParent())
                 checkDiameters = true;
             if(!checkDiameters)
             {
@@ -306,7 +349,7 @@ public class LinAlg {
                 {
                     Photon curPhoton = curContainer.getPhoton(idp);
                     double curDist = returnLength(VektorSubtraktion(pos, curPhoton.position));
-                    if(curDist < PHOTON_SEARCH_RADIUS)
+                    if(curDist < PHOTON_SEARCH_RADIUS && curPhoton.photonType != Photon.PHOTON_SHADOW)
                     {
                         result.add(curPhoton);
                     }
@@ -403,6 +446,35 @@ public class LinAlg {
 
 
         return 0;
+    }
+    
+    public static ColorDbl PhotonLightCalculationsMesh(Vertex strikept, int TriangleID)
+    {
+        Vector<Photon> photonList = new Vector<Photon>();
+        photonList = getPhotons(strikept, octreeRoot);
+        double intensity = 0;
+        for(int idp = 0; idp < photonList.size(); ++idp)
+        {
+            intensity += photonList.get(idp).flux;
+        }
+        ColorDbl triangleColor = Scene.objects[Scene.getObjectByTriangleIndex(TriangleID)].returnTriangleById(TriangleID).color;
+        triangleColor.setIntensity(intensity);
+        return triangleColor;
+    }
+    
+    public static ColorDbl PhotonLightCalculationsSphere(int sphereIndex, Vertex strikept)
+    {
+        Vector<Photon> photonList = new Vector<Photon>();
+        photonList = getPhotons(strikept, octreeRoot);
+        double intensity = 0;
+        for(int idp = 0; idp < photonList.size(); ++idp)
+        {
+            intensity += photonList.get(idp).flux;
+        }
+        Sphere getSphere = (Sphere)Scene.objects[sphereIndex];
+        ColorDbl sphereColor = getSphere.color;
+        sphereColor.setIntensity(intensity);
+        return sphereColor;
     }
     
 //    public static double formfactor()
@@ -567,6 +639,26 @@ public class LinAlg {
 //        if(result.phi >= Math.PI*2)
 //            while(result.phi > Math.PI*2)
 //                result.phi -= Math.PI*2;
+        return result;
+    }
+    
+    public static HemisCoords cartToHemis(Direction cart)
+    {
+        HemisCoords result = new HemisCoords();
+        result.r = returnLength(dirToVertex(cart));
+        result.theta = Math.acos(cart.z/result.r);
+        if(cart.y == 0 && cart.x == 0)
+            result.phi = 0;
+        else
+            result.phi = Math.atan(cart.y/cart.x);
+        while(result.phi >= 2*Math.PI)
+        {
+            result.phi -= 2*Math.PI;
+        }
+        while(result.phi < 0)
+        {
+            result.phi += 2*Math.PI;
+        }
         return result;
     }
     

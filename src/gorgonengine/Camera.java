@@ -46,6 +46,7 @@ public class Camera extends JFrame{
     public int raysPerPixel = 4;
     public static boolean areaLightsource = true;
     public static boolean photonLight = true;
+    public static boolean usePhotonmapping = true;
     public static boolean logScale = false;
     public static double photonRadie = 0.05;
     
@@ -92,7 +93,6 @@ public class Camera extends JFrame{
         double newZ;
         double maxMeanIntensity = 0;
         int percentEffictivicer = 0;
-        int percentEffictivicer2 = 0;
         int strongestIndex = 0;
         ColorDbl strongestColor = ColorDbl.BLACK;
         int currentIndex = 0;
