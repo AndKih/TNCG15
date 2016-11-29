@@ -19,8 +19,15 @@ public class LinAlg {
     public static final double ORENNAYAR_STANDARD_DEVIATION = Math.PI/4;
     public static final double PHOTON_SEARCH_RADIUS = 0.5;
     public static final double STANDARD_FLUX = 1;
-    public static final int STANDARD_PHOTON_EMITTANCE = 100000000;
+    public static final int STANDARD_PHOTON_EMITTANCE = 1000000;
     public static Node<PhotonContainer> octreeRoot;
+    
+    public static void displayWholeOctree()
+    {
+        int length = 0;
+        length = octreeRoot.traverse(octreeRoot, length);
+        System.out.println("Whole length: " + length);
+    }
     
     public static void emitPhotons()
     {
@@ -46,7 +53,7 @@ public class LinAlg {
                             System.out.println("Photon emittance at " + percentage1 + "%!");
                             ++percentage2;
                         }
-                        Vertex emittancePoint = curTriangle.getRandomPointOnTriangle();
+                        Vertex emittancePoint = randomPointOnTriangle(curTriangle);
                         Direction randomDir = getRandomDirection(false, curTriangle.normal);
                         Vertex setEnd = VektorAddition(emittancePoint, VektorMultiplikation(dirToVertex(randomDir), 100));
                         Ray lightRay = new Ray(emittancePoint, setEnd, ColorDbl.BLACK, curTriangle.triangleIndex, Ray.RAY_LIGHT);
@@ -145,7 +152,7 @@ public class LinAlg {
                     break;
                 case 3:
                     newMax = new Vertex(mid.x + xMod, mid.y, mid.z);
-                    newMin = new Vertex(mid.z, mid.y - yMod, mid.z - zMod);
+                    newMin = new Vertex(mid.x, mid.y - yMod, mid.z - zMod);
                     break;
                 case 4:
                     newMax = new Vertex(mid.x, mid.y + yMod, mid.z + zMod);
@@ -167,6 +174,10 @@ public class LinAlg {
             double[] newDiameters = new double[]{returnLength(new Vertex(newMax.x - newMin.x, 0, 0)), 
                                                  returnLength(new Vertex(0, newMax.y - newMin.y, 0)), 
                                                  returnLength(new Vertex(0, 0, newMax.z - newMin.z))};
+            for(int idd = 0; idd < 3; ++idd)
+            {
+//                System.out.println("Displaying diameters: " + newDiameters[idd]);
+            }
             Node<PhotonContainer> it = new Node<PhotonContainer>(new PhotonContainer(newMax, newMin, newDiameters));
             
             root.addChild(it);
@@ -178,6 +189,9 @@ public class LinAlg {
         for(int idb = 0; idb < octreeRoot.returnChildrenAmount(); ++idb)
         {
             boolean in = true;
+//            System.out.println("Position: " + pos);
+//            System.out.println("Maxpos: " + cur.returnChild(idb).returnData().getMaxPos());
+//            System.out.println("Minpos: " + cur.returnChild(idb).returnData().getMinPos());
             if(pos.x < cur.returnChild(idb).returnData().getMaxPos().x && 
                     pos.y < cur.returnChild(idb).returnData().getMaxPos().y && 
                     pos.z < cur.returnChild(idb).returnData().getMaxPos().z)
@@ -192,31 +206,36 @@ public class LinAlg {
                 in = false;
             if(in)
             {
-                boolean checkDiameters = true;
+//                System.out.println("We are in!");
+                boolean checkDiameters = false;
                 double[] curDiameters = cur.returnChild(idb).returnData().getDiameters();
                 for(int idd = 0; idd < 3; ++idd)
                 {
-                    if(curDiameters[idd] > PHOTON_SEARCH_RADIUS)
+                    if(curDiameters[idd] < PHOTON_SEARCH_RADIUS)
                     {
-                        checkDiameters = false;
+                        checkDiameters = true;
                         break;
                     }
                 }
                 if(!checkDiameters)
                 {
                     if(!cur.returnChild(idb).checkIfParent())
+                    {
+//                        System.out.println("Adding more children!");
                         createOctree(cur.returnChild(idb));
+                    }
                     addPhotonToTree(pos, flux, dir, type, cur.returnChild(idb));
                 }
                 else
                 {
+                    
                     cur.returnChild(idb).returnData().addPhoton(new Photon(pos, flux, dir, type));
                 }
                 break;
             }
         }
     }
-    
+    //Här är problemet, du tar inte med den node som positionen ligger i!
     public static Vector<Photon> getPhotons(Vertex pos, Node<PhotonContainer> cur)
     {
         Vector<Photon> result = new Vector<Photon>();
@@ -309,6 +328,13 @@ public class LinAlg {
                     System.out.println("Something went wrong with closestPoints!: " + idb);
                     break;
             }
+            Vertex localMax = cur.returnChild(idb).returnData().getMaxPos();
+            Vertex localMin = cur.returnChild(idb).returnData().getMinPos();
+            if(pos.x <= localMax.x && pos.y <= localMax.y && pos.z <= localMax.z && 
+                    pos.x >= localMin.x && pos.y >= localMin.y && pos.z >= localMin.z)
+            {
+                reachNodes.add(cur.returnChild(idb));
+            }
             int offset = 0;
             boolean offsetplus = true;
             for(int idp = 0; idp < 7; ++idp)
@@ -321,6 +347,9 @@ public class LinAlg {
                         ++offset;
                         offsetplus = false;
                     }
+//                    System.out.println("Idp: " + idp + "Idb: " + idb);
+//                    System.out.println("Size of cur: " + cur.returnChildrenAmount());
+//                    System.out.println("Testing node: " + cur.returnChild(idp + offset).returnData().toString());
                     reachNodes.add(cur.returnChild(idp + offset));
                 }
             }
@@ -328,37 +357,48 @@ public class LinAlg {
         
         for(int idn = 0; idn < reachNodes.size(); ++idn)
         {
-            boolean checkDiameters = true;
+            boolean checkDiameters = false;
             double[] curDiameters = reachNodes.get(idn).returnData().getDiameters();
             for(int idd = 0; idd < 3; ++idd)
             {
-                if(curDiameters[idd] > PHOTON_SEARCH_RADIUS)
+//                System.out.println("Comparing: " + curDiameters[idd]);
+                if(curDiameters[idd] < PHOTON_SEARCH_RADIUS)
                 {
-                    checkDiameters = false;
+                    checkDiameters = true;
                     break;
                 }
             }
-            if(!reachNodes.get(idn).checkIfParent())
-                checkDiameters = true;
-            if(!checkDiameters)
+            if(!checkDiameters && reachNodes.get(idn).checkIfParent())
             {
                 result.addAll(0, getPhotons(pos, reachNodes.get(idn)));
             }
-            else
+            else if(checkDiameters)
             {
                 PhotonContainer curContainer = reachNodes.get(idn).returnData();
+//                if(pos.y == 6)
+//                {
+//                    System.out.println("Hit northern wall!");
+//                    System.out.println("current diameters: " + curDiameters[0] + ", " + curDiameters[1] + ", " + curDiameters[2]);
+//                    System.out.println("Container size: " + curContainer.getContainerSize());
+//                }
                 for(int idp = 0; idp < curContainer.getContainerSize(); ++idp)
                 {
                     Photon curPhoton = curContainer.getPhoton(idp);
                     double curDist = returnLength(VektorSubtraktion(pos, curPhoton.position));
+                    
+//                    System.out.println("curPhoton: " + curPhoton.toString());
                     if(curDist < PHOTON_SEARCH_RADIUS && curPhoton.photonType != Photon.PHOTON_SHADOW)
                     {
+                        if(curDist > PHOTON_SEARCH_RADIUS)
+                        System.out.println("curDist2: " + curDist);
+//                        System.out.println("Adding photon!");
                         result.add(curPhoton);
                     }
                 }
             }
         }
-
+//        if(result.size() != 0 && octreeRoot.dataEquals(cur.returnData()))
+//            System.out.println("Size of result: " + result.size());
         return result;
     }
     
@@ -373,94 +413,47 @@ public class LinAlg {
         z = (a.x*b.y) - (a.y*b.x);
         return new Vertex(x, y, z);
     }
-    //Dummy
-    public static double irradiance(Vertex x, HemisCoords ohm, PointLightSource[] ls, int iteration)
-    {
-        Vertex p = hemisToCart(ohm);
-        double result = 0;
-        double incRadiance = 0;
-        final int STEPSIZE = 100000;
-        for(int idl = 0; idl < ls.length; ++idl)
-        {
-            Vertex l = ls[idl].getLightVectorFrom(x);
-            double angle = SkalärProdukt(p, l)/(returnLength(p)*returnLength(l));
-            incRadiance += ls[idl].radiance*angle;
-        }
-//        for(int idp = 0; idp < 2*Math.PI; idp += (2*Math.PI)/STEPSIZE)
-//        {
-//            for(int idt = 0; idt < Math.PI/2; idt += (Math.PI/2)/STEPSIZE)
-//            {
-//                HemisCoords dir = new HemisCoords(idt, idp, 1);
-//                //Find triangle located in dir path.
-//                if(iteration < maxiterations)
-//                    irradiance(newx, dir, ls, ++iteration);
-//                //end cycle when iterations reach a certain number
-//                //Send a ray in all directions and check the radiance emmitted by targeted triangles, using the radiance function.
-//            }
-//        }
-        return result;
-    }
-    //Dummy
-    public static double radiosity()
-    {
-        return 0;
-    }
-    //Dummy
-    public static boolean visible(Ray r, int triangleID)
-    {
-        
-        
-        
-        return true;
-    }
-    //Dummy
-    public static double importance()
-    {
-        
-        return 0;
-    }
     
-    public static double radiance(Vertex x, Triangle t, HemisCoords in, PointLightSource[] ls)
-    {
-        Vertex p = hemisToCart(in);
-        double result;
-        double emmitance = 0;
-        double incRadiance = 0;
-        int STEPSIZE = 100000;
-        for(int idl = 0; idl < ls.length; ++idl)
-        {
-            Vertex l = ls[idl].getLightVectorFrom(x);
-            double angle = SkalärProdukt(p, l)/(returnLength(p)*returnLength(l));
-            incRadiance += ls[idl].radiance*angle;
-        }
-        
-//        for(int idp = 0; idp < 2*Math.PI; idp += (2*Math.PI)/STEPSIZE)
-//        {
-//            for(int idt = 0; idt < Math.PI/2; idt += (Math.PI/2)/STEPSIZE)
-//            {
-//                HemisCoords out = new HemisCoords(idt, idp, 1);
-//                
-//                //Send radiance in all directions
-//
-//                result += BRDF(t, Triangle.REFLECTION_ORENNAYAR, in, out)*irradiance(x, out, ls, 0);
-//            }
-//        }
-
-
-        return 0;
-    }
     
     public static ColorDbl PhotonLightCalculationsMesh(Vertex strikept, int TriangleID)
     {
+//        for(int idt = 0; idt < Scene.objects[0].getSize(); ++idt)
+//        {
+//            System.out.println("Colours: " + Scene.objects[0].returnTriangleByIndex(idt).color + ", IDT: " + idt);
+//        }
         Vector<Photon> photonList = new Vector<Photon>();
         photonList = getPhotons(strikept, octreeRoot);
+//        if(photonList.size() > 0)
+//            System.out.println("PhotonList size: " + photonList.size());
+        
         double intensity = 0;
         for(int idp = 0; idp < photonList.size(); ++idp)
         {
+//            System.out.println("Adding flux!");
             intensity += photonList.get(idp).flux;
         }
-        ColorDbl triangleColor = Scene.objects[Scene.getObjectByTriangleIndex(TriangleID)].returnTriangleById(TriangleID).color;
+        int objectIndex = Scene.getObjectByTriangleIndex(TriangleID);
+        
+        ColorDbl triangleColor = new ColorDbl(Scene.objects[objectIndex].returnTriangleById(TriangleID).color);
+        if(Scene.objects[objectIndex].returnTriangleById(TriangleID).triangleIndex == -1)
+        {
+            System.out.println("Faulty triangle, triangle not found.");
+        }
+//        if(intensity > 0)
+//        {
+//            System.out.println("Triangleindex: " + TriangleID);
+//            System.out.println("objectIndex: " + objectIndex);
+//            System.out.println("Caught triangle: " + Scene.objects[objectIndex].returnTriangleById(TriangleID).toString());
+//            System.out.println("Intensity: " + intensity);
+//            System.out.println("Pre Color: " + triangleColor);
+//            System.out.println("Final Color: " + triangleColor);
+//        }
+//        System.out.println("Intensity: " + intensity);
+//        System.out.println("Pre Color: " + triangleColor);
+//        System.out.println("Intensity: " + intensity);
         triangleColor.setIntensity(intensity);
+//        if(!triangleColor.equals(ColorDbl.BLACK))
+//            System.out.println("Final Color: " + triangleColor);
         return triangleColor;
     }
     

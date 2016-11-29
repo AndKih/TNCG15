@@ -167,6 +167,7 @@ public class Node<T> //implements Iterable<Node<T>>, Iterator<Node<T>>
         int length = l;
         ++length;
         System.out.println("Current level: " + length);
+        System.out.println("Number of children: " + n.returnChildrenAmount());
         System.out.println(n.returnData().toString());
         List<Node<T>> storage = new ArrayList<Node<T>>();
         for(int i = 0; i < n.returnChildrenAmount(); ++i)
@@ -179,6 +180,13 @@ public class Node<T> //implements Iterable<Node<T>>, Iterator<Node<T>>
             length = traverse(it, length);
         }
         return length;
+    }
+    
+    public boolean dataEquals(T otherData)
+    {
+        if(data.equals(otherData))
+            return true;
+        return false;
     }
     
 //    public Iterator<Node<T>> iterator()

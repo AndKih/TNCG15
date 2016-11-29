@@ -33,4 +33,13 @@ public class Photon {
         photonType = PHOTON_DIRECT;
     }
     
+    public String toString()
+    {
+        String result = "Position: " + position + "\n"
+                + "Flux: " + flux + "\n"
+                + "Direction: " + dir + "\n"
+                + "PhotonType: " + photonType;
+        return result;
+    }
+    
 }

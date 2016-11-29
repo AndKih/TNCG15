@@ -19,6 +19,13 @@ public class PhotonContainer {
     private final Vertex minPos;
     private final double[] diameter;
     
+    public PhotonContainer()
+    {
+        maxPos = Vertex.DUMMY;
+        minPos = Vertex.DUMMY;
+        diameter = new double[0];
+    }
+    
     public PhotonContainer(Vertex maxPos, Vertex minPos, double[] dia)
     {
         this.maxPos = maxPos;
@@ -61,7 +68,19 @@ public class PhotonContainer {
     
     public String toString()
     {
-        return "MAX: " + maxPos + "\nMIN: " + minPos;
+        String result = "MAX: " + maxPos + "\n"
+                + "MIN: " + minPos + "\n"
+                + "Diameters: " + diameter[0] + ", " + diameter[1] + ", " + diameter[2] + "\n"
+                + "Size: " + photonList.size() + "\n";
+        return result;
+    }
+    
+    public boolean equals(PhotonContainer other)
+    {
+        if(other.diameter[0] == diameter[0] && other.diameter[1] == diameter[1] && other.diameter[2] == diameter[2] &&
+                other.maxPos.equals(maxPos) && other.minPos.equals(minPos) && photonList.equals(other.photonList))
+            return true;
+        return false;
     }
     
 }

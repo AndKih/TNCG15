@@ -105,4 +105,12 @@ public class ColorDbl {
         }
         return mean;
     }
+    
+    public boolean equals(ColorDbl col)
+    {
+        if(col.r == r && col.g == g && col.b == b)
+            return true;
+        else
+            return false;
+    }
 }

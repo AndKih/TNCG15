@@ -345,6 +345,7 @@ public class Scene {
     
         if(Camera.usePhotonmapping)
         {
+            
             Vertex sceneMax = new Vertex(13, 6, 5);
             Vertex sceneMin = new Vertex(-3, -6, -5);
             double[] rootDiameter = new double[]{16, 12, 10};
@@ -365,7 +366,7 @@ public class Scene {
             if(r.getObjectIndex() == idt)
                 continue;
             newRay = objects[idt].lightRayIntersection(r);
-            if(newRay.equals(Ray.ERROR_RAY))
+            if(!newRay.equals(Ray.ERROR_RAY))
             {
                 if(VektorDistansJämförelse(newRay.end, largestRay.end, r.start))
                 {
@@ -375,8 +376,10 @@ public class Scene {
                 }
             }
         }
+        //System.out.println("largestRay: " + largestRay);
         if(!largestRay.equals(Ray.ERROR_RAY))
         {
+//            System.out.println("Depositing photon!");
             largestRay.depositPhoton(false);
             if(largestRay.returnIndex() > 24 || largestRay.returnIndex() < 1)
             {
@@ -398,6 +401,7 @@ public class Scene {
                         }
                     }
                 }
+//                System.out.println("Depositing photon!");
                 newLargestRay.depositPhoton(true);
             }
             

@@ -70,11 +70,14 @@ public class Triangle {
     
     public String toString()
     {
-        String result = "";
+        String result = "Position:\n";
         for(int ids = 0; ids < SIZE; ++ids)
         {
             result += p[ids].toString() + "\n";
         }
+        result += "Color: " + color.toString() + "\n"
+                + "Normal: " + normal + "\n"
+                + "Index: " + triangleIndex;
         return result;
     }
     public double getArea()
@@ -85,11 +88,12 @@ public class Triangle {
         return area;
     }
     
-    public Vertex getRandomPointOnTriangle()
+    public boolean equals(Triangle other)
     {
-        Vertex result = Vertex.DUMMY;
-        
-        return result;
+        if(color.equals(other.color) && normal.equals(other.normal) && p[0].equals(other.p[0])
+                && p[1].equals(other.p[1]) && p[2].equals(other.p[2]) && triangleIndex == other.triangleIndex)
+            return true;
+        return false;
     }
     
 }
