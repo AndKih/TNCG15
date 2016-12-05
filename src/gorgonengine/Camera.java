@@ -46,7 +46,7 @@ public class Camera extends JFrame{
     public int raysPerPixel = 4;
     public static boolean areaLightsource = true;
     public static boolean usePhotonmapping = true;
-    public static boolean logScale = false;
+    public static boolean logScale = true;
     
     private double deltax;
     private double deltay;

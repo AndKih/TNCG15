@@ -293,7 +293,8 @@ public class Sphere extends Object{
                     for(int id2 = 0; id2 < Scene.objects[id1].returnSize(); ++id2)
                     {
 //                        System.out.println("TEST");
-                        t = Scene.objects[id1].returnTriangleByIndex(id2).rayIntersection(r);
+                        t = Scene.objects[id1].returnTriangleByIndex(id2).rayIntersection
+(r);
                         if(smallT <= t && t > 0)
                             smallT = t;
                     }

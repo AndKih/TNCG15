@@ -56,8 +56,7 @@ public class LinAlg {
                         Vertex emittancePoint = randomPointOnTriangle(curTriangle);
                         Direction randomDir = getRandomDirection(false, curTriangle.normal);
                         Vertex setEnd = VektorAddition(emittancePoint, VektorMultiplikation(dirToVertex(randomDir), 100));
-                        Ray lightRay = new Ray(emittancePoint, setEnd, ColorDbl.BLACK, curTriangle.triangleIndex, Ray.RAY_LIGHT);
-                        lightRay.setObjectIndex(lightsources.get(idl).getObjectID());
+                        Ray lightRay = new Ray(emittancePoint, setEnd, ColorDbl.BLACK, -5, Ray.RAY_LIGHT);
                         Scene.lightRayIntersection(lightRay);
                     }
                 }
@@ -73,7 +72,6 @@ public class LinAlg {
                     Direction randomDir = getRandomDirection(true, normal);
                     Vertex setEnd = VektorAddition(emittancePoint, VektorMultiplikation(dirToVertex(randomDir), 100));
                     Ray lightRay = new Ray(emittancePoint, setEnd, ColorDbl.BLACK, -5, Ray.RAY_LIGHT);
-                    lightRay.setObjectIndex(lightsources.get(idl).getObjectID());
                     Scene.lightRayIntersection(lightRay);
                 }
             }
@@ -775,6 +773,35 @@ public class LinAlg {
     {
 //        getMCAreaLightIntensity(normal, endpt, ls, triangleID);
         return getPointLightIntensity(normal, endpt, ls, triangleID);
+    }
+    public static ColorDbl getPhotonLight(Direction normal, Vertex endpt, int triangleID)
+    {
+        Vector<Photon> photons = getPhotons(endpt, octreeRoot);
+        double flux = 0;
+        double r;
+        for (Photon photon : photons) 
+        {
+            if(photon.photonType ==Photon.PHOTON_DIRECT)
+            {
+                r = returnLength(VektorSubtraktion(photon.position,endpt));
+                flux += dummyPhotonWeight(photon.flux, r);
+            }
+        }
+        flux /= photons.size();
+        
+        ColorDbl retval = new ColorDbl(flux);
+        
+        return retval;
+    }
+    public static double lecturePhotonWeight(double flux, double dist)
+    {
+        double Q = 1;
+        double w = Q/(Math.PI*Math.pow(dist, 2));
+        return w;
+    }
+    public static double dummyPhotonWeight(double flux, double dist)
+    {
+        return 1;
     }
     public static ColorDbl getMCAreaLightIntensity(Direction normal, Vertex endpt, int triangleID)
     {
