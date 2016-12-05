@@ -389,9 +389,6 @@ public class LinAlg {
 //                    System.out.println("curPhoton: " + curPhoton.toString());
                     if(curDist < PHOTON_SEARCH_RADIUS && curPhoton.photonType != Photon.PHOTON_SHADOW)
                     {
-                        if(curDist > PHOTON_SEARCH_RADIUS)
-                        System.out.println("curDist2: " + curDist);
-//                        System.out.println("Adding photon!");
                         result.add(curPhoton);
                     }
                 }
@@ -432,6 +429,8 @@ public class LinAlg {
 //            System.out.println("Adding flux!");
             intensity += photonList.get(idp).flux;
         }
+//        if(photonList.size() != 0)
+//            intensity = intensity/photonList.size();
         int objectIndex = Scene.getObjectByTriangleIndex(TriangleID);
         
         ColorDbl triangleColor = new ColorDbl(Scene.objects[objectIndex].returnTriangleById(TriangleID).color);
@@ -1203,6 +1202,14 @@ public class LinAlg {
     }
 
     
-//    public boolean russianRoullette()
+    public static boolean russianRoullette(double flux)
+    {
+        boolean result = false;
+        if(Math.random() < flux)
+        {
+            result = true;
+        }
+        return result;
+    }
     
 }

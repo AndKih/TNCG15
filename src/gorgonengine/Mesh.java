@@ -230,7 +230,6 @@ public class Mesh extends Object{
         {
             if(mesh[idt].triangleIndex == r.returnIndex())
             {
-//                System.out.println("Will not target self.");
                 continue;
             }
                 
@@ -365,12 +364,9 @@ public class Mesh extends Object{
 //            System.out.println("Smallest!");
             Vertex newEnd = VektorAddition(r.start, VektorMultiplikation(VektorSubtraktion(r.end, r.start), smallT));
             result = new Ray(r.start, newEnd, r.color, savedIndex, r.RAY_TYPE);
-            result.setObjectIndex(r.getObjectIndex());
+            result.setRadiance(r.getRadiance());
+            result.setObjectIndex(objectID);
         }
-//        if(result.equals(Ray.ERROR_RAY))
-//            System.out.println("lightRayIntersection returning incorrectly!");
-//        else
-//            System.out.println("lightRayIntersection returning correctly!");
         return result;
     }
     

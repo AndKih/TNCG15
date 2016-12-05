@@ -14,7 +14,7 @@ import static gorgonengine.LinAlg.*;
 
 public class Ray {
     
-    public static final Ray ERROR_RAY = new Ray(new Vertex(0, 0, 0), new Vertex(0, 0, 0), new ColorDbl(0, 0, 0), -3);
+    public static final Ray ERROR_RAY = new Ray();
     public Vertex start, end;
     public Direction dir;
     public ColorDbl color;
@@ -28,6 +28,22 @@ public class Ray {
     public final int RAY_TYPE;
     public int RAY_REFLECTION_TYPE;
     private boolean inside;
+    
+    public Ray()
+    {
+        start = Vertex.DUMMY;
+        end = Vertex.DUMMY;
+        color = ColorDbl.BLACK;
+        dir = Direction.DUMMY;
+        rayIndex = -3;
+        objectIndex = -1;
+        RAY_TYPE = 0;
+        RAY_REFLECTION_TYPE = 0;
+        inside = false;
+        t = 0;
+        radiance = -1;
+        importance = -1;
+    }
     
     public Ray(Vertex s, Vertex e, ColorDbl c)
     {

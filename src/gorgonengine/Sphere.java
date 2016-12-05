@@ -177,7 +177,6 @@ public class Sphere extends Object{
     
     public Ray lightRayIntersection(Ray r)
     {
-        Ray result = Ray.ERROR_RAY;
         if(!transparent && r.getObjectIndex() == objectID)
         {
             System.out.println("Non transparent objects cant hit self.");
@@ -202,7 +201,84 @@ public class Sphere extends Object{
         Vertex x1 = VektorAddition(r.start, VektorMultiplikation(i, dup));
         Vertex x2 = VektorAddition(r.start, VektorMultiplikation(i, ddown));
         
-        return result;
+        if(returnLength(VektorSubtraktion(x1, r.end)) < EPSILON || 
+                returnLength(VektorSubtraktion(x2, r.end)) < EPSILON)
+        {
+            System.out.println("Distance between x1/x2 and r.end is too short");
+            return Ray.ERROR_RAY;
+        }
+        if(returnLength(VektorSubtraktion(x1, r.start)) < EPSILON || 
+                returnLength(VektorSubtraktion(x2, r.start)) < EPSILON)
+        {
+//            System.out.println("Distance between x1/x2 and r.start is too short");
+            return Ray.ERROR_RAY;
+        }
+        if(returnLength(VektorSubtraktion(x2, center))-radius<EPSILON || 
+                returnLength(VektorSubtraktion(x1, center))-radius<EPSILON)
+        {
+            if(returnLength(VektorSubtraktion(x1, r.start)) < 
+                    returnLength(VektorSubtraktion(x2, r.start)))
+            {
+                Ray dirtest = new Ray(r.start, x1, ColorDbl.BLACK, -1, Ray.RAY_SHADOW);
+                double angle = VektorVinkel(r.dir, dirtest.dir);
+                if(angle > Math.PI/2 || angle < 0)
+                {
+//                    System.out.println("Angle between incoming ray and normal too large");
+                    return Ray.ERROR_RAY;
+                }
+                Ray resultRay = new Ray(r.start, x1, r.color, -1, Ray.RAY_LIGHT);
+                resultRay.setRadiance(r.getRadiance());
+                resultRay.setObjectIndex(objectID);
+                
+                if(returnLength(VektorSubtraktion(resultRay.start, resultRay.end)) < EPSILON)
+                {
+                    System.out.println("resultray length too short.");
+                    return Ray.ERROR_RAY;
+                }
+                if(returnLength(VektorSubtraktion(resultRay.start, center))-radius<EPSILON && 
+                        returnLength(VektorSubtraktion(resultRay.end, center))-radius<EPSILON && 
+                        !transparent)
+                {
+//                    System.out.println("resultRay start and end is on sphere");
+                    return Ray.ERROR_RAY;
+                }
+                
+                return resultRay;
+            }
+            else
+            {
+                Ray dirtest = new Ray(r.start, x2, ColorDbl.BLACK, -1, Ray.RAY_SHADOW);
+                Vertex dir1 = dirToVertex(r.dir);
+                Vertex dir2 = dirToVertex(dirtest.dir);
+                double angle = SkalärProdukt(dir1,dir2)/(returnLength(dir1)*returnLength(dir2));
+                if(angle > Math.PI/2 || angle < 0)
+                    {
+//                    System.out.println("Angle between incoming ray and normal too large");
+                    return Ray.ERROR_RAY;
+                }
+                Ray resultRay = new Ray(r.start, x2, r.color, -1, Ray.RAY_LIGHT);
+                resultRay.setRadiance(r.getRadiance());
+                resultRay.setObjectIndex(objectID);
+                
+                if(returnLength(VektorSubtraktion(resultRay.start, resultRay.end)) < EPSILON)
+                {
+                    System.out.println("resultray length too short.");
+                    return Ray.ERROR_RAY;
+                }
+                if(returnLength(VektorSubtraktion(resultRay.start, center))-radius<EPSILON && 
+                        returnLength(VektorSubtraktion(resultRay.end, center))-radius<EPSILON && 
+                        !transparent)
+                {
+//                    System.out.println("resultRay start and end is on sphere");
+                    return Ray.ERROR_RAY;
+                }
+                return resultRay;
+            }
+        }
+        else
+        {
+            return Ray.ERROR_RAY;
+        }
     }
     
     public boolean shadowRayIntersection(Ray r, PointLightSource ls, int sphereid)
