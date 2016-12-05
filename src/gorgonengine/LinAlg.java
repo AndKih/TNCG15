@@ -97,6 +97,7 @@ public class LinAlg {
         {
             newTheta = UNIPDF2theta();
         }while(newTheta > maxThetaAngle && newTheta < 0);
+        newTheta += Math.PI;
         double newPhi = UNIPDF2phi();
         do
         {
@@ -122,7 +123,7 @@ public class LinAlg {
     
     public static double UNIPDF2theta()
     {
-        return Math.pow(Math.cos(Math.sqrt(Math.random())), -1);
+        return Math.acos(Math.sqrt(Math.random()));
     }
     
     public static void createOctree(Node<PhotonContainer> root)
@@ -387,6 +388,7 @@ public class LinAlg {
 //                    System.out.println("curPhoton: " + curPhoton.toString());
                     if(curDist < PHOTON_SEARCH_RADIUS && curPhoton.photonType != Photon.PHOTON_SHADOW)
                     {
+                        
                         result.add(curPhoton);
                     }
                 }
@@ -436,15 +438,15 @@ public class LinAlg {
         {
             System.out.println("Faulty triangle, triangle not found.");
         }
-//        if(intensity > 0)
-//        {
-//            System.out.println("Triangleindex: " + TriangleID);
-//            System.out.println("objectIndex: " + objectIndex);
-//            System.out.println("Caught triangle: " + Scene.objects[objectIndex].returnTriangleById(TriangleID).toString());
-//            System.out.println("Intensity: " + intensity);
-//            System.out.println("Pre Color: " + triangleColor);
-//            System.out.println("Final Color: " + triangleColor);
-//        }
+        if(intensity > 100000)
+        {
+            System.out.println("Triangleindex: " + TriangleID);
+            System.out.println("objectIndex: " + objectIndex);
+            System.out.println("Caught triangle: " + Scene.objects[objectIndex].returnTriangleById(TriangleID).toString());
+            System.out.println("Intensity: " + intensity);
+            System.out.println("Pre Color: " + triangleColor);
+            System.out.println("Final Color: " + triangleColor);
+        }
 //        System.out.println("Intensity: " + intensity);
 //        System.out.println("Pre Color: " + triangleColor);
 //        System.out.println("Intensity: " + intensity);

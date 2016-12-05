@@ -972,51 +972,19 @@ public class Scene {
         double randAng = 0;
         double estimate = 0;
         int nInside = 0;
-        for(int idc = 0; idc < iterations; ++idc)
+        do
         {
             randAng = Math.acos(Math.sqrt(Math.random()));
-            if(Math.abs(randAng) < EPSILON)
-            {
-                randAng+=Math.PI*2;
-            }
-            if(randAng > EPSILON && randAng < Math.PI/2)
-            {
-                estimate += randAng;
-                ++nInside;
-            }
-        }
-        if(nInside>0)
-        {
+        
             rotateAround = vertexToDir(KryssProdukt(normal,predicted));
-            estimate/=nInside;
-//            System.out.println("Estimate: "+estimate);
             result = rotateVertexAroundAxis(result, rotateAround, estimate);
-        }else{
-            System.out.println("ERROR ALL OUT OF BOUNDS! Theta");
-            System.out.println("RandomAngle "+randAng);
-        }
-//        System.out.println("Est Theta "+estimate);
-        estimate = 0;
-        nInside = 0;
-        for(int imc = 0; imc<iterations; imc++)
-        {
+
             randAng = 2*Math.PI*Math.random();
-            if(Math.abs(randAng)<EPSILON)
-            {
-                randAng+=Math.PI*2;
-            }
-            estimate+= Math.PI/randAng;
-            nInside++;
-        }
-        if(nInside>0)
-        {
+
             rotateAround = limit;
-            estimate/=nInside;
-//            System.out.println("Estimate: "+estimate);
             result = rotateVertexAroundAxis(result, rotateAround, estimate-Math.PI);
-        }else{
-            System.out.println("ERROR ALL OUT OF BOUNDS! Phi");
-        }
+        }while(VektorVinkel(vertexToDir(result), limit) > Math.PI/2);
+        
         
 //        System.out.println("Est Theta "+estimate);
 //        System.out.println("Result:  "+result.toString());
