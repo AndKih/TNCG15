@@ -280,6 +280,7 @@ public class Mesh extends Object{
                         retint = getMCAreaLightIntensity(normal, newEnd, mesh[savedID].triangleIndex);
                     else
                         retint = PhotonLightCalculationsMesh(newEnd, mesh[savedID].triangleIndex);
+//                        retint = getPhotonLight(mesh[savedID].normal, newEnd, mesh[savedID].triangleIndex);
                     res.setIntensity(retint, tmpCol);
                     resultRay = new Ray(r.start, newEnd, res, mesh[savedID].triangleIndex, Ray.RAY_IMPORTANCE);
                 }    
@@ -287,6 +288,7 @@ public class Mesh extends Object{
                 {
                     if(Camera.usePhotonmapping)
                         tmpCol = PhotonLightCalculationsMesh(newEnd, mesh[savedID].triangleIndex);
+//                        retint = getPhotonLight(mesh[savedID].normal, newEnd, mesh[savedID].triangleIndex);
                     resultRay = new Ray(r.start, newEnd, tmpCol, mesh[savedID].triangleIndex, Ray.RAY_IMPORTANCE);
                 }
             }
