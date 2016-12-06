@@ -21,12 +21,54 @@ public class LinAlg {
     public static final double STANDARD_FLUX = 1;
     public static final int STANDARD_PHOTON_EMITTANCE = 1000000;
     public static Node<PhotonContainer> octreeRoot;
+    public static int missingPhotons;
     
     public static void displayWholeOctree()
     {
         int length = 0;
         length = octreeRoot.traverse(octreeRoot, length);
         System.out.println("Whole length: " + length);
+    }
+    
+    public static int getPhotonSubsetFromOctree(int index, Node<PhotonContainer> it)
+    {
+        int result = 0;
+        if(it.dataEquals(octreeRoot.returnData()))
+        {
+            result += getPhotonSubsetFromOctree(index, it.returnChild(index));
+        }
+        else if(it.checkIfParent())
+        {
+            for(int idn = 0; idn < it.returnChildrenAmount(); ++idn)
+            {
+                result += getPhotonSubsetFromOctree(index, it.returnChild(idn));
+            }
+        }
+        else
+        {
+            result = it.returnData().getContainerSize();
+        }
+        return result;
+    }
+    
+    public static boolean checkInside(Vertex pos, Vertex max, Vertex min)
+    {
+        boolean result = true;
+        
+        if(pos.x <= max.x  && 
+                    pos.y <= max.y && 
+                    pos.z <= max.z)
+                result = true;
+            else
+                result = false;
+            if(pos.x >= min.x && 
+                    pos.y >= min.y && 
+                    pos.z >= min.z && result)
+                result = true;
+            else
+                result = false;
+        
+        return result;
     }
     
     public static void emitPhotons()
@@ -187,26 +229,28 @@ public class LinAlg {
     
     public static void addPhotonToTree(Vertex pos, double flux, Direction dir, int type, Node<PhotonContainer> cur)
     {
+        boolean inAny = false;
         for(int idb = 0; idb < octreeRoot.returnChildrenAmount(); ++idb)
         {
             boolean in = true;
 //            System.out.println("Position: " + pos);
 //            System.out.println("Maxpos: " + cur.returnChild(idb).returnData().getMaxPos());
 //            System.out.println("Minpos: " + cur.returnChild(idb).returnData().getMinPos());
-            if(pos.x < cur.returnChild(idb).returnData().getMaxPos().x && 
-                    pos.y < cur.returnChild(idb).returnData().getMaxPos().y && 
-                    pos.z < cur.returnChild(idb).returnData().getMaxPos().z)
+            if(pos.x <= cur.returnChild(idb).returnData().getMaxPos().x + EPSILON && 
+                    pos.y <= cur.returnChild(idb).returnData().getMaxPos().y + EPSILON && 
+                    pos.z <= cur.returnChild(idb).returnData().getMaxPos().z + EPSILON)
                 in = true;
             else
                 in = false;
-            if(pos.x > cur.returnChild(idb).returnData().getMinPos().x && 
-                    pos.y > cur.returnChild(idb).returnData().getMinPos().y && 
-                    pos.z > cur.returnChild(idb).returnData().getMinPos().z)
+            if(pos.x >= cur.returnChild(idb).returnData().getMinPos().x - EPSILON && 
+                    pos.y >= cur.returnChild(idb).returnData().getMinPos().y - EPSILON && 
+                    pos.z >= cur.returnChild(idb).returnData().getMinPos().z - EPSILON && in)
                 in = true;
             else
                 in = false;
             if(in)
             {
+                inAny = true;
 //                System.out.println("We are in!");
                 boolean checkDiameters = false;
                 double[] curDiameters = cur.returnChild(idb).returnData().getDiameters();
@@ -235,6 +279,15 @@ public class LinAlg {
                 break;
             }
         }
+        if(!inAny)
+        {
+            ++missingPhotons;
+//            System.out.println("Not in any.");
+//            System.out.println("Position: " + pos);
+//            System.out.println("maxPos: " + cur.returnData().getMaxPos());
+//            System.out.println("minPos: " + cur.returnData().getMinPos());
+        }
+            
     }
     //Här är problemet, du tar inte med den node som positionen ligger i!
     public static Vector<Photon> getPhotons(Vertex pos, Node<PhotonContainer> cur)

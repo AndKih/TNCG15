@@ -24,9 +24,12 @@ public class Scene {
     public static int counter = 1;
     public static Object[] objects;
     PointLightSource[] lights;
+    private static int rayStrikeInSubset1;
     
     public Scene()
     {
+        rayStrikeInSubset1 = 0;
+        missingPhotons = 0;
         //Middleposition: roof, (0, 0, 5). Floor: (0, 0, -5)
         final int TRIANGLESIZE = 3;
         Vertex[] p = new Vertex[TRIANGLESIZE];
@@ -235,9 +238,9 @@ public class Scene {
 //        pnew2[1] = new Vertex(0, 0, -4.999);
 //        pnew2[2] = new Vertex(13, 0, -4.999);
 
-        pnew2[0] = new Vertex(10, 6, 4.999);
-        pnew2[1] = new Vertex(13, 0, 4.999);
-        pnew2[2] = new Vertex(0, 0, 4.999);
+        pnew2[0] = new Vertex(10, -6, 4.999);//move dis
+        pnew2[1] = new Vertex(0, 0, 4.999);
+        pnew2[2] = new Vertex(13, 0, 4.999);
         
 //        pnew2[0] = new Vertex(-3, 0, 4.999);
 //        pnew2[1] = new Vertex(0, 6, 4.999);
@@ -351,18 +354,30 @@ public class Scene {
             octreeRoot = new Node<PhotonContainer>(new PhotonContainer(sceneMax, sceneMin, rootDiameter));
             createOctree(octreeRoot);
             emitPhotons();
+            int photonsum = 0;
+            for(int idn = 0; idn < octreeRoot.returnChildrenAmount(); ++idn)
+            {
+                int nrPhotons = 0;
+                nrPhotons = getPhotonSubsetFromOctree(idn, octreeRoot);
+                System.out.println("Subset: " + (idn+1));
+                System.out.println("Photons: " + nrPhotons);
+                photonsum += nrPhotons;
+            }
+            System.out.println("Total photon amount: " + photonsum);
+            System.out.println("Ray strikes in subset 1: " + rayStrikeInSubset1);
+            System.out.println("Missing photons: " + missingPhotons);
         }
     }
     
     public static void lightRayIntersection(Ray r)
     {
-        
+        Vertex maxPosSubset1 = octreeRoot.returnChild(0).returnData().getMaxPos();
+        Vertex minPosSubset1 = octreeRoot.returnChild(0).returnData().getMinPos();
         Ray newRay, reflectedRay = Ray.ERROR_RAY, refractedRay = Ray.ERROR_RAY;
         Ray largestRay = objects[0].lightRayIntersection(r);
         largestRay.setReflectionType(Ray.RAY_REFLECTION);
         for(int idt = 1; idt < objects.length; ++idt)
         {
-            
             if(objects[idt].isLightsource())
                 continue;
             newRay = objects[idt].lightRayIntersection(r);
@@ -381,6 +396,8 @@ public class Scene {
         if(!largestRay.equals(Ray.ERROR_RAY))
         {
 //            System.out.println("Depositing photon!");
+            if(checkInside(largestRay.end, maxPosSubset1, minPosSubset1))
+                ++rayStrikeInSubset1;
             largestRay.depositPhoton(false);
             if(russianRoullette(largestRay.getRadiance()))
             {
@@ -447,6 +464,8 @@ public class Scene {
                     }
                 }
 //                System.out.println("Depositing photon!");
+                if(checkInside(newLargestRay.end, maxPosSubset1, minPosSubset1))
+                    ++rayStrikeInSubset1;
                 newLargestRay.depositPhoton(true);
             }
             
@@ -1140,7 +1159,6 @@ public class Scene {
                 }
                 estimate+=randAng;
                 nInside++;
-            
         }
         if(nInside > 0)
         {
