@@ -106,7 +106,9 @@ public class LinAlg {
         newDir.r = 1;
         newDir.theta = newTheta;
         newDir.phi = newPhi;
+//        System.out.println("Theta: "+(newDir.theta/Math.PI));
         result = vertexToDir(hemisToCart(newDir));
+//        System.out.println("Vector: "+result.toString());
         return result;
     }
     
@@ -388,14 +390,12 @@ public class LinAlg {
 //                    System.out.println("curPhoton: " + curPhoton.toString());
                     if(curDist < PHOTON_SEARCH_RADIUS && curPhoton.photonType != Photon.PHOTON_SHADOW)
                     {
-                        
+//                        System.out.println("Adding photon.");
                         result.add(curPhoton);
                     }
                 }
             }
         }
-//        if(result.size() != 0 && octreeRoot.dataEquals(cur.returnData()))
-//            System.out.println("Size of result: " + result.size());
         return result;
     }
     
@@ -424,16 +424,30 @@ public class LinAlg {
 //            System.out.println("PhotonList size: " + photonList.size());
         
         double intensity = 0;
+        double dist = 0;
         for(int idp = 0; idp < photonList.size(); ++idp)
         {
 //            System.out.println("Adding flux!");
-            intensity += photonList.get(idp).flux;
+//            intensity += photonList.get(idp).flux;
+            dist = returnLength(VektorSubtraktion(photonList.get(idp).position,strikept));
+            intensity += vladPhotonWeight(photonList.get(idp).flux, dist);
+            if(vladPhotonWeight(photonList.get(idp).flux, dist)>photonList.get(idp).flux)
+            {
+                System.out.println("weight increases flux. (it shouldn't I think. flux: "+
+                        photonList.get(idp).flux+", weight: "+vladPhotonWeight(photonList.get(idp).flux, dist));
+            }
+        }
+        if(photonList.size()>0)
+        {
+            intensity /= photonList.size();
         }
 //        if(photonList.size() != 0)
 //            intensity = intensity/photonList.size();
         int objectIndex = Scene.getObjectByTriangleIndex(TriangleID);
         
-        ColorDbl triangleColor = new ColorDbl(Scene.objects[objectIndex].returnTriangleById(TriangleID).color);
+        ColorDbl triangleColor = new ColorDbl(Scene.objects[objectIndex].returnTriangleById(TriangleID).color.r,
+        Scene.objects[objectIndex].returnTriangleById(TriangleID).color.g,
+        Scene.objects[objectIndex].returnTriangleById(TriangleID).color.b);
         if(Scene.objects[objectIndex].returnTriangleById(TriangleID).triangleIndex == -1)
         {
             System.out.println("Faulty triangle, triangle not found.");
@@ -453,6 +467,10 @@ public class LinAlg {
         triangleColor.setIntensity(intensity);
 //        if(!triangleColor.equals(ColorDbl.BLACK))
 //            System.out.println("Final Color: " + triangleColor);
+if(triangleColor.r>100000)
+{
+    System.out.println("COLOR IS HUUUUUUGE!!!! "+ triangleColor.toString());
+}
         return triangleColor;
     }
     
@@ -461,13 +479,25 @@ public class LinAlg {
         Vector<Photon> photonList = new Vector<Photon>();
         photonList = getPhotons(strikept, octreeRoot);
         double intensity = 0;
+        double dist = 0;
         for(int idp = 0; idp < photonList.size(); ++idp)
         {
-            intensity += photonList.get(idp).flux;
+//            intensity += photonList.get(idp).flux;
+            dist = returnLength(VektorSubtraktion(photonList.get(idp).position,strikept));
+            intensity += vladPhotonWeight(photonList.get(idp).flux, dist);
+        }
+        
+        if(photonList.size()>0)
+        {
+            intensity /= photonList.size();
         }
         Sphere getSphere = (Sphere)Scene.objects[sphereIndex];
         ColorDbl sphereColor = getSphere.color;
         sphereColor.setIntensity(intensity);
+if(sphereColor.r>100000)
+{
+    System.out.println("COLOR IS HUUUUUUGE!!!! "+ sphereColor.toString());
+}
         return sphereColor;
     }
     
@@ -799,6 +829,12 @@ public class LinAlg {
     {
         double Q = 1;
         double w = Q/(Math.PI*Math.pow(dist, 2));
+        return w;
+    }
+    public static double vladPhotonWeight(double flux, double dist)
+    {
+        double Q = flux;
+        double w = Q/(1+(Math.PI*Math.pow(dist, 2)));
         return w;
     }
     public static double dummyPhotonWeight(double flux, double dist)

@@ -35,18 +35,18 @@ public class Camera extends JFrame{
     public double width, height;
     private double iMax, iMin;
 
-    public static final double IMPORTANCETHRESHOLD = 0.05;
+    public static final double IMPORTANCETHRESHOLD = 0.1;
 
     public static final int N_REFLECTEDRAYS = 1;
     public static final int N_AREALIGHTSOURCEPOINTS = 10;
-    public static final int ESTIMATOR_ITERATIONS = 200;
+    public static final int ESTIMATOR_ITERATIONS = 100;
     public static final boolean AREALIGHTAFFECTOR = true;
     Scene scene;
     
     public int raysPerPixel = 4;
     public static boolean areaLightsource = true;
     public static boolean usePhotonmapping = true;
-    public static boolean logScale = true;
+    public static boolean logScale = false;
     
     private double deltax;
     private double deltay;
@@ -197,6 +197,11 @@ public class Camera extends JFrame{
                 }
 //                iMin=0;
 //                iMax=100;
+
+                if(iMax>100000)
+                {
+                    System.out.println("MAXCOLOR LARGE AS HELL! "+iMax);
+                }
             }
         }
         System.out.println("Ceiling power: " + maxMeanIntensity);
