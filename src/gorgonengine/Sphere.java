@@ -242,7 +242,6 @@ public class Sphere extends Object{
 //                    System.out.println("resultRay start and end is on sphere");
                     return Ray.ERROR_RAY;
                 }
-                
                 return resultRay;
             }
             else

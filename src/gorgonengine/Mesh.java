@@ -255,6 +255,7 @@ public class Mesh extends Object{
             ColorDbl tmpCol = new ColorDbl(mesh[savedID].color);
             ColorDbl res = new ColorDbl();
             Vertex newEnd = VektorAddition(r.start, VektorMultiplikation(VektorSubtraktion(r.end, r.start), smallT));
+            newEnd = roundPosition(newEnd);
             ColorDbl retint;
             Ray resultRay;
             if(!Camera.areaLightsource)
@@ -361,11 +362,14 @@ public class Mesh extends Object{
                 savedIndex = idt;
             }
         }
-        if(smallT != -10 && smallT <= 1)
+        
+        if(smallT != -10 && smallT > 0 && mesh[savedIndex].triangleIndex != r.returnIndex() && !Double.isInfinite(smallT))
         {
+            boolean hit = true;
 //            System.out.println("Smallest!");
             Vertex newEnd = VektorAddition(r.start, VektorMultiplikation(VektorSubtraktion(r.end, r.start), smallT));
-            result = new Ray(r.start, newEnd, r.color, savedIndex, r.RAY_TYPE);
+            newEnd = roundPosition(newEnd);
+            result = new Ray(r.start, newEnd, r.color, mesh[savedIndex].triangleIndex, r.RAY_TYPE);
             result.setRadiance(r.getRadiance());
             result.setObjectIndex(objectID);
         }

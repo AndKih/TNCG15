@@ -118,6 +118,7 @@ public class LinAlg {
                 }
             }
         }
+        System.out.println("Finished emitting photons!!!");
     }
     
     public static Direction getRandomDirection(boolean isSphere, Direction normal)
@@ -236,15 +237,15 @@ public class LinAlg {
 //            System.out.println("Position: " + pos);
 //            System.out.println("Maxpos: " + cur.returnChild(idb).returnData().getMaxPos());
 //            System.out.println("Minpos: " + cur.returnChild(idb).returnData().getMinPos());
-            if(pos.x <= cur.returnChild(idb).returnData().getMaxPos().x + EPSILON && 
-                    pos.y <= cur.returnChild(idb).returnData().getMaxPos().y + EPSILON && 
-                    pos.z <= cur.returnChild(idb).returnData().getMaxPos().z + EPSILON)
+            if(pos.x <= cur.returnChild(idb).returnData().getMaxPos().x && 
+                    pos.y <= cur.returnChild(idb).returnData().getMaxPos().y && 
+                    pos.z <= cur.returnChild(idb).returnData().getMaxPos().z)
                 in = true;
             else
                 in = false;
-            if(pos.x >= cur.returnChild(idb).returnData().getMinPos().x - EPSILON && 
-                    pos.y >= cur.returnChild(idb).returnData().getMinPos().y - EPSILON && 
-                    pos.z >= cur.returnChild(idb).returnData().getMinPos().z - EPSILON && in)
+            if(pos.x >= cur.returnChild(idb).returnData().getMinPos().x && 
+                    pos.y >= cur.returnChild(idb).returnData().getMinPos().y && 
+                    pos.z >= cur.returnChild(idb).returnData().getMinPos().z && in)
                 in = true;
             else
                 in = false;
@@ -294,12 +295,13 @@ public class LinAlg {
     {
         Vector<Photon> result = new Vector<Photon>();
         Vector<Node<PhotonContainer>> reachNodes = new Vector<Node<PhotonContainer>>();
+        Vertex superMax = cur.returnData().getMaxPos();
+        Vertex superMin = cur.returnData().getMinPos();
+        Vertex superMid = new Vertex((superMin.x + superMax.x)/2, (superMin.y + superMax.y)/2, (superMin.z + superMax.z)/2);
         for(int idb = 0; idb < 8; ++idb)
         {
             
-            Vertex superMax = cur.returnData().getMaxPos();
-            Vertex superMin = cur.returnData().getMinPos();
-            Vertex superMid = new Vertex((superMin.x + superMax.x)/2, (superMin.y + superMax.y)/2, (superMin.z + superMax.z)/2);
+            
 
             double xmod = pos.x - superMid.x, ymod = pos.y - superMid.y, zmod = pos.z - superMid.z;
             
@@ -407,8 +409,15 @@ public class LinAlg {
                     reachNodes.add(cur.returnChild(idp + offset));
                 }
             }
+            
         }
-        
+//        if(reachNodes.size() == 0)
+//        {
+//            System.out.println("Something has gone horribly wrong! reachNodes is empty!");
+//            System.out.println("Position: " + pos);
+//            System.out.println("Supermax: " + superMax);
+//            System.out.println("Supermin: " + superMin);
+//        }
         for(int idn = 0; idn < reachNodes.size(); ++idn)
         {
             boolean checkDiameters = false;
@@ -473,6 +482,12 @@ public class LinAlg {
 //        }
         Vector<Photon> photonList = new Vector<Photon>();
         photonList = getPhotons(strikept, octreeRoot);
+//        if(photonList.size() == 0)
+//        {
+//            System.out.println("No photons found here");
+//            System.out.println("Strikept: " + strikept);
+//            System.out.println("TriangleID: " + TriangleID);
+//        }
 //        if(photonList.size() > 0)
 //            System.out.println("PhotonList size: " + photonList.size());
         
@@ -1319,6 +1334,45 @@ if(sphereColor.r>100000)
         return new Vertex(newx,newy,newz);
     }
 
+    public static Vertex roundPosition(Vertex point, Vertex comparison)
+    {
+        Vertex result = new Vertex(point);
+        Vertex difference = VektorSubtraktion(point, comparison);
+        difference.x = Math.abs(difference.x);
+        difference.y = Math.abs(difference.y);
+        difference.z = Math.abs(difference.z);
+        if(difference.x < EPSILON)
+        {
+            result.x = comparison.x;
+        }
+        if(difference.y < EPSILON)
+        {
+            result.y = comparison.y;
+        }
+        if(difference.z < EPSILON)
+        {
+            result.z = comparison.z;
+        }
+        return result;
+    }
+    
+    public static Vertex roundPosition(Vertex point)
+    {
+        Vertex result = new Vertex(point);
+        if(point.x > Scene.sceneMax.x)
+            result.x = Math.round(point.x);
+        if(point.x < Scene.sceneMin.x)
+            result.x = Math.round(point.x);
+        if(point.y > Scene.sceneMax.y)
+            result.y = Math.round(point.y);
+        if(point.y < Scene.sceneMin.y)
+            result.y = Math.round(point.y);
+        if(point.z > Scene.sceneMax.z)
+            result.z = Math.round(point.z);
+        if(point.z < Scene.sceneMin.z)
+            result.z = Math.round(point.z);
+        return result;
+    }
     
     public static boolean russianRoullette(double flux)
     {

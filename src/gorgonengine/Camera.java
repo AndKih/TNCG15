@@ -135,6 +135,8 @@ public class Camera extends JFrame{
                     r.setObjectIndex(-1);
                     Node<Ray> raystart = new Node<Ray>(r);
                     r = scene.rayIntersection(raystart);
+                    if(r.hitLightSource)
+                        cam[px][py].hitLightSource = true;
 //                    currentIndex = r.returnIndex();
 //                    currentColor = r.color;
                     if(r.returnIndex() > 12 && r.returnIndex() < 19 && r.color.meanIntensity() > maxMeanIntensity)
@@ -221,6 +223,12 @@ public class Camera extends JFrame{
         {
             for(int py = 0; py < SIZEY; ++py)
             {
+                if(cam[px][py].hitLightSource)
+                {
+                    cam[px][py].color.r = iMax;
+                    cam[px][py].color.g = iMax;
+                    cam[px][py].color.b = iMax;
+                }
                 int r, g, b, rgb;
                 r = (int)(cam[px][py].color.r*(255.99/iMax));
                 g = (int)(cam[px][py].color.g*(255.99/iMax));

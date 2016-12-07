@@ -20,6 +20,8 @@ public class Scene {
     public static final ColorDbl LIGHTCOLOR = new ColorDbl(100,100,100);
     public static final int NROBJECTS = 7;
     public Triangle[] mesh = new Triangle[SIZE];
+    public static final Vertex sceneMax = new Vertex(13, 6, 5);
+    public static final Vertex sceneMin = new Vertex(-3, -6, -5);
     
     public static int counter = 1;
     public static Object[] objects;
@@ -348,8 +350,7 @@ public class Scene {
         if(Camera.usePhotonmapping)
         {
             
-            Vertex sceneMax = new Vertex(13, 6, 5);
-            Vertex sceneMin = new Vertex(-3, -6, -5);
+            
             double[] rootDiameter = new double[]{16, 12, 10};
             octreeRoot = new Node<PhotonContainer>(new PhotonContainer(sceneMax, sceneMin, rootDiameter));
             createOctree(octreeRoot);
@@ -376,6 +377,12 @@ public class Scene {
         Ray newRay, reflectedRay = Ray.ERROR_RAY, refractedRay = Ray.ERROR_RAY;
         Ray largestRay = objects[0].lightRayIntersection(r);
         largestRay.setReflectionType(Ray.RAY_REFLECTION);
+        if(largestRay.equals(Ray.ERROR_RAY))
+        {
+            System.out.println("No wall hit!");
+            System.out.println("Ray used: " + r);
+        }
+
         for(int idt = 1; idt < objects.length; ++idt)
         {
             if(objects[idt].isLightsource())
@@ -383,15 +390,20 @@ public class Scene {
             newRay = objects[idt].lightRayIntersection(r);
             if(!newRay.equals(Ray.ERROR_RAY))
             {
+//                System.out.println("newRay object index: " + newRay.getObjectIndex());
                 if(VektorDistansJämförelse(newRay.end, largestRay.end, r.start))
                 {
-                    
                     largestRay = new Ray(newRay.start, newRay.end, newRay.color, newRay.returnIndex(), Ray.RAY_LIGHT);
+                    largestRay.setRadiance(r.getRadiance());
                     largestRay.setReflectionType(Ray.RAY_REFLECTION);
+                    largestRay.setObjectIndex(newRay.getObjectIndex());
                 }
             }
         }
-        
+//        if(largestRay.equals(Ray.ERROR_RAY))
+//            System.out.println("No object hit at all!!!");
+//        else if(objects[largestRay.getObjectIndex()].isSphere())
+//            System.out.println("Depositing photon at sphere.");
         //System.out.println("largestRay: " + largestRay);
         if(!largestRay.equals(Ray.ERROR_RAY))
         {
@@ -399,49 +411,68 @@ public class Scene {
             if(checkInside(largestRay.end, maxPosSubset1, minPosSubset1))
                 ++rayStrikeInSubset1;
             largestRay.depositPhoton(false);
+            
             if(russianRoullette(largestRay.getRadiance()))
             {
-                Triangle pick = objects[largestRay.getObjectIndex()].returnTriangleById(largestRay.returnIndex());
-                Direction normal;
-                if(largestRay.isInside())
-                    normal = invert(pick.normal);
-                else
-                    normal = pick.normal;
-                Vertex refEnd = Vertex.DUMMY;
-                double largestAngle = VektorVinkel(invert(largestRay.dir), normal);
-                boolean totalReflection = false;
-                if(!largestRay.isInside())
-                {
-                    if(largestAngle > BrewsterAngle(Object.PROP_AIR, objects[largestRay.getObjectIndex()].returnProperty()))
-                        totalReflection = true;
-                }
-                else
-                {
-                    if(largestAngle > BrewsterAngle(objects[largestRay.getObjectIndex()].returnProperty(), Object.PROP_AIR))
-                        totalReflection = true;
-                }
-//                if(objects[largestRay.getObjectIndex()].getReflectorType() == Object.REFLECTOR_DIFFUSE)
-                    refEnd = randomLightAngle(normal, objects[largestRay.getObjectIndex()].returnTriangleById(largestRay.returnIndex())
-                                ,vertexToDir(VektorSubtraktion(largestRay.start, largestRay.end)));
-//                else if(objects[largestRay.getObjectIndex()].getReflectorType() == Object.REFLECTOR_SPECULAR)
-//                {
-//                    refEnd = VektorSubtraktion(dirToVertex(largestRay.dir), VektorMultiplikation( 
-//                        VektorMultiplikation(dirToVertex(normal), SkalärProdukt(
-//                                dirToVertex(largestRay.dir), dirToVertex(normal))/Math.pow(returnLength(dirToVertex(normal)), 2))
-//                                , 2));
-//                }
-                refEnd = normalize(refEnd);
-                reflectedRay = new Ray(largestRay.end, VektorAddition(largestRay.end, refEnd), largestRay.color, largestRay.returnIndex(), Ray.RAY_LIGHT);
                 if(!objects[largestRay.getObjectIndex()].isSphere())
-                    reflectedRay.setRadiance(largestRay.getRadiance()*pick.reflectionCoefficient);
-                else
-                    reflectedRay.setRadiance(largestRay.getRadiance()*objects[largestRay.getObjectIndex()].reflectionCoefficient);
-                reflectedRay.setReflectionType(Ray.RAY_REFLECTION);
-                lightRayIntersection(reflectedRay);
-//                if(objects[largestRay.getObjectIndex()].isTransparent() && !totalReflection)
-//                {
-//                    
-//                }
+                {
+                    Triangle pick = objects[largestRay.getObjectIndex()].returnTriangleById(largestRay.returnIndex());
+                    Direction normal;
+
+                    if(largestRay.isInside())
+                        normal = invert(pick.normal);
+                    else
+                        normal = pick.normal;
+//                    if(Double.isNaN(normal.x) || Double.isNaN(normal.y) || Double.isNaN(normal.z))
+//                    {
+//                        System.out.println("Normal is NaN! Something is wrong here");
+//                        System.out.println("Pick: " + pick.toString());
+//                        System.out.println("object index used: " + largestRay.getObjectIndex());
+//                        System.out.println("triangle index used: " + largestRay.returnIndex());
+//                        System.out.println("largestRay: " + largestRay);
+//                        System.out.println("Ray: " + r);
+//                    }
+
+                    Vertex refEnd = Vertex.DUMMY;
+                    double largestAngle = VektorVinkel(invert(largestRay.dir), normal);
+                    boolean totalReflection = false;
+                    if(!largestRay.isInside())
+                    {
+                        if(largestAngle > BrewsterAngle(Object.PROP_AIR, objects[largestRay.getObjectIndex()].returnProperty()))
+                            totalReflection = true;
+                    }
+                    else
+                    {
+                        if(largestAngle > BrewsterAngle(objects[largestRay.getObjectIndex()].returnProperty(), Object.PROP_AIR))
+                            totalReflection = true;
+                    }
+    //                if(objects[largestRay.getObjectIndex()].getReflectorType() == Object.REFLECTOR_DIFFUSE)
+                        refEnd = randomLightAngle(normal, objects[largestRay.getObjectIndex()].returnTriangleById(largestRay.returnIndex())
+                                    ,vertexToDir(VektorSubtraktion(largestRay.start, largestRay.end)));
+    //                else if(objects[largestRay.getObjectIndex()].getReflectorType() == Object.REFLECTOR_SPECULAR)
+    //                {
+    //                    refEnd = VektorSubtraktion(dirToVertex(largestRay.dir), VektorMultiplikation( 
+    //                        VektorMultiplikation(dirToVertex(normal), SkalärProdukt(
+    //                                dirToVertex(largestRay.dir), dirToVertex(normal))/Math.pow(returnLength(dirToVertex(normal)), 2))
+    //                                , 2));
+    //                }
+                    refEnd = normalize(refEnd);
+                    reflectedRay = new Ray(largestRay.end, VektorAddition(largestRay.end, refEnd), largestRay.color, largestRay.returnIndex(), Ray.RAY_LIGHT);
+                    if(!objects[largestRay.getObjectIndex()].isSphere())
+                        reflectedRay.setRadiance(largestRay.getRadiance()*pick.reflectionCoefficient);
+                    else
+                        reflectedRay.setRadiance(largestRay.getRadiance()*objects[largestRay.getObjectIndex()].reflectionCoefficient);
+//                    System.out.println("Current raidance: " + reflectedRay.getRadiance());
+                    reflectedRay.setReflectionType(Ray.RAY_REFLECTION);
+//                    if(reflectedRay.dir.equals(normal))
+//                        System.out.println("Identical direction and normal.");
+                    lightRayIntersection(reflectedRay);
+    //                if(objects[largestRay.getObjectIndex()].isTransparent() && !totalReflection)
+    //                {
+    //                    
+    //                }
+                }
+                
             }
             if(largestRay.returnIndex() > 24 || largestRay.returnIndex() < 1)
             {
@@ -483,14 +514,6 @@ public class Scene {
 //        boolean later = false;
         Ray largestRay = objects[0].rayIntersection(r.returnData(), lights);
         largestRay.setReflectionType(Ray.RAY_REFLECTION);
-        if(largestRay.equals(Ray.ERROR_RAY))
-        {
-            System.out.println("SHIET");
-            System.out.println("Received ray: " + r.returnData().toString());
-            if(r.checkHasParent())
-                System.out.println("Parent: " + r.returnParent().returnData().toString());
-            
-        }
             
 //        boolean failsafe = true;
 //        if(largestRay.returnIndex() == -3)
@@ -564,7 +587,8 @@ public class Scene {
             retRay.setImportance(largestRay.getImportance());
             Node<Ray> retNode = new Node<Ray>(retRay);
             r.addChild(retNode);
-            
+            if(!r.checkHasParent())
+                retRay.hitLightSource = true;
             return retRay;
         }
         
@@ -975,6 +999,8 @@ public class Scene {
         Vertex light = dirToVertex(incoming);
         Vertex normal = dirToVertex(limit);
         Vertex result = dirToVertex(limit);
+//        if(Double.isNaN(result.x))
+//            System.out.println("randomLightDir is NaN 0");
         Direction rotateAround;
         if(Math.abs(normal.x - predicted.x) < EPSILON && Math.abs(normal.y - predicted.y) < EPSILON
                 && Math.abs(normal.z - predicted.z) < EPSILON)
@@ -987,6 +1013,7 @@ public class Scene {
             VektorMultiplikation(normal, SkalärProdukt(predicted, normal)/
                     Math.pow(returnLength(normal), 2)), 2));
         }
+        
         int iterations = Camera.ESTIMATOR_ITERATIONS;
         double randAng = 0;
         double estimate = 0;
@@ -996,15 +1023,20 @@ public class Scene {
             randAng = Math.acos(Math.sqrt(Math.random()));
         
             rotateAround = vertexToDir(KryssProdukt(normal,predicted));
-            result = rotateVertexAroundAxis(result, rotateAround, estimate);
+            result = rotateVertexAroundAxis(result, rotateAround, randAng);
+            
+//            if(Double.isNaN(result.x))
+//                System.out.println("randomLightDir causes NaN 1");
 
             randAng = 2*Math.PI*Math.random();
 
             rotateAround = limit;
-            result = rotateVertexAroundAxis(result, rotateAround, estimate-Math.PI);
+            result = rotateVertexAroundAxis(result, rotateAround, randAng-Math.PI);
+            
+//            if(Double.isNaN(result.x))
+//                System.out.println("randomLightDir causes NaN 2");
+            
         }while(VektorVinkel(vertexToDir(result), limit) > Math.PI/2);
-        
-        
 //        System.out.println("Est Theta "+estimate);
 //        System.out.println("Result:  "+result.toString());
 //        System.out.println("predcit: "+predicted.toString());
@@ -1016,7 +1048,6 @@ public class Scene {
     {
         Vertex predicted = dirToVertex(incoming);
         predicted = normalize(predicted);
-        Vertex light = dirToVertex(incoming);
         Vertex normal = dirToVertex(limit);
         Vertex result = dirToVertex(limit);
         Direction rotateAround;

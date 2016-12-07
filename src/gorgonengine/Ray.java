@@ -23,6 +23,7 @@ public class Ray {
     private double t;
     private double radiance;
     private double importance;
+    public boolean hitLightSource;
     public static final int RAY_LIGHT = 100, RAY_IMPORTANCE = 101, RAY_SHADOW = 102;
     public static final int RAY_REFLECTION = 200, RAY_REFRACTION = 201;
     public final int RAY_TYPE;
@@ -47,6 +48,7 @@ public class Ray {
     
     public Ray(Vertex s, Vertex e, ColorDbl c)
     {
+        hitLightSource = false;
         t = -1;
         start = s;
         end = e;
@@ -63,6 +65,7 @@ public class Ray {
     
     public Ray(Vertex s, Vertex e, ColorDbl c, int index)
     {
+        hitLightSource = false;
         t = -1;
         start = s;
         end = e;
@@ -76,6 +79,7 @@ public class Ray {
     
     public Ray(ColorDbl c, Vertex s, Vertex e, int raytype)
     {
+        hitLightSource = false;
         t = -1;
         start = s;
         end = e;
@@ -106,6 +110,7 @@ public class Ray {
     
     public Ray(Vertex s, Vertex e, ColorDbl c, int index, int raytype)
     {
+        hitLightSource = false;
         t = -1;
         start = s;
         end = e;
@@ -136,6 +141,7 @@ public class Ray {
     
     public Ray(Ray r)
     {
+        hitLightSource = false;
         t = r.t;
         start = r.start;
         end = r.end;
@@ -237,31 +243,31 @@ public class Ray {
     
     public boolean equals(Ray ray)
     {
-        if(ray.end.x - end.x > Mesh.EPSILON)
+        if(Math.abs(ray.end.x - end.x) > Mesh.EPSILON)
         {
             return false;
         }
-        if(ray.end.y - end.y > Mesh.EPSILON)
+        if(Math.abs(ray.end.y - end.y) > Mesh.EPSILON)
         {
             return false;
         }
-        if(ray.end.z - end.z > Mesh.EPSILON)
+        if(Math.abs(ray.end.z - end.z) > Mesh.EPSILON)
         {
             return false;
         }
-        if(ray.start.x - start.x > Mesh.EPSILON)
+        if(Math.abs(ray.start.x - start.x) > Mesh.EPSILON)
         {
             return false;
         }
-        if(ray.start.y - start.y > Mesh.EPSILON)
+        if(Math.abs(ray.start.y - start.y) > Mesh.EPSILON)
         {
             return false;
         }
-        if(ray.start.z - start.z > Mesh.EPSILON)
+        if(Math.abs(ray.start.z - start.z) > Mesh.EPSILON)
         {
             return false;
         }
-        if(ray.color != color)
+        if(!ray.color.equals(color))
         {
             return false;
         }

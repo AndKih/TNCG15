@@ -13,9 +13,11 @@ public class Pixel {
     
     public ColorDbl color;
     private int pixelIndex, rayIndex;
+    public boolean hitLightSource;
     
     public Pixel(ColorDbl c, int pIndex)
     {
+        hitLightSource = false;
         color = c;
         pixelIndex = pIndex; //pixel index. Goes from 1 to max
         rayIndex = -1;
