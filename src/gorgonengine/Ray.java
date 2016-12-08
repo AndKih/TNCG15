@@ -226,7 +226,7 @@ public class Ray {
         if(!shadow)
             addPhotonToTree(end, radiance, dir, Photon.PHOTON_DIRECT, octreeRoot);
         else
-            addPhotonToTree(end, 0, dir, Photon.PHOTON_SHADOW, octreeRoot);
+            addPhotonToTree(end, 0, Direction.DUMMY, Photon.PHOTON_SHADOW, octreeRoot);
     }
     
     public String toString()

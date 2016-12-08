@@ -22,6 +22,7 @@ public class LinAlg {
     public static final int STANDARD_PHOTON_EMITTANCE = 1000000;
     public static Node<PhotonContainer> octreeRoot;
     public static int missingPhotons;
+    public static int hitSphere;
     
     public static void displayWholeOctree()
     {
@@ -529,21 +530,13 @@ public class LinAlg {
             System.out.println("Pre Color: " + triangleColor);
             System.out.println("Final Color: " + triangleColor);
         }
-//        System.out.println("Intensity: " + intensity);
-//        System.out.println("Pre Color: " + triangleColor);
-//        System.out.println("Intensity: " + intensity);
         triangleColor.setIntensity(intensity);
-//        if(!triangleColor.equals(ColorDbl.BLACK))
-//            System.out.println("Final Color: " + triangleColor);
-if(triangleColor.r>100000)
-{
-    System.out.println("COLOR IS HUUUUUUGE!!!! "+ triangleColor.toString());
-}
         return triangleColor;
     }
     
     public static ColorDbl PhotonLightCalculationsSphere(int sphereIndex, Vertex strikept)
     {
+//        System.out.println("Calculating photons for sphere!");
         Vector<Photon> photonList = new Vector<Photon>();
         photonList = getPhotons(strikept, octreeRoot);
         double intensity = 0;
@@ -554,7 +547,6 @@ if(triangleColor.r>100000)
             dist = returnLength(VektorSubtraktion(photonList.get(idp).position,strikept));
             intensity += vladPhotonWeight(photonList.get(idp).flux, dist);
         }
-        
         if(photonList.size()>0)
         {
             intensity /= photonList.size();
@@ -562,10 +554,13 @@ if(triangleColor.r>100000)
         Sphere getSphere = (Sphere)Scene.objects[sphereIndex];
         ColorDbl sphereColor = getSphere.color;
         sphereColor.setIntensity(intensity);
-if(sphereColor.r>100000)
-{
-    System.out.println("COLOR IS HUUUUUUGE!!!! "+ sphereColor.toString());
-}
+        if(sphereColor.r>100000)
+        {
+            System.out.println("COLOR IS HUUUUUUGE!!!! "+ sphereColor.toString());
+        }
+//        System.out.println("Spherecolor: " + sphereColor);
+//        System.out.println("Photons gathered: " + photonList.size());
+//        System.out.println("Intensity: " + intensity);
         return sphereColor;
     }
     

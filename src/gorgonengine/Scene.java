@@ -32,6 +32,7 @@ public class Scene {
     {
         rayStrikeInSubset1 = 0;
         missingPhotons = 0;
+        hitSphere = 0;
         //Middleposition: roof, (0, 0, 5). Floor: (0, 0, -5)
         final int TRIANGLESIZE = 3;
         Vertex[] p = new Vertex[TRIANGLESIZE];
@@ -282,7 +283,7 @@ public class Scene {
 //        objects[4].setReflectorType(Object.REFLECTOR_DIFFUSE);
         
         objects[3] = new Mesh(3, new double[] {2}, new Vertex(5, -3, -2), Mesh.TYPE_CUBE, Mesh.COLOR_ORANGE, false, false);
-        objects[3].setObjectReflection(0.95);
+        objects[3].setObjectReflection(0.2);
         
         objects[4] = new Mesh(4, mesh3);
         objects[4].setLightsource();
@@ -367,6 +368,7 @@ public class Scene {
             System.out.println("Total photon amount: " + photonsum);
             System.out.println("Ray strikes in subset 1: " + rayStrikeInSubset1);
             System.out.println("Missing photons: " + missingPhotons);
+            System.out.println("Number of photons on object 2: " + hitSphere);
         }
     }
     
@@ -400,6 +402,8 @@ public class Scene {
                 }
             }
         }
+        if(largestRay.getObjectIndex() == 2)
+            ++hitSphere;
 //        if(largestRay.equals(Ray.ERROR_RAY))
 //            System.out.println("No object hit at all!!!");
 //        else if(objects[largestRay.getObjectIndex()].isSphere())
@@ -474,7 +478,7 @@ public class Scene {
                 }
                 
             }
-            if(largestRay.returnIndex() > 24 || largestRay.returnIndex() < 1)
+            if(largestRay.returnIndex() > 24 || largestRay.returnIndex() < 1 && r.getRadiance() == STANDARD_FLUX)
             {
                 Ray shadowPhotonRay = new Ray(largestRay.end, VektorAddition(largestRay.end, VektorMultiplikation(dirToVertex(largestRay.dir), 100)), 
                                               ColorDbl.BLACK, largestRay.getObjectIndex(), Ray.RAY_LIGHT);
