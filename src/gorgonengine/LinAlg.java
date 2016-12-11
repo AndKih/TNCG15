@@ -19,7 +19,7 @@ public class LinAlg {
     public static final double ORENNAYAR_STANDARD_DEVIATION = Math.PI/4;
     public static final double PHOTON_SEARCH_RADIUS = 0.5;
     public static final double STANDARD_FLUX = 1;
-    public static final int STANDARD_PHOTON_EMITTANCE = 1000000;
+    public static final int STANDARD_PHOTON_EMITTANCE = 5000000;
     public static Node<PhotonContainer> octreeRoot;
     public static int missingPhotons;
     public static int hitSphere;
@@ -552,7 +552,7 @@ public class LinAlg {
             intensity /= photonList.size();
         }
         Sphere getSphere = (Sphere)Scene.objects[sphereIndex];
-        ColorDbl sphereColor = getSphere.color;
+        ColorDbl sphereColor = new ColorDbl(getSphere.color);
         sphereColor.setIntensity(intensity);
         if(sphereColor.r>100000)
         {
@@ -856,6 +856,8 @@ public class LinAlg {
     public static double SnellsLaw(double n1, double n2, double angle1)
     {
 //        System.out.println("Sneeeeels lååååååå");
+//        System.out.println("Sneeels låååå: " + (n1*Math.sin(angle1))/n2);
+//        System.out.println("Asin: " + Math.asin((n1*Math.sin(angle1))/n2));
         return Math.asin((n1*Math.sin(angle1))/n2);
     }
     

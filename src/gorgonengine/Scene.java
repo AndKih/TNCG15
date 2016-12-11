@@ -274,7 +274,7 @@ public class Scene {
         objects[1].setObjectReflection(0.2);
 //        objects[1].setReflectorType(Object.REFLECTOR_DIFFUSE);
         
-        objects[2] = new Sphere(ColorDbl.PURPLE, new Vertex(11, -2, 1), 1, 2);
+        objects[2] = new Sphere(ColorDbl.PURPLE, new Vertex(10, -2, 1), 1, 2);
         objects[2].setObjectReflection(0.2);
 //        objects[2].setReflectorType(Object.REFLECTOR_DIFFUSE);
         
@@ -282,8 +282,8 @@ public class Scene {
 //        objects[4].setObjectReflection(0.5);
 //        objects[4].setReflectorType(Object.REFLECTOR_DIFFUSE);
         
-        objects[3] = new Mesh(3, new double[] {2}, new Vertex(5, -3, -2), Mesh.TYPE_CUBE, Mesh.COLOR_ORANGE, false, false);
-        objects[3].setObjectReflection(0.2);
+        objects[3] = new Mesh(3, new double[] {2}, new Vertex(5, -3, -2), Mesh.TYPE_CUBE, Mesh.COLOR_ORANGE, false, true);
+        objects[3].setObjectReflection(0.95);
         
         objects[4] = new Mesh(4, mesh3);
         objects[4].setLightsource();
@@ -350,8 +350,6 @@ public class Scene {
     
         if(Camera.usePhotonmapping)
         {
-            
-            
             double[] rootDiameter = new double[]{16, 12, 10};
             octreeRoot = new Node<PhotonContainer>(new PhotonContainer(sceneMax, sceneMin, rootDiameter));
             createOctree(octreeRoot);
@@ -404,6 +402,10 @@ public class Scene {
         }
         if(largestRay.getObjectIndex() == 2)
             ++hitSphere;
+        if(largestRay.isInside() != r.isInside())
+            largestRay.incursion();
+        if(!objects[largestRay.getObjectIndex()].isTransparent() && largestRay.isInside())
+            largestRay.incursion();
 //        if(largestRay.equals(Ray.ERROR_RAY))
 //            System.out.println("No object hit at all!!!");
 //        else if(objects[largestRay.getObjectIndex()].isSphere())
@@ -415,13 +417,17 @@ public class Scene {
             if(checkInside(largestRay.end, maxPosSubset1, minPosSubset1))
                 ++rayStrikeInSubset1;
             largestRay.depositPhoton(false);
-            
-            if(russianRoullette(largestRay.getRadiance()))
+            boolean reflect = russianRoullette(largestRay.getRadiance());
+            if(reflect || (objects[largestRay.getObjectIndex()].getReflectorType() 
+                    == Object.REFLECTOR_SPECULAR && (r.getReflectionType() == Ray.RAY_REFLECTION && r.isInside())))
             {
                 if(!objects[largestRay.getObjectIndex()].isSphere())
                 {
                     Triangle pick = objects[largestRay.getObjectIndex()].returnTriangleById(largestRay.returnIndex());
                     Direction normal;
+                    
+                    if(pick.equals(Triangle.DUMMY))
+                        System.out.println("Dummy triangle! Ray used: " + r.toString());
 
                     if(largestRay.isInside())
                         normal = invert(pick.normal);
@@ -450,35 +456,134 @@ public class Scene {
                         if(largestAngle > BrewsterAngle(objects[largestRay.getObjectIndex()].returnProperty(), Object.PROP_AIR))
                             totalReflection = true;
                     }
-    //                if(objects[largestRay.getObjectIndex()].getReflectorType() == Object.REFLECTOR_DIFFUSE)
+                    
+                    if(objects[largestRay.getObjectIndex()].getReflectorType() == Object.REFLECTOR_DIFFUSE)
+//                        refEnd = randomAngle(normal, objects[largestRay.getObjectIndex()].returnTriangleById(largestRay.returnIndex())
+//                                    );
                         refEnd = randomLightAngle(normal, objects[largestRay.getObjectIndex()].returnTriangleById(largestRay.returnIndex())
                                     ,vertexToDir(VektorSubtraktion(largestRay.start, largestRay.end)));
-    //                else if(objects[largestRay.getObjectIndex()].getReflectorType() == Object.REFLECTOR_SPECULAR)
-    //                {
-    //                    refEnd = VektorSubtraktion(dirToVertex(largestRay.dir), VektorMultiplikation( 
-    //                        VektorMultiplikation(dirToVertex(normal), SkalärProdukt(
-    //                                dirToVertex(largestRay.dir), dirToVertex(normal))/Math.pow(returnLength(dirToVertex(normal)), 2))
-    //                                , 2));
-    //                }
+                    else if(objects[largestRay.getObjectIndex()].getReflectorType() == Object.REFLECTOR_SPECULAR)
+                    {
+                                //System.out.println("Specular reflection!");
+                        refEnd = VektorSubtraktion(dirToVertex(largestRay.dir), VektorMultiplikation( 
+                            VektorMultiplikation(dirToVertex(normal), SkalärProdukt(
+                                    dirToVertex(largestRay.dir), dirToVertex(normal))/Math.pow(returnLength(dirToVertex(normal)), 2))
+                                    , 2));
+                    }
                     refEnd = normalize(refEnd);
                     reflectedRay = new Ray(largestRay.end, VektorAddition(largestRay.end, refEnd), largestRay.color, largestRay.returnIndex(), Ray.RAY_LIGHT);
-                    if(!objects[largestRay.getObjectIndex()].isSphere())
-                        reflectedRay.setRadiance(largestRay.getRadiance()*pick.reflectionCoefficient);
-                    else
-                        reflectedRay.setRadiance(largestRay.getRadiance()*objects[largestRay.getObjectIndex()].reflectionCoefficient);
+                    reflectedRay.setRadiance(largestRay.getRadiance()*pick.reflectionCoefficient);    
+                    reflectedRay.setObjectIndex(largestRay.getObjectIndex());
+//                    System.out.println("Last ray mesh side: " + largestRay.toString());
 //                    System.out.println("Current raidance: " + reflectedRay.getRadiance());
                     reflectedRay.setReflectionType(Ray.RAY_REFLECTION);
+                    
 //                    if(reflectedRay.dir.equals(normal))
 //                        System.out.println("Identical direction and normal.");
+//                    System.out.println("Hit object: " + largestRay.getObjectIndex());
+//                    System.out.println("Reflector type for object: " + objects[largestRay.getObjectIndex()].getReflectorType());
                     lightRayIntersection(reflectedRay);
-    //                if(objects[largestRay.getObjectIndex()].isTransparent() && !totalReflection)
-    //                {
-    //                    
-    //                }
+                    if(objects[largestRay.getObjectIndex()].isTransparent() && !totalReflection)
+                    {
+                        Vertex refrEnd = Vertex.DUMMY;
+                        double refrAngle = 0;
+                        if(!largestRay.isInside())
+                            refrAngle = SnellsLaw(Object.PROP_AIR, objects[largestRay.getObjectIndex()].returnProperty(), largestAngle);
+                        else
+                            refrAngle = SnellsLaw(objects[largestRay.getObjectIndex()].returnProperty(), Object.PROP_AIR, largestAngle);
+//                        System.out.println("largestAngle: " + largestAngle);
+//                        System.out.println("Sin: " + Math.sin(largestAngle));
+//                        System.out.println("refrAngle: " + refrAngle);
+                        double numerator = SkalärProdukt(dirToVertex(invert(largestRay.dir)), dirToVertex(normal));
+                        double denominator = returnLength(dirToVertex(normal));
+                        Vertex normalProj = VektorMultiplikation(dirToVertex(normal), (numerator/denominator));
+                        Vertex projDir = VektorSubtraktion(dirToVertex(invert(largestRay.dir)), normalProj);
+//                        Vertex ortoDir = VektorSubtraktion(dirToVertex(largestRay.dir), projDir);
+                        
+                        refrEnd = VektorAddition(VektorMultiplikation(dirToVertex(normal), -Math.cos(refrAngle)), 
+                                VektorMultiplikation(projDir, -Math.sin(refrAngle)/returnLength(projDir)));
+                        
+                        if(Double.isNaN(refrEnd.x) && Double.isNaN(refrEnd.y) && Double.isNaN(refrEnd.z))
+                        {
+                            System.out.println("refrEnd isNaN.");
+                            System.out.println("Ray used: " + r.toString());
+                            System.out.println("refrAngle: " + refrAngle);
+                            System.out.println("numerator: " + numerator);
+                            System.out.println("denominator: " + denominator);
+                            System.out.println("normalProj: " + normalProj);
+                            System.out.println("projDir: " + projDir);
+                        }
+                            
+                        
+                        refractedRay = new Ray(largestRay.end, VektorAddition(largestRay.end, refrEnd), largestRay.color, largestRay.returnIndex(), Ray.RAY_LIGHT);
+                        refractedRay.setRadiance(largestRay.getRadiance()*objects[largestRay.getObjectIndex()].reflectionCoefficient);
+                        refractedRay.setReflectionType(Ray.RAY_REFRACTION);
+                        if(VektorVinkel(refractedRay.dir, normal) < Math.PI/2)
+                        {
+                            System.out.println("RefractedRay: " + refractedRay);
+                            System.out.println("LargestRay: " + largestRay);
+                            System.out.println("ProjDir: " + projDir);
+//                            System.out.println("OrtoDir: " + ortoDir);
+                            System.out.println("refrEnd: " + refrEnd);
+                            System.out.println("refrAngle: " + refrAngle*180/Math.PI);
+                            System.out.println("Difference: " + VektorVinkel(refractedRay.dir, pick.normal)*180/Math.PI);
+                        }
+//                        System.out.println("refractedRay reflectionType: " + refractedRay.getReflectionType());
+                        refractedRay.setObjectIndex(largestRay.getObjectIndex());
+                        if(!largestRay.isInside())
+                            refractedRay.incursion();
+                        lightRayIntersection(refractedRay);
+                    }
                 }
-                
+                else if(reflect)
+                {
+                    Direction normal = objects[largestRay.getObjectIndex()].returnNormal(largestRay.end);
+
+                    Vertex refEnd = Vertex.DUMMY;
+                    if(objects[largestRay.getObjectIndex()].getReflectorType() == Object.REFLECTOR_DIFFUSE)
+                    {
+//                                    refEnd = randomAngle(normal, objects[largestRay.getObjectIndex()].returnTriangleById(largestRay.returnIndex())
+//                                    );
+                        refEnd = randomLightAngle(normal, objects[largestRay.getObjectIndex()].returnTriangleById(largestRay.returnIndex())
+                            ,vertexToDir(VektorSubtraktion(largestRay.start, largestRay.end)));
+                    }
+                    else if(objects[largestRay.getObjectIndex()].getReflectorType() == Object.REFLECTOR_SPECULAR)
+                    {
+                        refEnd = VektorSubtraktion(dirToVertex(largestRay.dir), VektorMultiplikation( 
+                            VektorMultiplikation(dirToVertex(normal), SkalärProdukt(
+                                    dirToVertex(largestRay.dir), dirToVertex(normal))/Math.pow(returnLength(dirToVertex(normal)), 2))
+                                    , 2));
+                    }
+                    refEnd = normalize(refEnd);
+
+                    reflectedRay = new Ray(largestRay.end, VektorAddition(largestRay.end, refEnd), largestRay.color, -1, Ray.RAY_IMPORTANCE);
+                    reflectedRay.setRadiance(largestRay.getRadiance()*objects[largestRay.getObjectIndex()].reflectionCoefficient);
+                    reflectedRay.setReflectionType(Ray.RAY_REFLECTION);
+                    reflectedRay.setObjectIndex(largestRay.getObjectIndex());
+//                    System.out.println("Last ray sphere side: " + largestRay.toString());
+                    HemisCoords impIn = cartToHemis(dirToVertex(largestRay.dir));
+                    HemisCoords impOut = cartToHemis(dirToVertex(reflectedRay.dir));
+                    if(objects[reflectedRay.getObjectIndex()].getReflectorType() == Object.REFLECTOR_SPECULAR)
+                    {
+                        reflectedRay.setImportance(largestRay.getImportance()*objects[largestRay.getObjectIndex()].reflectionCoefficient);
+                    }
+                    else
+                    {
+                        reflectedRay.setImportance(largestRay.getImportance()*Math.PI*BRDFsphere(
+                            (Sphere)objects[largestRay.getObjectIndex()], reflectedRay.end,
+                            Triangle.REFLECTION_ORENNAYAR, impIn, impOut));
+                    }
+//                                reflectedRay.setImportance(largestRay.getImportance());
+                    if(Double.isNaN(refEnd.x) || Double.isNaN(refEnd.y) || Double.isNaN(refEnd.z))
+                    {
+                        System.out.println("largestRay: " + largestRay);
+                    }
+                    if(!largestRay.isInside())
+                        reflectedRay.incursion();
+                    lightRayIntersection(reflectedRay);
+                }
             }
-            if(largestRay.returnIndex() > 24 || largestRay.returnIndex() < 1 && r.getRadiance() == STANDARD_FLUX)
+            if(largestRay.getObjectIndex() != 0 && r.getReflectionType() != Ray.RAY_REFRACTION && !r.isInside())
             {
                 Ray shadowPhotonRay = new Ray(largestRay.end, VektorAddition(largestRay.end, VektorMultiplikation(dirToVertex(largestRay.dir), 100)), 
                                               ColorDbl.BLACK, largestRay.getObjectIndex(), Ray.RAY_LIGHT);
@@ -507,6 +612,7 @@ public class Scene {
         }
         
     }
+
     
     public Ray rayIntersection(Node<Ray> r)
     {
@@ -533,13 +639,35 @@ public class Scene {
             {
                 if(VektorDistansJämförelse(newRay.end, largestRay.end, r.returnData().start))
                 {
-                    
                     largestRay = new Ray(newRay.start, newRay.end, newRay.color, newRay.returnIndex(), Ray.RAY_IMPORTANCE);
                     largestRay.setReflectionType(Ray.RAY_REFLECTION);
                     largestRay.setObjectIndex(newRay.getObjectIndex());
                     largestRay.setImportance(newRay.getImportance());
                 }
             }
+        }
+        
+        if(largestRay.equals(Ray.ERROR_RAY))
+        {
+            
+            Node<Ray> it = r;
+            System.out.println("ERROR RAY!!! Current it: " + it.returnData());
+            if(it.returnData().isInside())
+                System.out.println("Is insde.");
+            else
+                System.out.println("Is not inside.");
+            System.out.println("Anglediff: " + VektorVinkel(objects[it.returnData().getObjectIndex()].returnTriangleById(it.returnData().returnIndex()).normal, it.returnData().dir));
+            do
+            {
+                it = it.returnParent();
+                System.out.println("ERROR RAY!!! Current it: " + it.returnData());
+                if(it.returnData().isInside())
+                    System.out.println("Is inside.");
+                else
+                    System.out.println("Is not inside.");
+                System.out.println("Anglediff: " + VektorVinkel(objects[it.returnData().getObjectIndex()
+                        ].returnTriangleById(it.returnData().returnIndex()).normal, it.returnData().dir));
+            }while(it.checkHasParent());
         }
         
         if(objects[largestRay.getObjectIndex()].isLightsource())
@@ -600,7 +728,10 @@ public class Scene {
         
         if(largestRay.isInside() != r.returnData().isInside())
             largestRay.incursion();
-
+        
+        if(!objects[largestRay.getObjectIndex()].isTransparent() && largestRay.isInside())
+            largestRay.incursion();
+        
         if(largestRay.getImportance() > Camera.IMPORTANCETHRESHOLD)
         {
             int nRefl = N_REFLECTEDRAYS;
@@ -675,36 +806,13 @@ public class Scene {
                                     , 2));
                     }
                     refEnd = normalize(refEnd);
-                    
-//                    if(Double.isNaN(refEnd.x) || Double.isNaN(refEnd.y) || Double.isNaN(refEnd.z))
-//                    {
-//                        System.out.println("YOU GOT NAN!!!");
-//                        System.out.println("LargestRay: " + largestRay);
-//                        if(objects[largestRay.getObjectIndex()].getReflectorType() == Object.REFLECTOR_DIFFUSE)
-//                            System.out.println("Diffuse reflection");
-//                        else
-//                            System.out.println("Specular reflection");
-//                        Node<Ray> traverse = r;
-//                        int length = 0;
-//                        while(traverse.checkHasParent())
-//                        {
-//                            ++length;
-//                            traverse = traverse.returnParent();
-//                            System.out.println("Current node: " + traverse.returnData());
-//            //                if(length > 4)
-//            //                {
-//            //                    System.out.println("Length greater than 4! Stuck in:" + traverse.returnData().getObjectIndex());
-//            //                    System.out.println("Current importance: " + traverse.returnData().getImportance());
-//            //                }
-//
-//
-//                        }
-//                        System.out.println("Length of tree at this point: " + length);
-//                    }
+
                     reflectedRay = new Ray(largestRay.end, VektorAddition(largestRay.end, refEnd), largestRay.color, largestRay.returnIndex(), Ray.RAY_IMPORTANCE);
                     reflectedRay.setReflectionType(Ray.RAY_REFLECTION);
 //                    System.out.println("reflectedRay reflectionType: " + reflectedRay.getReflectionType());
                     reflectedRay.setObjectIndex(largestRay.getObjectIndex());
+                    if(largestRay.isInside())
+                        reflectedRay.incursion();
                     if(Double.isNaN(refEnd.x) || Double.isNaN(refEnd.y) || Double.isNaN(refEnd.z))
                     {
                         System.out.println("largestRay: " + largestRay);
@@ -744,7 +852,7 @@ public class Scene {
                     {
                         Vertex refrEnd = Vertex.DUMMY;
                         double refrAngle = 0;
-                        if(r.returnData().getReflectionType() == Ray.RAY_REFLECTION)
+                        if(!largestRay.isInside())
                             refrAngle = SnellsLaw(Object.PROP_AIR, objects[largestRay.getObjectIndex()].returnProperty(), largestAngle);
                         else
                             refrAngle = SnellsLaw(objects[largestRay.getObjectIndex()].returnProperty(), Object.PROP_AIR, largestAngle);
@@ -773,7 +881,8 @@ public class Scene {
                         refractedRay.setObjectIndex(largestRay.getObjectIndex());
                         refractedRay.setImportance(largestRay.getImportance()*
                                 objects[largestRay.getObjectIndex()].returnTriangleById(largestRay.returnIndex()).reflectionCoefficient);
-                        refractedRay.incursion();
+                        if(!r.returnData().isInside())
+                            refractedRay.incursion();
 //                        if(Double.isNaN(refractedRay.end.x) || Double.isNaN(refractedRay.end.y) || Double.isNaN(refractedRay.end.z))
 //                        {
 //                            System.out.println("NaN detected in refractedRay!");

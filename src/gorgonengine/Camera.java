@@ -35,7 +35,7 @@ public class Camera extends JFrame{
     public double width, height;
     private double iMax, iMin;
 
-    public static final double IMPORTANCETHRESHOLD = 0.1;
+    public static final double IMPORTANCETHRESHOLD = 0.01;
 
     public static final int N_REFLECTEDRAYS = 1;
     public static final int N_AREALIGHTSOURCEPOINTS = 10;
@@ -43,7 +43,7 @@ public class Camera extends JFrame{
     public static final boolean AREALIGHTAFFECTOR = true;
     Scene scene;
     
-    public int raysPerPixel = 4;
+    public int raysPerPixel = 6;
     public static boolean areaLightsource = true;
     public static boolean usePhotonmapping = true;
     public static boolean logScale = false;
@@ -132,7 +132,7 @@ public class Camera extends JFrame{
     //                System.out.println("Start: " + vp);
                     r = new Ray(vp, target, new ColorDbl(0, 0, 0), -2, Ray.RAY_IMPORTANCE);
                     r.setReflectionType(Ray.RAY_REFLECTION);
-                    r.setObjectIndex(-1);
+                    r.setObjectIndex(-2);
                     Node<Ray> raystart = new Node<Ray>(r);
                     r = scene.rayIntersection(raystart);
                     if(r.hitLightSource)

@@ -283,6 +283,7 @@ public class Mesh extends Object{
                         retint = PhotonLightCalculationsMesh(newEnd, mesh[savedID].triangleIndex);
 //                        retint = getPhotonLight(mesh[savedID].normal, newEnd, mesh[savedID].triangleIndex);
                     res.setIntensity(retint, tmpCol);
+//                    System.out.println("Mesh color: " + res);
                     resultRay = new Ray(r.start, newEnd, res, mesh[savedID].triangleIndex, Ray.RAY_IMPORTANCE);
                 }    
                 else

@@ -63,7 +63,7 @@ public class Sphere extends Object{
     {
         if(!transparent && r.getObjectIndex() == objectID)
         {
-            System.out.println("Non transparent objects cant hit self.");
+//            System.out.println("Non transparent objects cant hit self.");
             return Ray.ERROR_RAY;
         }
         //final double EPSILON = 0.000001;
@@ -149,6 +149,8 @@ public class Sphere extends Object{
                     return Ray.ERROR_RAY;
                 }
                 ColorDbl col = intensityCalc(x2,ls);
+//                if(r.getObjectIndex() == -2)
+//                    System.out.println("Sphere color2: " + col);
                 Ray resultRay = new Ray(r.start, x2, col, -1, Ray.RAY_IMPORTANCE);
 //                resultRay.setImportance(r.getImportance()*reflectionCoefficient);
                 resultRay.setImportance(r.getImportance());
@@ -179,7 +181,7 @@ public class Sphere extends Object{
     {
         if(!transparent && r.getObjectIndex() == objectID)
         {
-            System.out.println("Non transparent objects cant hit self.");
+//            System.out.println("Non transparent objects cant hit self.");
             return Ray.ERROR_RAY;
         }
         //final double EPSILON = 0.000001;
@@ -242,6 +244,7 @@ public class Sphere extends Object{
 //                    System.out.println("resultRay start and end is on sphere");
                     return Ray.ERROR_RAY;
                 }
+                
                 return resultRay;
             }
             else
@@ -403,7 +406,11 @@ public class Sphere extends Object{
                 retint = getMCAreaLightIntensity(normal, x, -1);
             else
                 retint = PhotonLightCalculationsSphere(objectID, x);
+//            System.out.println("Pre1: " + tmpCol);
+//            System.out.println("Pre2: " + retint);
             res.setIntensity(retint, tmpCol);
+//            System.out.println("Post1: " + res);
+//            System.out.println("Post2: " + retint);
         }else{
             for(int i = 0; i<ls.length; i++)
             {

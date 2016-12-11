@@ -145,7 +145,7 @@ public class Ray {
         t = r.t;
         start = r.start;
         end = r.end;
-        dir = r.dir;
+        dir = calculateVectorDirection(start, end);
         color = r.color;
         objectIndex = r.getObjectIndex();
         rayIndex = r.returnIndex();
